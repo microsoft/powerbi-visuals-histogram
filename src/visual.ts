@@ -27,20 +27,15 @@
 module powerbi.visuals.samples {
     // jsCommon
     import PixelConverter = jsCommon.PixelConverter;
-    import IStringResourceProvider = jsCommon.IStringResourceProvider;
     import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
     import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
 
     // powerbi
-    import IVisual = powerbi.IVisual;
     import ValueTypeDescriptor = powerbi.ValueTypeDescriptor;
     import ValueType = powerbi.ValueType;
     import IViewport = powerbi.IViewport;
 
-    import IDataColorPalette = powerbi.IDataColorPalette;
     import TextProperties = powerbi.TextProperties;
-    import VisualInitOptions = powerbi.VisualInitOptions;
-    import IVisualStyle = powerbi.IVisualStyle;
     import DataView = powerbi.DataView;
     import Fill = powerbi.Fill;
     import VisualObjectInstance = powerbi.VisualObjectInstance;
@@ -55,22 +50,22 @@ module powerbi.visuals.samples {
     import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
     import DataViewCategoryColumn = powerbi.DataViewCategoryColumn;
 
+    // powerbi.extensibility
+    import IVisual = powerbi.extensibility.IVisual;
+    import IColorPalette = powerbi.extensibility.IColorPalette;
+
     // powerbi.extensibility.visual
     import IVisualHost = powerbi.extensibility.visual.IVisualHost;
     import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
     import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 
     // powerbi.visuals
+    import ISelectionId = powerbi.visuals.ISelectionId;
     import ValueFormatter = powerbi.visuals.valueFormatter;
-    import IGenericAnimator = powerbi.visuals.IGenericAnimator;
     import IMargin = powerbi.visuals.IMargin;
-    import TooltipEnabledDataPoint = powerbi.visuals.TooltipEnabledDataPoint;
-    import SelectionId = powerbi.visuals.SelectionId;
     import IValueFormatter = powerbi.visuals.IValueFormatter;
     import axisStyle = powerbi.visuals.axisStyle;
-    import yAxisPosition = powerbi.visuals.yAxisPosition;
-    import DataColorPalette = powerbi.visuals.DataColorPalette;
-    import TooltipDataItem = powerbi.visuals.TooltipDataItem;
+    import VisualTooltipDataItem = powerbi.visuals.VisualTooltipDataItem;
     import ColorHelper = powerbi.visuals.ColorHelper;
     import SVGUtil = powerbi.visuals.SVGUtil;
     import TooltipManager = powerbi.visuals.TooltipManager;
@@ -84,7 +79,6 @@ module powerbi.visuals.samples {
     import ValueFormatterOptions = powerbi.visuals.ValueFormatterOptions;
     import IAxisProperties = powerbi.visuals.IAxisProperties;
     import IInteractiveBehavior = powerbi.visuals.IInteractiveBehavior;
-    import ObjectEnumerationBuilder = powerbi.visuals.ObjectEnumerationBuilder;
     import ISelectionHandler = powerbi.visuals.ISelectionHandler;
     import IInteractivityService = powerbi.visuals.IInteractivityService;
     import appendClearCatcher = powerbi.visuals.appendClearCatcher;
@@ -189,7 +183,7 @@ module powerbi.visuals.samples {
 
     interface HistogramValue {
         value: number;
-        selectionId: SelectionId;
+        selectionId: ISelectionId;
         frequency: number;
     }
 
@@ -446,7 +440,7 @@ module powerbi.visuals.samples {
         private interactivityService: IInteractivityService;
         private behavior: IInteractiveBehavior;
 
-        private colors: IDataColorPalette;
+        private colors: IColorPalette;
 
         private root: D3.Selection;
         private clearCatcher: D3.Selection;
@@ -459,8 +453,6 @@ module powerbi.visuals.samples {
         private labelGraphicsContext: D3.Selection;
 
         private dataView: HistogramDataView;
-
-        private animator: IGenericAnimator;
 
         private get columnsSelection(): D3.Selection {
             return this.main.select(Histogram.Columns.selector)
@@ -519,7 +511,7 @@ module powerbi.visuals.samples {
                 .classed(Histogram.LabelGraphicsContext.class, true);
         }
 
-        public static converter(dataView: DataView, colors: IDataColorPalette): HistogramDataView {
+        public static converter(dataView: DataView, colors: IColorPalette): HistogramDataView {
             if (!dataView ||
                 !dataView.categorical ||
                 !dataView.categorical.categories ||
@@ -739,16 +731,16 @@ module powerbi.visuals.samples {
                     value: number = Number(item),
                     id: DataViewScopeIdentity = identities[index],
                     measureId: string,
-                    selectionId: SelectionId;
+                    selectionId: ISelectionId;
 
                 value = isNaN(value) ? 0 : value;
 
                 measureId = id ? id.key : undefined;
 
-                selectionId = SelectionId.createWithIdAndMeasureAndCategory(
+                /*selectionId = SelectionId.createWithIdAndMeasureAndCategory(
                     id,
                     measureId,
-                    queryName);
+                    queryName);*/ // TODO: convert it to the new API by using ISelectionIdBuilder.
 
                 if (frequencies
                     && frequencies[index]
@@ -806,7 +798,7 @@ module powerbi.visuals.samples {
             settings: HistogramSettings,
             includeLeftBorder: boolean,
             yValueFormatter: IValueFormatter,
-            xValueFormatter: IValueFormatter): TooltipDataItem[] {
+            xValueFormatter: IValueFormatter): VisualTooltipDataItem[] {
 
             return [
                 {
@@ -842,7 +834,7 @@ module powerbi.visuals.samples {
             return ((index === 0 && value.value >= bin.x) || (value.value > bin.x)) && value.value <= bin.x + bin.dx;
         }
 
-        private static parseSettings(dataView: DataView, colors: IDataColorPalette): HistogramSettings {
+        private static parseSettings(dataView: DataView, colors: IColorPalette): HistogramSettings {
             if (!dataView ||
                 !dataView.metadata ||
                 !dataView.metadata.columns ||
@@ -1828,7 +1820,7 @@ module powerbi.visuals.samples {
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-            var enumeration: ObjectEnumerationBuilder = new ObjectEnumerationBuilder(),
+            var instances: VisualObjectInstance[] = [],
                 settings: HistogramSettings;
 
             if (!this.dataView ||
@@ -1840,37 +1832,37 @@ module powerbi.visuals.samples {
 
             switch (options.objectName) {
                 case "general": {
-                    this.enumerateGeneral(enumeration, settings);
+                    this.enumerateGeneral(instances, settings);
 
                     break;
                 }
                 case "dataPoint": {
-                    this.enumerateDataPoint(enumeration, settings);
+                    this.enumerateDataPoint(instances, settings);
 
                     break;
                 }
                 case "labels": {
-                    this.enumerateLabels(enumeration, settings);
+                    this.enumerateLabels(instances, settings);
 
                     break;
                 }
                 case "xAxis": {
-                    this.enumerateXAxis(enumeration, settings);
+                    this.enumerateXAxis(instances, settings);
 
                     break;
                 }
                 case "yAxis": {
-                    this.enumerateYAxis(enumeration, settings);
+                    this.enumerateYAxis(instances, settings);
 
                     break;
                 }
             }
 
-            return enumeration.complete() || [];
+            return instances;
         }
 
         private enumerateGeneral(
-            enumeration: ObjectEnumerationBuilder,
+            instances: VisualObjectInstance[],
             settings: HistogramSettings): void {
 
             var general: VisualObjectInstance = {
@@ -1883,11 +1875,11 @@ module powerbi.visuals.samples {
                 }
             };
 
-            enumeration.pushInstance(general);
+            instances.push(general);
         }
 
         private enumerateDataPoint(
-            enumeration: ObjectEnumerationBuilder,
+            instances: VisualObjectInstance[],
             settings: HistogramSettings): void {
 
             var dataPoint: VisualObjectInstance = {
@@ -1899,11 +1891,11 @@ module powerbi.visuals.samples {
                 }
             };
 
-            enumeration.pushInstance(dataPoint);
+            instances.push(dataPoint);
         }
 
         private enumerateLabels(
-            enumeration: ObjectEnumerationBuilder,
+            instances: VisualObjectInstance[],
             settings: HistogramSettings): void {
 
             var labelsSettings: HistogramLabelSettings = settings.labelSettings,
@@ -1920,11 +1912,11 @@ module powerbi.visuals.samples {
                     }
                 };
 
-            enumeration.pushInstance(labels);
+            instances.push(labels);
         }
 
         private enumerateXAxis(
-            enumeration: ObjectEnumerationBuilder,
+            instances: VisualObjectInstance[],
             settings: HistogramSettings): void {
 
             var xAxisSettings: HistogramXAxisSettings = settings.xAxisSettings,
@@ -1942,11 +1934,11 @@ module powerbi.visuals.samples {
                     }
                 };
 
-            enumeration.pushInstance(xAxis);
+            instances.push(xAxis);
         }
 
         private enumerateYAxis(
-            enumeration: ObjectEnumerationBuilder,
+            instances: VisualObjectInstance[],
             settings: HistogramSettings): void {
 
             var yAxisSettings: HistogramYAxisSettings = settings.yAxisSettings,
@@ -1967,7 +1959,7 @@ module powerbi.visuals.samples {
                     }
                 };
 
-            enumeration.pushInstance(yAxis);
+            instances.push(yAxis);
         }
 
         private static getObjectsFromDataView(dataView: DataView): DataViewObjects {
@@ -2250,8 +2242,6 @@ module powerbi.visuals.samples {
         }
 
         function getScalarLabelMaxWidth(scale: D3.Scale.GenericScale<any>, tickValues: number[]): number {
-            debug.assertValue(scale, "scale");
-            debug.assertNonEmpty(tickValues, "tickValues");
             // find the distance between two ticks. scalar ticks can be anywhere, such as:
             // |---50----------100--------|
             if (scale && !_.isEmpty(tickValues)) {
@@ -2298,9 +2288,6 @@ module powerbi.visuals.samples {
                 }
             }
             else {
-                if (getValueFn == null && !isScalar) {
-                    debug.assertFail("getValueFn must be supplied for ordinal tickValues");
-                }
                 if (useTickIntervalForDisplayUnits && isScalar && tickValues.length > 1) {
                     var value1 = axisDisplayUnits ? axisDisplayUnits : tickValues[1] - tickValues[0];
 
@@ -2450,8 +2437,6 @@ module powerbi.visuals.samples {
                 return tickLabels;
             }
 
-            debug.assertFail("must pass a quantitative scale to this method");
-
             return tickLabels;
         }
 
@@ -2574,9 +2559,6 @@ module powerbi.visuals.samples {
                             scalarDomain.length,
                             (pixelSpan - outerPadding * 2) / minOrdinalRectThickness);
                 }
-                else {
-                    debug.assertFail("unsupported dataType, something other than text or numeric");
-                }
             }
 
             // vertical ordinal axis (e.g. categorical bar chart) does not need to reverse
@@ -2613,8 +2595,6 @@ module powerbi.visuals.samples {
             dataDomain: any[],
             innerPaddingRatio: number,
             outerPaddingRatio: number): D3.Scale.OrdinalScale {
-
-            debug.assert(outerPaddingRatio >= 0 && outerPaddingRatio < 4, "outerPaddingRatio should be a value between zero and four");
 
             var scale = d3.scale.ordinal()
                 /* Avoid using rangeRoundBands here as it is adding some extra padding to the axis*/
@@ -2666,7 +2646,6 @@ module powerbi.visuals.samples {
         }
 
         function createLogScale(pixelSpan: number, dataDomain: any[], outerPadding: number = 0, niceCount?: number): D3.Scale.LinearScale {
-            debug.assert(isLogScalePossible(dataDomain), "dataDomain cannot include 0");
             var scale = d3.scale.log()
                 .range([outerPadding, pixelSpan - outerPadding])
                 .domain([dataDomain[0], dataDomain[1]])
@@ -2732,12 +2711,8 @@ module powerbi.visuals.samples {
          * @param isDateTime - flag to show single tick when min is equal to max.
          */
         export function getBestNumberOfTicks(min: number, max: number, valuesMetadata: DataViewMetadataColumn[], maxTickCount: number, isDateTime?: boolean): number {
-            debug.assert(maxTickCount >= 0, "maxTickCount must be greater or equal to zero");
-
             if (isNaN(min) || isNaN(max))
                 return DefaultBestTickCount;
-
-            debug.assert(min <= max, "min value needs to be less or equal to max value");
 
             if (maxTickCount <= 1 || (max <= 1 && min >= -1))
                 return maxTickCount;
@@ -2757,7 +2732,6 @@ module powerbi.visuals.samples {
         }
 
         export function ensureValuesInRange(values: number[], min: number, max: number): number[] {
-            debug.assert(min <= max, "min must be less or equal to max");
             var filteredValues = values.filter(v => v >= min && v <= max);
             if (filteredValues.length < 2)
                 filteredValues = [min, max];
@@ -2864,7 +2838,7 @@ module powerbi.visuals.samples {
                         && dataPoint
                         && selectedDataPoint.identity
                         && dataPoint.identity
-                        && selectedDataPoint.identity.equals(dataPoint.identity);
+                        && (selectedDataPoint.identity as ISelectionId).equals(dataPoint.identity as ISelectionId);
                 });
             });
         }
