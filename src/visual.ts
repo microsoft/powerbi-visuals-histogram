@@ -25,7 +25,9 @@
  */
 
 module powerbi.extensibility.visual {
-    export class Visual implements IVisual {
+    export class Histogram implements IVisual {
+        constructor(options: VisualConstructorOptions) { }
+
         public update(options: VisualUpdateOptions) { }
     }
 }

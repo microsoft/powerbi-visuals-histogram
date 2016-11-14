@@ -10,7 +10,8 @@
     "powerbi-visuals"
   ],
   "scripts": {
-    "postinstall": "typings install && pbiviz update 1.2.0"
+    "postinstall": "typings install && pbiviz update 1.2.0",
+    "pbiviz": "pbiviz"
   },
   "author": {
     "name": "Microsoft",
@@ -20,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/Microsoft/PowerBI-visuals-Histogram/issues"
   },
-  "homepage": "https://github.com/Microsoft/PowerBI-visuals-Histogram#readme"
+  "homepage": "https://github.com/Microsoft/PowerBI-visuals-Histogram#readme",
+  "devDependencies": {
+    "powerbi-visuals-tools": "1.2.1"
+  }
 }
