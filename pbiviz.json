@@ -1,0 +1,23 @@
+{
+  "visual": {
+    "name": "Histogram",
+    "displayName": "Histogram",
+    "guid": "Histogram1445664487616",
+    "visualClassName": "Histogram",
+    "version": "0.3.0",
+    "description": "A histogram chart plots data ranges into intervals. Useful for estimating density.",
+    "supportUrl": "http://community.powerbi.com",
+    "gitHubUrl": "https://github.com/Microsoft/PowerBI-visuals-Histogram"
+  },
+  "apiVersion": "1.2.0",
+  "author": {
+    "name": "Microsoft",
+    "email": "pbicvsupport@microsoft.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json"
+}

@@ -1,0 +1,24 @@
+{
+  "name": "powerbi-visuals-histogram",
+  "version": "0.3.0",
+  "description": "A histogram chart plots data ranges into intervals. Useful for estimating density.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Microsoft/PowerBI-visuals-Histogram.git"
+  },
+  "keywords": [
+    "powerbi-visuals"
+  ],
+  "scripts": {
+    "postinstall": "typings install && pbiviz update 1.2.0"
+  },
+  "author": {
+    "name": "Microsoft",
+    "email": "pbicvsupport@microsoft.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Microsoft/PowerBI-visuals-Histogram/issues"
+  },
+  "homepage": "https://github.com/Microsoft/PowerBI-visuals-Histogram#readme"
+}
