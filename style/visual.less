@@ -23,3 +23,29 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
  */
+
+.histogram {
+    @histogramAxesColor: #777777;
+
+    font-family: 'Segoe UI', 'wf_segoe-ui_normal', helvetica, arial, sans-serif;
+
+    .axis, .legends {
+        path, line {
+            fill: none;
+            stroke: @histogramAxesColor;
+            shape-rendering: crispEdges;
+        }
+
+        text {
+            fill: @histogramAxesColor;
+            font-size: 11px;
+        }
+    }
+
+    .legends {
+        text {
+            font-size: 12px;
+            text-anchor: middle;
+        }
+    }
+}
