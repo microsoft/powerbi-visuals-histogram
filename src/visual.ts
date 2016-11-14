@@ -24,7 +24,16 @@
  *  THE SOFTWARE.
  */
 
-module powerbi.visuals.samples {
+module powerbi.extensibility.visual {
+    // d3
+    import Selection = d3.Selection;
+    import UpdateSelection = d3.selection.Update;
+    import SVGAxis = d3.svg.Axis;
+    declare type LayoutBin = d3.layout.histogram.Bin<number>;
+    declare type LayoutHistogram = d3.layout.Histogram<number>;
+    declare type LinearScaleAny = d3.scale.Linear<any, any>;
+    declare type OrdinalScaleAny = d3.scale.Ordinal<any, any>;
+
     // jsCommon
     import PixelConverter = jsCommon.PixelConverter;
     import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
@@ -60,6 +69,8 @@ module powerbi.visuals.samples {
     import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
 
     // powerbi.visuals
+    import AxisHelper = powerbi.visuals.AxisHelper;
+    import TooltipEnabledDataPoint = powerbi.visuals.TooltipEnabledDataPoint;
     import ISelectionId = powerbi.visuals.ISelectionId;
     import ValueFormatter = powerbi.visuals.valueFormatter;
     import IMargin = powerbi.visuals.IMargin;
@@ -128,7 +139,7 @@ module powerbi.visuals.samples {
     }
 
     export interface HistogramDataPoint extends
-        D3.Layout.Bin,
+        d3.layout.histogram.Bin<number>,
         TooltipEnabledDataPoint {
 
         range: number[];
@@ -154,8 +165,8 @@ module powerbi.visuals.samples {
         xLegendSize: number;
         yLegendSize: number;
 
-        xScale?: D3.Scale.LinearScale;
-        yScale?: D3.Scale.LinearScale;
+        xScale?: d3.scale.Linear<any, any>;
+        yScale?: d3.scale.Linear<any, any>;
 
         xLabelFormatter?: IValueFormatter;
         yLabelFormatter?: IValueFormatter;
@@ -343,7 +354,8 @@ module powerbi.visuals.samples {
                 precision: 2,
                 style: axisStyle.showTitleOnly,
                 start: 0,
-                position: yAxisPosition.left,
+                // position: yAxisPosition.left,
+                position: "Left",
             },
             labelSettings: {
                 show: false,
@@ -442,19 +454,19 @@ module powerbi.visuals.samples {
 
         private colors: IColorPalette;
 
-        private root: D3.Selection;
-        private clearCatcher: D3.Selection;
-        private main: D3.Selection;
-        private axes: D3.Selection;
-        private axisX: D3.Selection;
-        private axisY: D3.Selection;
-        private legend: D3.Selection;
-        private columns: D3.Selection;
-        private labelGraphicsContext: D3.Selection;
+        private root: d3.Selection<any>;
+        private clearCatcher: d3.Selection<any>;
+        private main: d3.Selection<any>;
+        private axes: d3.Selection<any>;
+        private axisX: d3.Selection<any>;
+        private axisY: d3.Selection<any>;
+        private legend: d3.Selection<any>;
+        private columns: d3.Selection<HistogramDataPoint>;
+        private labelGraphicsContext: d3.Selection<any>;
 
         private dataView: HistogramDataView;
 
-        private get columnsSelection(): D3.Selection {
+        private get columnsSelection(): d3.Selection<HistogramDataPoint> {
             return this.main.select(Histogram.Columns.selector)
                 .selectAll(Histogram.Column.selector);
         }
@@ -525,10 +537,10 @@ module powerbi.visuals.samples {
             var settings: HistogramSettings,
                 categoryColumn: DataViewCategoryColumn = dataView.categorical.categories[0],
                 queryName: string,
-                histogramLayout: D3.Layout.HistogramLayout,
+                histogramLayout: d3.layout.Histogram<number>,
                 values: HistogramValue[],
                 numericalValues: number[] = [],
-                bins: D3.Layout.Bin[],
+                bins: LayoutBin[],
                 dataPoints: HistogramDataPoint[],
                 valueFormatter: IValueFormatter,
                 frequencies: number[] = [],
@@ -589,7 +601,7 @@ module powerbi.visuals.samples {
 
             bins = histogramLayout.frequency(settings.frequency)(numericalValues);
 
-            bins.forEach((bin: D3.Layout.Bin, index: number) => {
+            bins.forEach((bin: LayoutBin, index: number) => {
                 var filteredValues: HistogramValue[],
                     frequency: number;
 
@@ -666,7 +678,7 @@ module powerbi.visuals.samples {
             };
         }
 
-        public static getBorderValues(bins: D3.Layout.Bin[]): HistogramBorderValues {
+        public static getBorderValues(bins: LayoutBin[]): HistogramBorderValues {
             var borderValues: HistogramBorderValues = {
                 minX: Number.MAX_VALUE,
                 maxX: -Number.MAX_VALUE,
@@ -674,7 +686,7 @@ module powerbi.visuals.samples {
                 maxY: -Number.MAX_VALUE
             };
 
-            bins.forEach((dataPoint: D3.Layout.Bin) => {
+            bins.forEach((dataPoint: LayoutBin) => {
                 var minX: number = Number.MAX_VALUE,
                     maxX: number = -Number.MAX_VALUE;
 
@@ -762,7 +774,7 @@ module powerbi.visuals.samples {
         private static getDataPoints(
             values: HistogramValue[],
             numericalValues: number[],
-            bins: D3.Layout.Bin[],
+            bins: LayoutBin[],
             settings: HistogramSettings,
             yValueFormatter: IValueFormatter,
             xValueFormatter: IValueFormatter): HistogramDataPoint[] {
@@ -830,7 +842,7 @@ module powerbi.visuals.samples {
             return dataPoints;
         }
 
-        private static isValueContainedInRange(value: HistogramValue, bin: D3.Layout.Bin, index: number): boolean {
+        private static isValueContainedInRange(value: HistogramValue, bin: LayoutBin, index: number): boolean {
             return ((index === 0 && value.value >= bin.x) || (value.value > bin.x)) && value.value <= bin.x + bin.dx;
         }
 
@@ -1332,12 +1344,12 @@ module powerbi.visuals.samples {
                 this.legend,
                 this.columns,
                 this.labelGraphicsContext
-            ].forEach((selection: D3.Selection) => {
+            ].forEach((selection: Selection<any>) => {
                 this.clearElement(selection);
             });
         }
 
-        private clearElement(selection: D3.Selection): void {
+        private clearElement(selection: Selection<any>): void {
             selection
                 .selectAll("*")
                 .remove();
@@ -1421,7 +1433,8 @@ module powerbi.visuals.samples {
         }
 
         public shouldShowYOnRight(): boolean {
-            return this.dataView.settings.yAxisSettings.position === yAxisPosition.right;
+            // return this.dataView.settings.yAxisSettings.position === yAxisPosition.right;
+            return this.dataView.settings.yAxisSettings.position === "Right";
         }
 
         private columsAndAxesTransform(labelWidth: number): void {
@@ -1449,7 +1462,7 @@ module powerbi.visuals.samples {
         }
 
         private render(): void {
-            var columnsSelection: D3.UpdateSelection = this.renderColumns();
+            var columnsSelection: UpdateSelection<any> = this.renderColumns();
 
             Histogram.bindTooltipsToSelection(columnsSelection);
 
@@ -1460,11 +1473,11 @@ module powerbi.visuals.samples {
             this.renderLabels();
         }
 
-        private renderColumns(): D3.UpdateSelection {
+        private renderColumns(): UpdateSelection<HistogramDataPoint> {
             var data: HistogramDataPoint[] = this.dataView.dataPoints,
-                xScale: D3.Scale.LinearScale = this.dataView.xScale,
-                yScale: D3.Scale.LinearScale = this.dataView.yScale,
-                updateColumnsSelection: D3.UpdateSelection;
+                xScale: LinearScaleAny = this.dataView.xScale,
+                yScale: LinearScaleAny = this.dataView.yScale,
+                updateColumnsSelection: UpdateSelection<any>;
 
             updateColumnsSelection = this.columnsSelection.data(data);
 
@@ -1500,30 +1513,30 @@ module powerbi.visuals.samples {
             return updateColumnsSelection;
         }
 
-        private static bindTooltipsToSelection(selection: D3.UpdateSelection): void {
+        private static bindTooltipsToSelection(selection: UpdateSelection<any>): void {
             TooltipManager.addTooltip(selection, (tooltipEvent: TooltipEvent) => {
                 return (<HistogramDataPoint>tooltipEvent.data).tooltipInfo;
             });
         }
 
-        private getColumnHeight(column: D3.Layout.Bin, y: D3.Scale.LinearScale): number {
+        private getColumnHeight(column: LayoutBin, y: LinearScaleAny): number {
             var height: number = this.viewportIn.height - y(column.y);
 
             return Math.max(height, Histogram.MinColumnHeight);
         }
 
         private renderXAxis(): void {
-            var xAxis: D3.Svg.Axis,
+            var xAxis: SVGAxis,
                 xShow: boolean = this.dataView.settings.xAxisSettings.show,
                 axisColor: string = this.dataView.settings.xAxisSettings.axisColor;
 
             xAxis = this.xAxisProperties.axis
-                .tickFormat((value: number, index: number) => {
+                .tickFormat(((value: number, index: number) => { // TODO: check the second argument of the arrow function.
                     var tickValues: any[] = this.xAxisProperties.axis.tickValues(),
                         amountOfLabels: number = (tickValues && tickValues.length) || 0;
 
                     return this.formatLabelOfXAxis(value, index, amountOfLabels);
-                })
+                }) as any)
                 .orient("bottom");
 
             if (xShow) {
@@ -1569,7 +1582,7 @@ module powerbi.visuals.samples {
         }
 
         private renderYAxis(): void {
-            var yAxis: D3.Svg.Axis,
+            var yAxis: SVGAxis,
                 yShow: boolean = this.dataView.settings.yAxisSettings.show,
                 axisColor: string = this.dataView.settings.yAxisSettings.axisColor;
 
@@ -1590,7 +1603,7 @@ module powerbi.visuals.samples {
             this.updateFillColorOfAxis(this.axisY, axisColor);
         }
 
-        private updateFillColorOfAxis(axisSelection: D3.Selection, fillColor: string): void {
+        private updateFillColorOfAxis(axisSelection: Selection<any>, fillColor: string): void {
             axisSelection
                 .selectAll("g.tick text")
                 .style({
@@ -1602,8 +1615,8 @@ module powerbi.visuals.samples {
             var labelSettings: HistogramLabelSettings = this.dataView.settings.labelSettings,
                 fontSizeInPx: string = PixelConverter.fromPoint(labelSettings.fontSize),
                 fontFamily: string = dataLabelUtils.LabelTextProperties.fontFamily,
-                xScale: D3.Scale.LinearScale = this.dataView.xScale,
-                yScale: D3.Scale.LinearScale = this.dataView.yScale,
+                xScale: LinearScaleAny = this.dataView.xScale,
+                yScale: LinearScaleAny = this.dataView.yScale,
                 dataLabelFormatter: IValueFormatter = ValueFormatter.create({
                     value: labelSettings.displayUnits,
                     precision: labelSettings.precision
@@ -1647,7 +1660,7 @@ module powerbi.visuals.samples {
         private renderLabels(): void {
             var labelSettings: HistogramLabelSettings = this.dataView.settings.labelSettings,
                 dataPointsArray: HistogramDataPoint[] = this.dataView.dataPoints,
-                labels: D3.UpdateSelection;
+                labels: UpdateSelection<HistogramDataPoint>;
 
             if (!labelSettings.show) {
                 dataLabelUtils.cleanDataLabels(this.labelGraphicsContext);
@@ -1705,8 +1718,8 @@ module powerbi.visuals.samples {
         }
 
         private renderLegend(): void {
-            var legendElements: D3.Selection,
-                legendSelection: D3.UpdateSelection,
+            var legendElements: Selection<Legend>,
+                legendSelection: UpdateSelection<Legend>,
                 datalegends: Legend[] = this.getDataLegends(this.dataView.settings);
 
             legendElements = this.main
@@ -1793,7 +1806,7 @@ module powerbi.visuals.samples {
                 : Histogram.DensityText;
         }
 
-        private bindSelectionHandler(columnsSelection: D3.UpdateSelection): void {
+        private bindSelectionHandler(columnsSelection: UpdateSelection<HistogramDataPoint>): void {
             if (!this.interactivityService
                 || !this.dataView
                 || !this.dataView.dataPoints) {
@@ -2110,7 +2123,7 @@ module powerbi.visuals.samples {
         var DefaultBestTickCount: number = 3;
 
         export interface CreateScaleResult {
-            scale: D3.Scale.GenericScale<any>;
+            scale: LinearScaleAny;
             bestTickCount: number;
             usingDefaultDomain?: boolean;
         }
@@ -2241,7 +2254,7 @@ module powerbi.visuals.samples {
             return value / Math.pow(10, log10) === 1;
         }
 
-        function getScalarLabelMaxWidth(scale: D3.Scale.GenericScale<any>, tickValues: number[]): number {
+        function getScalarLabelMaxWidth(scale: LinearScaleAny, tickValues: number[]): number {
             // find the distance between two ticks. scalar ticks can be anywhere, such as:
             // |---50----------100--------|
             if (scale && !_.isEmpty(tickValues)) {
@@ -2335,7 +2348,7 @@ module powerbi.visuals.samples {
          * Format the linear tick labels or the category labels.
          */
         function formatAxisTickValues(
-            axis: D3.Svg.Axis,
+            axis: SVGAxis,
             tickValues: any[],
             formatter: IValueFormatter,
             dataType: ValueType,
@@ -2371,13 +2384,13 @@ module powerbi.visuals.samples {
         }
 
         export function getRecommendedTickValues(maxTicks: number,
-            scale: D3.Scale.GenericScale<any>,
+            scale: LinearScaleAny,
             axisType: ValueType,
             isScalar: boolean,
             minTickInterval?: number): any[] {
 
             if (!isScalar || isOrdinalScale(scale)) {
-                return getRecommendedTickValuesForAnOrdinalRange(maxTicks, scale.domain());
+                return getRecommendedTickValuesForAnOrdinalRange(maxTicks, scale.domain() as any);
             }
             else if (isDateTime(axisType)) {
                 return getRecommendedTickValuesForADateTimeRange(maxTicks, scale.domain());
@@ -2403,14 +2416,14 @@ module powerbi.visuals.samples {
             return tickLabels;
         }
 
-        export function getRecommendedTickValuesForAQuantitativeRange(maxTicks: number, scale: D3.Scale.GenericScale<any>, minInterval?: number): number[] {
+        export function getRecommendedTickValuesForAQuantitativeRange(maxTicks: number, scale: LinearScaleAny, minInterval?: number): number[] {
             var tickLabels: number[] = [];
 
             //if maxticks is zero return none
             if (maxTicks === 0)
                 return tickLabels;
 
-            var quantitiveScale = <D3.Scale.QuantitativeScale>scale;
+            var quantitiveScale = scale;
             if (quantitiveScale.ticks) {
                 tickLabels = quantitiveScale.ticks(maxTicks);
                 if (tickLabels.length > maxTicks && maxTicks > 1)
@@ -2500,7 +2513,7 @@ module powerbi.visuals.samples {
 
             var scalarDomain = dataDomain ? dataDomain.slice() : null;
             var bestTickCount = maxTicks;
-            var scale: D3.Scale.GenericScale<any>;
+            var scale: LinearScaleAny | OrdinalScaleAny;
             var usingDefaultDomain = false;
 
             if (dataDomain == null || (dataDomain.length === 2 && dataDomain[0] == null && dataDomain[1] == null) || (dataDomain.length !== 2 && isScalar)) {
@@ -2566,16 +2579,16 @@ module powerbi.visuals.samples {
                 scale.range(scale.range().reverse());
             }
 
-            normalizeInfinityInScale(scale);
+            normalizeInfinityInScale(scale as LinearScaleAny);
 
             return {
-                scale: scale,
+                scale: scale as LinearScaleAny,
                 bestTickCount: bestTickCount,
                 usingDefaultDomain: usingDefaultDomain,
             };
         }
 
-        export function normalizeInfinityInScale(scale: D3.Scale.GenericScale<any>): void {
+        export function normalizeInfinityInScale(scale: LinearScaleAny): void {
             // When large values (eg Number.MAX_VALUE) are involved, a call to scale.nice occasionally
             // results in infinite values being included in the domain. To correct for that, we need to
             // re-normalize the domain now to not include infinities.
@@ -2594,7 +2607,7 @@ module powerbi.visuals.samples {
             pixelSpan: number,
             dataDomain: any[],
             innerPaddingRatio: number,
-            outerPaddingRatio: number): D3.Scale.OrdinalScale {
+            outerPaddingRatio: number): OrdinalScaleAny {
 
             var scale = d3.scale.ordinal()
                 /* Avoid using rangeRoundBands here as it is adding some extra padding to the axis*/
@@ -2635,7 +2648,7 @@ module powerbi.visuals.samples {
             dataType: ValueType,
             outerPadding: number = 0,
             niceCount?: number,
-            shouldClamp?: boolean): D3.Scale.GenericScale<any> {
+            shouldClamp?: boolean): LinearScaleAny {
 
             if (axisScaleType === axisScale.log && isLogScalePossible(dataDomain, dataType)) {
                 return createLogScale(pixelSpan, dataDomain, outerPadding, niceCount);
@@ -2645,21 +2658,21 @@ module powerbi.visuals.samples {
             }
         }
 
-        function createLogScale(pixelSpan: number, dataDomain: any[], outerPadding: number = 0, niceCount?: number): D3.Scale.LinearScale {
+        function createLogScale(pixelSpan: number, dataDomain: any[], outerPadding: number = 0, niceCount?: number): LinearScaleAny {
             var scale = d3.scale.log()
                 .range([outerPadding, pixelSpan - outerPadding])
                 .domain([dataDomain[0], dataDomain[1]])
                 .clamp(true);
 
             if (niceCount) {
-                scale.nice(niceCount);
+                (scale as LinearScaleAny).nice(niceCount);
             }
 
             return scale;
         }
 
         // NOTE: export only for testing, do not access directly
-        export function createLinearScale(pixelSpan: number, dataDomain: any[], outerPadding: number = 0, niceCount?: number, shouldClamp?: boolean): D3.Scale.LinearScale {
+        export function createLinearScale(pixelSpan: number, dataDomain: any[], outerPadding: number = 0, niceCount?: number, shouldClamp?: boolean): LinearScaleAny {
             var scale = d3.scale.linear()
                 .range([outerPadding, pixelSpan - outerPadding])
                 .domain([dataDomain[0], dataDomain[1]])
@@ -2772,15 +2785,15 @@ module powerbi.visuals.samples {
     }
 
     export interface HistogramBehaviorOptions {
-        columns: D3.Selection;
-        clearCatcher: D3.Selection;
+        columns: Selection<HistogramDataPoint>;
+        clearCatcher: Selection<any>;
         interactivityService: IInteractivityService;
     }
 
     export class HistogramBehavior implements IInteractiveBehavior {
-        private columns: D3.Selection;
+        private columns: Selection<HistogramDataPoint>;
         private selectedDataPoints: SelectableDataPoint[];
-        private clearCatcher: D3.Selection;
+        private clearCatcher: Selection<any>;
         private interactivityService: IInteractivityService;
 
         public static create(): IInteractiveBehavior {
@@ -2888,7 +2901,7 @@ module powerbi.visuals.samples {
         }
 
         export function updateFillOpacity(
-            columns: D3.Selection,
+            columns: Selection<HistogramDataPoint>,
             interactivityService?: IInteractivityService,
             hasSelection: boolean = false): void {
             var hasHighlights: boolean = false;
