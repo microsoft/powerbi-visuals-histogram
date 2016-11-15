@@ -1579,7 +1579,7 @@ module powerbi.extensibility.visual {
 
             if (labels) {
                 labels.attr("transform", (dataPoint: HistogramDataPoint) => {
-                    var size: ISize = dataPoint.size,
+                    let size: ISize = dataPoint.size,
                         dx: number,
                         dy: number;
 
