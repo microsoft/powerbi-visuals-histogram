@@ -45,7 +45,6 @@ module powerbi.extensibility.visual {
     import Fill = powerbi.Fill;
     import VisualObjectInstance = powerbi.VisualObjectInstance;
     import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
-    import DataViewScopeIdentity = powerbi.DataViewScopeIdentity;
     import DataViewObjects = powerbi.DataViewObjects;
     import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
     import TextMeasurementService = powerbi.TextMeasurementService;
@@ -427,20 +426,24 @@ module powerbi.extensibility.visual {
                 .classed(Histogram.LabelGraphicsContext.class, true);
         }
 
-        public static converter(dataView: DataView, colors: IColorPalette): HistogramDataView {
-            if (!dataView ||
-                !dataView.categorical ||
-                !dataView.categorical.categories ||
-                !dataView.categorical.categories[0] ||
-                !dataView.categorical.categories[0].values ||
-                !(dataView.categorical.categories[0].values.length > 0) ||
-                !colors) {
+        public static converter(
+            dataView: DataView,
+            visualHost: IVisualHost,
+            colors: IColorPalette): HistogramDataView {
+
+            if (!dataView
+                || !dataView.categorical
+                || !dataView.categorical.categories
+                || !dataView.categorical.categories[0]
+                || !dataView.categorical.categories[0].values
+                || !(dataView.categorical.categories[0].values.length > 0)
+                || !colors) {
+
                 return null;
             }
 
-            var settings: HistogramSettings,
+            let settings: HistogramSettings,
                 categoryColumn: DataViewCategoryColumn = dataView.categorical.categories[0],
-                queryName: string,
                 histogramLayout: d3.layout.Histogram<number>,
                 values: HistogramValue[],
                 numericalValues: number[] = [],
@@ -448,7 +451,6 @@ module powerbi.extensibility.visual {
                 dataPoints: HistogramDataPoint[],
                 valueFormatter: IValueFormatter,
                 frequencies: number[] = [],
-                identities: DataViewScopeIdentity[] = [],
                 shiftByValues: number = 0,
                 sumFrequency: number = 0,
                 xLabelFormatter: IValueFormatter,
@@ -457,7 +459,7 @@ module powerbi.extensibility.visual {
                 yLegendSize: number,
                 borderValues: HistogramBorderValues,
                 yAxisSettings: HistogramYAxisSettings,
-                sourceValues: number[] = <number[]>categoryColumn.values;
+                sourceValues: number[] = categoryColumn.values as number[];
 
             settings = Histogram.parseSettings(dataView, colors);
 
@@ -477,20 +479,11 @@ module powerbi.extensibility.visual {
                 frequencies = <number[]>dataView.categorical.values[0].values;
             }
 
-            if (categoryColumn.identity
-                && categoryColumn.identity.length > 0) {
-                identities = categoryColumn.identity;
-            }
-
-            queryName = categoryColumn && categoryColumn.source
-                ? categoryColumn.source.queryName
-                : undefined;
-
             values = Histogram.getValuesByFrequencies(
+                visualHost,
+                categoryColumn,
                 sourceValues,
-                frequencies,
-                identities,
-                queryName);
+                frequencies);
 
             values.forEach((value: HistogramValue) => {
                 numericalValues.push(value.value);
@@ -506,7 +499,7 @@ module powerbi.extensibility.visual {
             bins = histogramLayout.frequency(settings.frequency)(numericalValues);
 
             bins.forEach((bin: LayoutBin<number>, index: number) => {
-                var filteredValues: HistogramValue[],
+                let filteredValues: HistogramValue[],
                     frequency: number;
 
                 filteredValues = values.filter((value: HistogramValue) => {
@@ -528,11 +521,11 @@ module powerbi.extensibility.visual {
 
             yAxisSettings = settings.yAxisSettings;
 
-            var maxYvalue: number = (yAxisSettings.end !== null) && (yAxisSettings.end > yAxisSettings.start)
+            let maxYvalue: number = (yAxisSettings.end !== null) && (yAxisSettings.end > yAxisSettings.start)
                 ? yAxisSettings.end
                 : borderValues.maxY;
 
-            var minYValue: number = yAxisSettings.start < maxYvalue
+            let minYValue: number = yAxisSettings.start < maxYvalue
                 ? yAxisSettings.start
                 : 0;
 
@@ -541,9 +534,7 @@ module powerbi.extensibility.visual {
 
             if (values.length >= Histogram.MinAmountOfValues) {
                 valueFormatter = ValueFormatter.create({
-                    format: ValueFormatter.getFormatString(
-                        dataView.categorical.categories[0].source,
-                        Histogram.Properties["general"]["formatString"]),
+                    format: ValueFormatter.getFormatStringByColumn(dataView.categorical.categories[0].source),
                     value: values[0].value,
                     value2: values[values.length - 1].value,
                     precision: settings.precision
@@ -635,28 +626,26 @@ module powerbi.extensibility.visual {
         }
 
         private static getValuesByFrequencies(
+            visualHost: IVisualHost,
+            categoryColumn: DataViewCategoryColumn,
             sourceValues: number[],
-            frequencies: number[],
-            identities: DataViewScopeIdentity[],
-            queryName: string): HistogramValue[] {
+            frequencies: number[]): HistogramValue[] {
 
-            var values: HistogramValue[] = [];
+            const values: HistogramValue[] = [],
+                queryName: string = Histogram.getCategoryColumnQuery(categoryColumn);
 
             sourceValues.forEach((item: number, index: number) => {
-                var frequency: number = 1,
+                let frequency: number = 1,
                     value: number = Number(item),
-                    id: DataViewScopeIdentity = identities[index],
                     measureId: string,
                     selectionId: ISelectionId;
 
                 value = isNaN(value) ? 0 : value;
 
-                measureId = id ? id.key : undefined;
-
-                /*selectionId = SelectionId.createWithIdAndMeasureAndCategory(
-                    id,
-                    measureId,
-                    queryName);*/ // TODO: convert it to the new API by using ISelectionIdBuilder.
+                selectionId = visualHost.createSelectionIdBuilder()
+                    .withCategory(categoryColumn, index)
+                    .withMeasure(queryName)
+                    .createSelectionId();
 
                 if (frequencies
                     && frequencies[index]
@@ -666,13 +655,19 @@ module powerbi.extensibility.visual {
                 }
 
                 values.push({
-                    value: value,
-                    frequency: frequency,
-                    selectionId: selectionId
+                    value,
+                    frequency,
+                    selectionId
                 });
             });
 
             return values;
+        }
+
+        private static getCategoryColumnQuery(categoryColumn: DataViewCategoryColumn): string {
+            return categoryColumn && categoryColumn.source
+                ? categoryColumn.source.queryName
+                : undefined;
         }
 
         private static getDataPoints(
@@ -683,7 +678,7 @@ module powerbi.extensibility.visual {
             yValueFormatter: IValueFormatter,
             xValueFormatter: IValueFormatter): HistogramDataPoint[] {
 
-            var fontSizeInPx: string = PixelConverter.fromPoint(settings.labelSettings.fontSize);
+            let fontSizeInPx: string = PixelConverter.fromPoint(settings.labelSettings.fontSize);
 
             return bins.map((bin: any, index: number): HistogramDataPoint => {
                 bin.range = Histogram.getRange(bin.x, bin.dx);
@@ -732,7 +727,7 @@ module powerbi.extensibility.visual {
             bin: HistogramDataPoint,
             index: number): HistogramSubDataPoint[] {
 
-            var dataPoints: SelectableDataPoint[] = [];
+            let dataPoints: SelectableDataPoint[] = [];
 
             values.forEach((value: HistogramValue) => {
                 if (Histogram.isValueContainedInRange(value, bin, index)) {
@@ -747,7 +742,8 @@ module powerbi.extensibility.visual {
         }
 
         private static isValueContainedInRange(value: HistogramValue, bin: LayoutBin<number>, index: number): boolean {
-            return ((index === 0 && value.value >= bin.x) || (value.value > bin.x)) && value.value <= bin.x + bin.dx;
+            return ((index === 0 && value.value >= bin.x) || (value.value > bin.x))
+                && value.value <= bin.x + bin.dx;
         }
 
         private static parseSettings(dataView: DataView, colors: IColorPalette): HistogramSettings {
@@ -758,7 +754,7 @@ module powerbi.extensibility.visual {
                 return null;
             }
 
-            var histogramSettings: HistogramSettings = <HistogramSettings>{},
+            let histogramSettings: HistogramSettings = <HistogramSettings>{},
                 objects: DataViewObjects,
                 colorHelper: ColorHelper;
 
@@ -1101,18 +1097,21 @@ module powerbi.extensibility.visual {
         }
 
         public update(options: VisualUpdateOptions): void {
-            if (!options ||
-                !options.dataViews ||
-                !options.dataViews[0]) {
+            if (!options
+                || !options.dataViews
+                || !options.dataViews[0]) {
                 return;
             }
 
-            var dataView: DataView = options.dataViews[0],
+            let dataView: DataView = options.dataViews[0],
                 maxWidthOfVerticalAxisLabel: number;
 
             this.setSize(options.viewport);
 
-            this.dataView = Histogram.converter(dataView, this.colors);
+            this.dataView = Histogram.converter(
+                dataView,
+                this.visualHost,
+                this.colors);
 
             if (!this.isDataValid(this.dataView)) {
                 this.clear();
@@ -1516,7 +1515,7 @@ module powerbi.extensibility.visual {
         }
 
         private getLabelLayout(): ILabelLayout {
-            var labelSettings: HistogramLabelSettings = this.dataView.settings.labelSettings,
+            let labelSettings: HistogramLabelSettings = this.dataView.settings.labelSettings,
                 fontSizeInPx: string = PixelConverter.fromPoint(labelSettings.fontSize),
                 fontFamily: string = dataLabelUtils.LabelTextProperties.fontFamily,
                 xScale: LinearScale<any, any> = this.dataView.xScale,

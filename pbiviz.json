@@ -29,6 +29,7 @@
     "node_modules/@powerbi-visuals-utils/pixelconverter/lib/index.js",
     "node_modules/@powerbi-visuals-utils/svgutil/lib/index.js",
     "node_modules/@powerbi-visuals-utils/rect/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/stringextensions/lib/index.js",
     "node_modules/@powerbi-visuals-utils/arrayextensions/lib/index.js",
     "node_modules/@powerbi-visuals-utils/pointerutils/lib/index.js",
     "node_modules/@powerbi-visuals-utils/controls-touchutils/lib/index.js",
@@ -43,7 +44,8 @@
     "node_modules/@powerbi-visuals-utils/tooltipservice/lib/index.js",
     "node_modules/@powerbi-visuals-utils/datalabelutils/lib/index.js",
     "node_modules/@powerbi-visuals-utils/datalabelmanager/lib/index.js",
-    "node_modules/@powerbi-visuals-utils/interactivityservice/lib/index.js"
+    "node_modules/@powerbi-visuals-utils/interactivityservice/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/valueformatter/lib/index.js"
   ],
   "style": "style/visual.less",
   "capabilities": "capabilities.json"
