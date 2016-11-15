@@ -17,7 +17,34 @@
   "assets": {
     "icon": "assets/icon.png"
   },
-  "externalJS": [],
+  "externalJS": [
+    "node_modules/@powerbi-visuals-utils/external-loader/lib/index.js",
+    "node_modules/jquery/dist/jquery.min.js",
+    "node_modules/lodash/lodash.min.js",
+    "node_modules/d3/d3.min.js",
+    "node_modules/moment/min/moment.min.js",
+    "node_modules/globalize/lib/globalize.js",
+    "node_modules/globalize/lib/cultures/globalize.culture.en-US.js",
+    "node_modules/@powerbi-visuals-utils/cssconstants/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/pixelconverter/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/svgutil/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/rect/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/arrayextensions/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/pointerutils/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/controls-touchutils/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/wordbreaker/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/colorhelper/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/fontutils/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/shapes/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/localstorageservice/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/textmeasurementservice/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/axishelper/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/tooltipmanager/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/tooltipservice/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/datalabelutils/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/datalabelmanager/lib/index.js",
+    "node_modules/@powerbi-visuals-utils/interactivityservice/lib/index.js"
+  ],
   "style": "style/visual.less",
   "capabilities": "capabilities.json"
 }

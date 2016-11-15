@@ -85,6 +85,9 @@ module powerbi.extensibility.visual {
     import appendClearCatcher = powerbi.visuals.appendClearCatcher;
     import createInteractivityService = powerbi.visuals.createInteractivityService;
     import SelectableDataPoint = powerbi.visuals.SelectableDataPoint;
+    import ITooltipService = powerbi.visuals.ITooltipService;
+    import createTooltipService = powerbi.visuals.createTooltipService;
+    import TooltipEventArgs = powerbi.visuals.TooltipEventArgs;
     import ISize = powerbi.visuals.shapes.ISize;
 
     interface HistogramValue {
@@ -361,6 +364,8 @@ module powerbi.extensibility.visual {
 
         private dataView: HistogramDataView;
 
+        private tooltipService: ITooltipService;
+
         private get columnsSelection(): d3.Selection<HistogramDataPoint> {
             return this.main.select(Histogram.Columns.selector)
                 .selectAll(Histogram.Column.selector);
@@ -380,6 +385,10 @@ module powerbi.extensibility.visual {
                 .append("svg");
 
             // var style: IVisualStyle = options.style;
+
+            this.colors = this.visualHost.colorPalette;
+
+            this.tooltipService = createTooltipService(options.host);
 
             // this.colors = style && style.colorPalette
             //     ? style.colorPalette.dataColors
@@ -1091,17 +1100,17 @@ module powerbi.extensibility.visual {
             return true;
         }
 
-        public update(visualUpdateOptions: VisualUpdateOptions): void {
-            if (!visualUpdateOptions ||
-                !visualUpdateOptions.dataViews ||
-                !visualUpdateOptions.dataViews[0]) {
+        public update(options: VisualUpdateOptions): void {
+            if (!options ||
+                !options.dataViews ||
+                !options.dataViews[0]) {
                 return;
             }
 
-            var dataView: DataView = visualUpdateOptions.dataViews[0],
+            var dataView: DataView = options.dataViews[0],
                 maxWidthOfVerticalAxisLabel: number;
 
-            this.setSize(visualUpdateOptions.viewport);
+            this.setSize(options.viewport);
 
             this.dataView = Histogram.converter(dataView, this.colors);
 
@@ -1359,7 +1368,7 @@ module powerbi.extensibility.visual {
         private render(): void {
             var columnsSelection: UpdateSelection<any> = this.renderColumns();
 
-            Histogram.bindTooltipsToSelection(columnsSelection);
+            this.bindTooltipsToSelection(columnsSelection);
 
             this.bindSelectionHandler(columnsSelection);
 
@@ -1408,9 +1417,9 @@ module powerbi.extensibility.visual {
             return updateColumnsSelection;
         }
 
-        private static bindTooltipsToSelection(selection: UpdateSelection<any>): void {
-            TooltipManager.addTooltip(selection, (tooltipEvent: TooltipEvent) => {
-                return (<HistogramDataPoint>tooltipEvent.data).tooltipInfo;
+        private bindTooltipsToSelection(selection: UpdateSelection<any>): void {
+            this.tooltipService.addTooltip(selection, (eventArgs: TooltipEventArgs<HistogramDataPoint>) => {
+                return eventArgs.data.tooltipInfo;
             });
         }
 
