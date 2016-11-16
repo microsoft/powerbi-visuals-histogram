@@ -62,7 +62,11 @@ module powerbi.extensibility.visual {
             this.columns.on("click", (dataPoint: HistogramDataPoint) => {
                 selectionHandler.handleClearSelection();
 
-                if (!HistogramBehavior.areDataPointsSelected(this.selectedDataPoints, dataPoint.subDataPoints)) {
+                const areDataPointsSelected: boolean = HistogramBehavior.areDataPointsSelected(
+                    this.selectedDataPoints,
+                    dataPoint.subDataPoints);
+
+                if (!areDataPointsSelected) {
                     dataPoint.subDataPoints.forEach((subDataPoint: SelectableDataPoint) => {
                         selectionHandler.handleSelection(subDataPoint, true);
                     });
@@ -79,7 +83,7 @@ module powerbi.extensibility.visual {
             });
         }
 
-        public renderSelection(hasSelection: boolean) {
+        public renderSelection(hasSelection: boolean): void {
             histogramUtils.updateFillOpacity(
                 this.columns,
                 this.interactivityService,

@@ -36,8 +36,17 @@ module powerbi.extensibility.visual {
     }
 
     export class HistogramGeneralSettings {
+        public static DefaultBins: number = null;
+        public static MinNumberOfBins: number = 0;
+        public static MaxNumberOfBins: number = 100;
+
+        /**
+         * Please note that this property isn't enumerated in capabilities.json.
+         * That means that users won't see it on the format panel.
+         */
         public displayName: string = "Histogram";
-        public bins: number = null;
+
+        public bins: number = HistogramGeneralSettings.DefaultBins;
         public frequency: boolean = true;
     }
 
