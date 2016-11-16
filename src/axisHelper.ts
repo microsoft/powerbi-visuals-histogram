@@ -55,15 +55,15 @@ module powerbi.extensibility.visual {
          * Default ranges are for when we have a field chosen for the axis,
          * but no values are returned by the query.
          */
-        export var emptyDomain = [0, 0];
+        export let emptyDomain = [0, 0];
 
-        var InnerPaddingRatio: number = 0.2;
-        var TickLabelPadding: number = 2; // between text labels, used by AxisHelper
-        var MinOrdinalRectThickness: number = 20;
+        let InnerPaddingRatio: number = 0.2;
+        let TickLabelPadding: number = 2; // between text labels, used by AxisHelper
+        let MinOrdinalRectThickness: number = 20;
 
-        var ScalarTickLabelPadding: number = 3;
-        var MinTickCount: number = 2;
-        var DefaultBestTickCount: number = 3;
+        let ScalarTickLabelPadding: number = 3;
+        let MinTickCount: number = 2;
+        let DefaultBestTickCount: number = 3;
 
         export interface CreateScaleResult {
             scale: LinearScale<any, any>;
@@ -82,7 +82,7 @@ module powerbi.extensibility.visual {
          * @param options The properties used to create the axis.
          */
         export function createAxis(options: CreateAxisOptions): IAxisProperties {
-            var pixelSpan = options.pixelSpan,
+            let pixelSpan = options.pixelSpan,
                 dataDomain = options.dataDomain,
                 metaDataColumn = options.metaDataColumn,
                 formatString = options.formatString,
@@ -98,31 +98,31 @@ module powerbi.extensibility.visual {
                 is100Pct = !!options.is100Pct,
                 tickLabelPadding: number = options.tickLabelPadding || TickLabelPadding;
 
-            var dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
+            let dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
 
             // Create the Scale
-            var scaleResult: CreateScaleResult = createScale(options);
-            var scale = scaleResult.scale;
-            var bestTickCount = scaleResult.bestTickCount;
-            var scaleDomain = scale.domain();
-            var isLogScaleAllowed = isLogScalePossible(dataDomain, dataType);
+            let scaleResult: CreateScaleResult = createScale(options);
+            let scale = scaleResult.scale;
+            let bestTickCount = scaleResult.bestTickCount;
+            let scaleDomain = scale.domain();
+            let isLogScaleAllowed = isLogScalePossible(dataDomain, dataType);
 
             // fix categoryThickness if scalar and the domain was adjusted when making the scale "nice"
             if (categoryThickness && isScalar && dataDomain && dataDomain.length === 2) {
-                var oldSpan = dataDomain[1] - dataDomain[0];
-                var newSpan = scaleDomain[1] - scaleDomain[0];
+                let oldSpan = dataDomain[1] - dataDomain[0];
+                let newSpan = scaleDomain[1] - scaleDomain[0];
                 if (oldSpan > 0 && newSpan > 0) {
                     categoryThickness = categoryThickness * oldSpan / newSpan;
                 }
             }
 
             // Prepare Tick Values for formatting
-            var tickValues: any[];
+            let tickValues: any[];
             if (isScalar && bestTickCount === 1) {
                 tickValues = [dataDomain[0]];
             }
             else {
-                var minTickInterval = isScalar ? getMinTickValueInterval(formatString, dataType, is100Pct) : undefined;
+                let minTickInterval = isScalar ? getMinTickValueInterval(formatString, dataType, is100Pct) : undefined;
                 tickValues = getRecommendedTickValues(bestTickCount, scale, dataType, isScalar, minTickInterval);
             }
 
@@ -130,7 +130,7 @@ module powerbi.extensibility.visual {
                 tickValues = tickValues.filter((d) => { return powerOfTen(d); });
             }
 
-            var formatter = createFormatter(
+            let formatter = createFormatter(
                 scaleDomain,
                 dataDomain,
                 dataType,
@@ -145,18 +145,18 @@ module powerbi.extensibility.visual {
 
             // sets default orientation only, cartesianChart will fix y2 for comboChart
             // tickSize(pixelSpan) is used to create gridLines
-            var axis = d3.svg.axis()
+            let axis = d3.svg.axis()
                 .scale(scale)
                 .tickSize(6, 0)
                 .orient(isVertical ? "left" : "bottom")
                 .ticks(bestTickCount)
                 .tickValues(tickValues);
 
-            var formattedTickValues = [];
+            let formattedTickValues = [];
             if (metaDataColumn)
                 formattedTickValues = formatAxisTickValues(axis, tickValues, formatter, dataType, getValueFn);
 
-            var xLabelMaxWidth;
+            let xLabelMaxWidth;
             // Use category layout of labels if specified, otherwise use scalar layout of labels
             if (!isScalar && categoryThickness) {
                 xLabelMaxWidth = Math.max(1, categoryThickness - tickLabelPadding * 2);
@@ -188,11 +188,11 @@ module powerbi.extensibility.visual {
          * Indicates whether the number is power of 10.
          */
         export function powerOfTen(d: any): boolean {
-            var value = Math.abs(d);
+            let value = Math.abs(d);
             // formula log2(Y)/log2(10) = log10(Y)
             // because double issues this won"t return exact value
             // we need to ceil it to nearest number.
-            var log10: number = Math.log(value) / Math.LN10;
+            let log10: number = Math.log(value) / Math.LN10;
             log10 = Math.ceil(log10 - 1e-12);
             return value / Math.pow(10, log10) === 1;
         }
@@ -220,11 +220,11 @@ module powerbi.extensibility.visual {
             axisDisplayUnits?: number,
             axisPrecision?: number): IValueFormatter {
 
-            var formatter: IValueFormatter;
+            let formatter: IValueFormatter;
             if (dataType.dateTime) {
                 if (isScalar) {
-                    var value = new Date(scaleDomain[0]);
-                    var value2 = new Date(scaleDomain[1]);
+                    let value = new Date(scaleDomain[0]);
+                    let value2 = new Date(scaleDomain[1]);
                     // datetime with only one value needs to pass the same value
                     // (from the original dataDomain value, not the adjusted scaleDomain)
                     // so formatting works correctly.
@@ -245,12 +245,12 @@ module powerbi.extensibility.visual {
             }
             else {
                 if (useTickIntervalForDisplayUnits && isScalar && tickValues.length > 1) {
-                    var value1 = axisDisplayUnits ? axisDisplayUnits : tickValues[1] - tickValues[0];
+                    let value1 = axisDisplayUnits ? axisDisplayUnits : tickValues[1] - tickValues[0];
 
-                    var options: ValueFormatterOptions = {
+                    let options: ValueFormatterOptions = {
                         format: formatString,
                         value: value1,
-                        value2: 0, //force tickInterval or display unit to be used
+                        value2: 0, // force tickInterval or display unit to be used
                         allowFormatBeautification: true,
                     };
 
@@ -272,11 +272,11 @@ module powerbi.extensibility.visual {
         }
 
         export function getMinTickValueInterval(formatString: string, columnType: ValueType, is100Pct?: boolean): number {
-            var isCustomFormat = formatString && !NumberFormat.isStandardFormat(formatString);
+            let isCustomFormat = formatString && !NumberFormat.isStandardFormat(formatString);
             if (isCustomFormat) {
-                var precision = NumberFormat.getCustomFormatMetadata(formatString, true /*calculatePrecision*/).precision;
+                let precision = NumberFormat.getCustomFormatMetadata(formatString, true /*calculatePrecision*/).precision;
                 if (formatString.indexOf("%") > -1)
-                    precision += 2; //percent values are multiplied by 100 during formatting
+                    precision += 2; // percent values are multiplied by 100 during formatting
                 return Math.pow(10, -precision);
             }
             else if (is100Pct)
@@ -297,7 +297,7 @@ module powerbi.extensibility.visual {
             dataType: ValueType,
             getValueFn?: (index: number, type: ValueType) => any) {
 
-            var formattedTickValues = [];
+            let formattedTickValues = [];
 
             if (!getValueFn)
                 getValueFn = data => data;
@@ -319,7 +319,7 @@ module powerbi.extensibility.visual {
             if (isDateTime(axisType))
                 return false;
 
-            return (domain[0] > 0 && domain[1] > 0) || (domain[0] < 0 && domain[1] < 0);//doman must exclude 0
+            return (domain[0] > 0 && domain[1] > 0) || (domain[0] < 0 && domain[1] < 0); // doman must exclude 0
         }
 
         export function isDateTime(type: ValueTypeDescriptor): boolean {
@@ -343,30 +343,30 @@ module powerbi.extensibility.visual {
         }
 
         export function getRecommendedTickValuesForAnOrdinalRange(maxTicks: number, labels: string[]): string[] {
-            var tickLabels: string[] = [];
+            let tickLabels: string[] = [];
 
             // return no ticks in this case
             if (maxTicks <= 0)
                 return tickLabels;
 
-            var len = labels.length;
+            let len = labels.length;
             if (maxTicks > len)
                 return labels;
 
-            for (var i = 0, step = Math.ceil(len / maxTicks); i < len; i += step) {
+            for (let i = 0, step = Math.ceil(len / maxTicks); i < len; i += step) {
                 tickLabels.push(labels[i]);
             }
             return tickLabels;
         }
 
         export function getRecommendedTickValuesForAQuantitativeRange(maxTicks: number, scale: LinearScale<any, any>, minInterval?: number): number[] {
-            var tickLabels: number[] = [];
+            let tickLabels: number[] = [];
 
-            //if maxticks is zero return none
+            // if maxticks is zero return none
             if (maxTicks === 0)
                 return tickLabels;
 
-            var quantitiveScale = scale;
+            let quantitiveScale = scale;
             if (quantitiveScale.ticks) {
                 tickLabels = quantitiveScale.ticks(maxTicks);
                 if (tickLabels.length > maxTicks && maxTicks > 1)
@@ -377,9 +377,9 @@ module powerbi.extensibility.visual {
                 tickLabels = createTrueZeroTickLabel(tickLabels);
 
                 if (minInterval && tickLabels.length > 1) {
-                    var tickInterval = tickLabels[1] - tickLabels[0];
+                    let tickInterval = tickLabels[1] - tickLabels[0];
                     while (tickInterval > 0 && tickInterval < minInterval) {
-                        for (var i = 1; i < tickLabels.length; i++) {
+                        for (let i = 1; i < tickLabels.length; i++) {
                             tickLabels.splice(i, 1);
                         }
 
@@ -397,12 +397,12 @@ module powerbi.extensibility.visual {
         }
 
         function getRecommendedTickValuesForADateTimeRange(maxTicks: number, dataDomain: number[]): number[] {
-            var tickLabels: number[] = [];
+            let tickLabels: number[] = [];
 
             if (dataDomain[0] === 0 && dataDomain[1] === 0)
                 return [];
 
-            var dateTimeTickLabels = DateTimeSequence.calculate(new Date(dataDomain[0]), new Date(dataDomain[1]), maxTicks).sequence;
+            let dateTimeTickLabels = DateTimeSequence.calculate(new Date(dataDomain[0]), new Date(dataDomain[1]), maxTicks).sequence;
             tickLabels = dateTimeTickLabels.map(d => d.getTime());
             tickLabels = ensureValuesInRange(tickLabels, dataDomain[0], dataDomain[1]);
             return tickLabels;
@@ -431,7 +431,7 @@ module powerbi.extensibility.visual {
         }
 
         export function createScale(options: CreateAxisOptions): CreateScaleResult {
-            var pixelSpan = options.pixelSpan,
+            let pixelSpan = options.pixelSpan,
                 dataDomain = options.dataDomain,
                 metaDataColumn = options.metaDataColumn,
                 outerPadding = options.outerPadding || 0,
@@ -444,9 +444,9 @@ module powerbi.extensibility.visual {
                 innerPaddingRatio: number = options.innerPaddingRatio || InnerPaddingRatio,
                 minOrdinalRectThickness: number = options.minOrdinalRectThickness || MinOrdinalRectThickness;
 
-            var dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
+            let dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
 
-            var maxTicks = isVertical
+            let maxTicks = isVertical
                 ? getRecommendedNumberOfTicksForYAxis(pixelSpan)
                 : getRecommendedNumberOfTicksForXAxis(pixelSpan);
 
@@ -454,17 +454,17 @@ module powerbi.extensibility.visual {
                 maxTicks > maxTickCount)
                 maxTicks = maxTickCount;
 
-            var scalarDomain = dataDomain ? dataDomain.slice() : null;
-            var bestTickCount = maxTicks;
-            var scale: LinearScale<any, any> | OrdinalScale<any, any>;
-            var usingDefaultDomain = false;
+            let scalarDomain = dataDomain ? dataDomain.slice() : null;
+            let bestTickCount = maxTicks;
+            let scale: LinearScale<any, any> | OrdinalScale<any, any>;
+            let usingDefaultDomain = false;
 
             if (dataDomain == null || (dataDomain.length === 2 && dataDomain[0] == null && dataDomain[1] == null) || (dataDomain.length !== 2 && isScalar)) {
                 usingDefaultDomain = true;
 
                 if (dataType.dateTime || !isOrdinal(dataType))
                     dataDomain = emptyDomain;
-                else //ordinal
+                else // ordinal
                     dataDomain = [];
 
                 if (isOrdinal(dataType)) {
@@ -484,12 +484,12 @@ module powerbi.extensibility.visual {
                         ? (maxTicks !== 0 ? forcedTickCount : 0)
                         : getBestNumberOfTicks(dataDomain[0], dataDomain[dataDomain.length - 1], [metaDataColumn], maxTicks, dataType.dateTime);
 
-                    var normalizedRange = normalizeLinearDomain({ min: dataDomain[0], max: dataDomain[dataDomain.length - 1] });
+                    let normalizedRange = normalizeLinearDomain({ min: dataDomain[0], max: dataDomain[dataDomain.length - 1] });
                     scalarDomain = [normalizedRange.min, normalizedRange.max];
                 }
 
                 if (isScalar && dataType.numeric && !dataType.dateTime) {
-                    //Note: Don't pass bestTickCount to createNumericalScale, because it overrides boundaries of the domain.
+                    // Note: Don't pass bestTickCount to createNumericalScale, because it overrides boundaries of the domain.
                     scale = createNumericalScale(options.scaleType, pixelSpan, scalarDomain, dataType, outerPadding, /*bestTickCount*/null, shouldClamp);
 
                     bestTickCount = maxTicks === 0
@@ -535,8 +535,8 @@ module powerbi.extensibility.visual {
             // When large values (eg Number.MAX_VALUE) are involved, a call to scale.nice occasionally
             // results in infinite values being included in the domain. To correct for that, we need to
             // re-normalize the domain now to not include infinities.
-            var scaledDomain = scale.domain();
-            for (var i = 0, len = scaledDomain.length; i < len; ++i) {
+            let scaledDomain = scale.domain();
+            for (let i = 0, len = scaledDomain.length; i < len; ++i) {
                 if (scaledDomain[i] === Number.POSITIVE_INFINITY)
                     scaledDomain[i] = Number.MAX_VALUE;
                 else if (scaledDomain[i] === Number.NEGATIVE_INFINITY)
@@ -552,7 +552,7 @@ module powerbi.extensibility.visual {
             innerPaddingRatio: number,
             outerPaddingRatio: number): OrdinalScale<any, any> {
 
-            var scale = d3.scale.ordinal()
+            let scale = d3.scale.ordinal()
                 /* Avoid using rangeRoundBands here as it is adding some extra padding to the axis*/
                 .rangeBands([0, pixelSpan], innerPaddingRatio, outerPaddingRatio)
                 .domain(dataDomain);
@@ -582,7 +582,7 @@ module powerbi.extensibility.visual {
             return domain;
         }
 
-        //this function can return different scales e.g. log, linear
+        // this function can return different scales e.g. log, linear
         // NOTE: export only for testing, do not access directly
         export function createNumericalScale(
             axisScaleType: string,
@@ -602,7 +602,7 @@ module powerbi.extensibility.visual {
         }
 
         function createLogScale(pixelSpan: number, dataDomain: any[], outerPadding: number = 0, niceCount?: number): LinearScale<any, any> {
-            var scale = d3.scale.log()
+            let scale = d3.scale.log()
                 .range([outerPadding, pixelSpan - outerPadding])
                 .domain([dataDomain[0], dataDomain[1]])
                 .clamp(true);
@@ -616,7 +616,7 @@ module powerbi.extensibility.visual {
 
         // NOTE: export only for testing, do not access directly
         export function createLinearScale(pixelSpan: number, dataDomain: any[], outerPadding: number = 0, niceCount?: number, shouldClamp?: boolean): LinearScale<any, any> {
-            var scale = d3.scale.linear()
+            let scale = d3.scale.linear()
                 .range([outerPadding, pixelSpan - outerPadding])
                 .domain([dataDomain[0], dataDomain[1]])
                 .clamp(shouldClamp);
@@ -688,15 +688,15 @@ module powerbi.extensibility.visual {
         }
 
         export function ensureValuesInRange(values: number[], min: number, max: number): number[] {
-            var filteredValues = values.filter(v => v >= min && v <= max);
+            let filteredValues = values.filter(v => v >= min && v <= max);
             if (filteredValues.length < 2)
                 filteredValues = [min, max];
             return filteredValues;
         }
 
         export function hasNonIntegerData(valuesMetadata: DataViewMetadataColumn[]): boolean {
-            for (var i = 0, len = valuesMetadata.length; i < len; i++) {
-                var currentMetadata = valuesMetadata[i];
+            for (let i = 0, len = valuesMetadata.length; i < len; i++) {
+                let currentMetadata = valuesMetadata[i];
                 if (currentMetadata && currentMetadata.type && !currentMetadata.type.integer) {
                     return true;
                 }
@@ -721,7 +721,7 @@ module powerbi.extensibility.visual {
             if (!ticks || ticks.length < 2)
                 return ticks;
 
-            var closeZero = epsilon * Math.abs(ticks[1] - ticks[0]);
+            let closeZero = epsilon * Math.abs(ticks[1] - ticks[0]);
 
             return ticks.map((tick) => Math.abs(tick) <= closeZero ? 0 : tick);
         }

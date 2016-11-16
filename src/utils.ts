@@ -82,7 +82,7 @@ module powerbi.extensibility.visual {
             }
 
             columns.style("fill-opacity", (dataPoint: HistogramDataPoint) => {
-                var selectedDataPoint: StateOfDataPoint = histogramUtils.getStateOfDataPoint(dataPoint);
+                const selectedDataPoint: StateOfDataPoint = histogramUtils.getStateOfDataPoint(dataPoint);
 
                 return histogramUtils.getFillOpacity(
                     selectedDataPoint.selected,

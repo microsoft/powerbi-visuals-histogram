@@ -600,7 +600,7 @@ module powerbi.extensibility.visual {
             if (isNaN(bins) || bins <= Histogram.MinNumberOfBins) {
                 bins = null;
             } else if (bins > Histogram.MaxNumberOfBins) {
-                bins = Histogram.MaxNumberOfBins
+                bins = Histogram.MaxNumberOfBins;
             }
 
             settings.general.bins = bins;
@@ -706,7 +706,7 @@ module powerbi.extensibility.visual {
         }
 
         private updateAxes(dataView: DataView): number {
-            var maxWidthOfVerticalAxisLabel: number,
+            let maxWidthOfVerticalAxisLabel: number,
                 maxWidthOfHorizontalAxisLabel: number,
                 maxHeightOfVerticalAxisLabel: number;
 
@@ -722,7 +722,7 @@ module powerbi.extensibility.visual {
                 this.dataView.borderValues.maxX,
                 this.dataView.xLabelFormatter);
 
-            var ySource = dataView.categorical.values &&
+            let ySource = dataView.categorical.values &&
                 dataView.categorical.values[0] &&
                 dataView.categorical.values[0].values
                 ? dataView.categorical.values[0].source
@@ -760,7 +760,7 @@ module powerbi.extensibility.visual {
         }
 
         private createScales(): void {
-            var yAxisSettings: HistogramYAxisSettings = this.dataView.settings.yAxis,
+            const yAxisSettings: HistogramYAxisSettings = this.dataView.settings.yAxis,
                 borderValues: HistogramBorderValues = this.dataView.borderValues;
 
             this.dataView.xScale = d3.scale.linear()
@@ -785,7 +785,7 @@ module powerbi.extensibility.visual {
         }
 
         private updateViewportIn(maxWidthOfVerticalAxisLabel: number = 0): void {
-            var width: number,
+            let width: number,
                 height: number;
 
             width = this.viewport.width
@@ -801,7 +801,7 @@ module powerbi.extensibility.visual {
         }
 
         private updateWidthOfColumn(): void {
-            var countOfValues: number = this.dataView.dataPoints.length,
+            let countOfValues: number = this.dataView.dataPoints.length,
                 widthOfColumn: number;
 
             widthOfColumn = countOfValues
@@ -839,7 +839,7 @@ module powerbi.extensibility.visual {
             labelValue: number | string,
             valueFormatter: IValueFormatter): number {
 
-            var textProperties: TextProperties =
+            const textProperties: TextProperties =
                 Histogram.getTextPropertiesForMeasurement(labelValue, valueFormatter);
 
             return TextMeasurementService.measureSvgTextWidth(textProperties) + Histogram.AdditionalWidthOfLabel;
@@ -849,7 +849,7 @@ module powerbi.extensibility.visual {
             labelValue: number | string,
             valueFormatter: IValueFormatter): number {
 
-            var textProperties: TextProperties =
+            const textProperties: TextProperties =
                 Histogram.getTextPropertiesForMeasurement(labelValue, valueFormatter);
 
             return TextMeasurementService.measureSvgTextHeight(textProperties) + Histogram.AdditionalHeightOfLabel;
@@ -859,7 +859,7 @@ module powerbi.extensibility.visual {
             labelValue: string | number,
             valueFormatter?: IValueFormatter): TextProperties {
 
-            var labelText: string;
+            let labelText: string;
 
             if (valueFormatter) {
                 labelText = valueFormatter.format(labelValue);
@@ -871,7 +871,7 @@ module powerbi.extensibility.visual {
         }
 
         private setSize(viewport: IViewport): void {
-            var height: number,
+            let height: number,
                 width: number;
 
             height = viewport.height
@@ -893,7 +893,7 @@ module powerbi.extensibility.visual {
         }
 
         private updateElements(height: number, width: number): void {
-            var transform: string = SVGUtil.translate(
+            const transform: string = SVGUtil.translate(
                 Histogram.Margin.left,
                 Histogram.Margin.top);
 
@@ -911,7 +911,7 @@ module powerbi.extensibility.visual {
         }
 
         private columsAndAxesTransform(labelWidth: number): void {
-            var offsetToRightStr: string,
+            let offsetToRightStr: string,
                 offsetToRight: number = this.shouldShowYOnRight()
                     ? Histogram.Margin.left
                     : this.dataView.settings.yAxis.title
@@ -993,19 +993,19 @@ module powerbi.extensibility.visual {
         }
 
         private getColumnHeight(column: LayoutBin<number>, y: LinearScale<any, any>): number {
-            var height: number = this.viewportIn.height - y(column.y);
+            const height: number = this.viewportIn.height - y(column.y);
 
             return Math.max(height, Histogram.MinColumnHeight);
         }
 
         private renderXAxis(): void {
-            var xAxis: SVGAxis,
+            let xAxis: SVGAxis,
                 xShow: boolean = this.dataView.settings.xAxis.show,
                 axisColor: string = this.dataView.settings.xAxis.axisColor;
 
             xAxis = this.xAxisProperties.axis
                 .tickFormat(((value: number, index: number) => {
-                    var tickValues: any[] = this.xAxisProperties.axis.tickValues(),
+                    let tickValues: any[] = this.xAxisProperties.axis.tickValues(),
                         amountOfLabels: number = (tickValues && tickValues.length) || 0;
 
                     return this.formatLabelOfXAxis(value, index, amountOfLabels);
@@ -1024,7 +1024,7 @@ module powerbi.extensibility.visual {
         }
 
         private formatLabelOfXAxis(labelValue: number | string, index: number, amountOfLabels: number): string {
-            var maxWidthOfTheLatestLabel: number,
+            let maxWidthOfTheLatestLabel: number,
                 formattedLabel: string = this.dataView.xLabelFormatter.format(labelValue);
 
             if (index === 0 || index === amountOfLabels - 1) {
@@ -1041,7 +1041,7 @@ module powerbi.extensibility.visual {
         }
 
         private static getTailoredTextOrDefault(text: string, maxWidth: number): string {
-            var textProperties = Histogram.getTextProperties(text);
+            const textProperties = Histogram.getTextProperties(text);
 
             return TextMeasurementService.getTailoredTextOrDefault(textProperties, maxWidth);
         }
@@ -1055,7 +1055,7 @@ module powerbi.extensibility.visual {
         }
 
         private renderYAxis(): void {
-            var yAxis: SVGAxis,
+            let yAxis: SVGAxis,
                 yShow: boolean = this.dataView.settings.yAxis.show,
                 axisColor: string = this.dataView.settings.yAxis.axisColor;
 
@@ -1163,7 +1163,7 @@ module powerbi.extensibility.visual {
 
         private static rangesToArray(data: HistogramDataPoint[]): number[] {
             return data.reduce((previousValue: number[], currentValue: HistogramDataPoint, index: number) => {
-                var range: number[];
+                let range: number[];
 
                 range = (index === 0)
                     ? currentValue.range
@@ -1178,7 +1178,7 @@ module powerbi.extensibility.visual {
             includeLeftBorder: boolean,
             valueFormatter: IValueFormatter): string {
 
-            var leftBracket: string,
+            let leftBracket: string,
                 rightBracket: string = Histogram.IncludeBrackets.right,
                 leftBorder: string = valueFormatter.format(range[0]),
                 rightBorder: string = valueFormatter.format(range[1]);
@@ -1191,7 +1191,7 @@ module powerbi.extensibility.visual {
         }
 
         private renderLegend(): void {
-            var legendElements: Selection<Legend>,
+            let legendElements: Selection<Legend>,
                 legendSelection: UpdateSelection<Legend>,
                 datalegends: Legend[] = this.getDataLegends(this.dataView.settings);
 
@@ -1287,13 +1287,13 @@ module powerbi.extensibility.visual {
                 return;
             }
 
-            var subDataPoints: SelectableDataPoint[] = [];
+            let subDataPoints: SelectableDataPoint[] = [];
 
             this.dataView.dataPoints.forEach((dataPoint: HistogramDataPoint) => {
                 subDataPoints = subDataPoints.concat(dataPoint.subDataPoints);
             });
 
-            var behaviorOptions: HistogramBehaviorOptions = {
+            let behaviorOptions: HistogramBehaviorOptions = {
                 columns: columnsSelection,
                 clearCatcher: this.clearCatcher,
                 interactivityService: this.interactivityService,
@@ -1323,7 +1323,7 @@ module powerbi.extensibility.visual {
             widthOfLabel: number,
             scrollbarVisible: boolean): IAxisProperties {
 
-            var axes: IAxisProperties,
+            let axes: IAxisProperties,
                 width: number = this.viewportIn.width;
 
             axes = this.calculateXAxesProperties(
@@ -1355,7 +1355,7 @@ module powerbi.extensibility.visual {
             innerPaddingRatio: number,
             minOrdinalRectThickness: number): IAxisProperties {
 
-            var xAxisProperties = HistogramAxisHelper.createAxis({
+            let xAxisProperties = HistogramAxisHelper.createAxis({
                 pixelSpan: this.viewportIn.width,
                 dataDomain: forcedXDomain,
                 metaDataColumn: metaDataColumn,
@@ -1398,7 +1398,7 @@ module powerbi.extensibility.visual {
             innerPaddingRatio: number,
             minOrdinalRectThickness: number): IAxisProperties {
 
-            var formatString: string = undefined;
+            let formatString: string = undefined;
 
             if (this.dataView.settings.general.frequency) {
                 formatString = valueFormatter.getFormatStringByColumn(metaDataColumn);

@@ -4,7 +4,7 @@
   "description": "A histogram chart plots data ranges into intervals. Useful for estimating density.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Microsoft/PowerBI-visuals-Histogram.git"
+    "url": "git+https://github.com/Microsoft/PowerBI-visuals-histogram.git"
   },
   "keywords": [
     "powerbi-visuals"
@@ -14,7 +14,8 @@
     "typings": "typings",
     "pbiviz": "pbiviz",
     "start": "pbiviz start",
-    "package": "pbiviz package"
+    "package": "pbiviz package",
+    "lint": "node node_modules/tslint/bin/tslint \"+(src|test)/**/*.ts\""
   },
   "author": {
     "name": "Microsoft",
@@ -22,9 +23,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Microsoft/PowerBI-visuals-Histogram/issues"
+    "url": "https://github.com/Microsoft/PowerBI-visuals-histogram/issues"
   },
-  "homepage": "https://github.com/Microsoft/PowerBI-visuals-Histogram#readme",
+  "homepage": "https://github.com/Microsoft/PowerBI-visuals-histogram#readme",
   "devDependencies": {
     "@powerbi-visuals-utils/arrayextensions": "git+https://github.com/vtkalek/powerbi-visuals-utils-arrayextensions.git",
     "@powerbi-visuals-utils/axishelper": "git+https://github.com/ignatvilesov/powerbi-visuals-utils-axishelper.git",
@@ -63,6 +64,7 @@
     "lodash": "4.16.2",
     "moment": "2.15.1",
     "powerbi-visuals-tools": "1.2.1",
+    "tslint": "3.15.1",
     "typings": "1.5.0"
   }
 }
