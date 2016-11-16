@@ -94,12 +94,6 @@
                         "bool": true
                     }
                 },
-                "axis": {
-                    "displayName": "Axis",
-                    "type": {
-                        "bool": true
-                    }
-                },
                 "axisColor": {
                     "displayName": "Color",
                     "type": {
@@ -156,12 +150,6 @@
             "properties": {
                 "show": {
                     "displayName": "Show",
-                    "type": {
-                        "bool": true
-                    }
-                },
-                "axis": {
-                    "displayName": "yAxis",
                     "type": {
                         "bool": true
                     }

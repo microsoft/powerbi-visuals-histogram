@@ -34,43 +34,6 @@ module powerbi.extensibility.visual {
     import IValueFormatter = powerbi.visuals.IValueFormatter;
     import ISize = powerbi.visuals.shapes.ISize;
 
-    export interface HistogramAxisSettings {
-        axisColor?: string;
-        displayUnits?: number;
-        precision?: number;
-        title?: boolean;
-        show?: boolean;
-        style?: string;
-    }
-
-    export interface HistogramXAxisSettings extends HistogramAxisSettings { }
-
-    export interface HistogramYAxisSettings extends HistogramAxisSettings {
-        start?: number;
-        end?: number;
-        position?: string;
-    }
-
-    export interface HistogramLabelSettings {
-        show?: boolean;
-        color?: string;
-        displayUnits?: number;
-        precision?: number;
-        fontSize?: number;
-    }
-
-    export interface HistogramSettings {
-        displayName?: string;
-        fillColor?: string;
-        frequency: boolean;
-        bins?: number;
-        precision: number;
-
-        xAxisSettings: HistogramXAxisSettings;
-        yAxisSettings: HistogramYAxisSettings;
-        labelSettings: HistogramLabelSettings;
-    }
-
     export interface HistogramSubDataPoint extends SelectableDataPoint {
         highlight?: boolean;
     }

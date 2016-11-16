@@ -54,7 +54,6 @@ module powerbi.extensibility.visual {
 
     // powerbi.extensibility
     import IVisual = powerbi.extensibility.IVisual;
-    import IColorPalette = powerbi.extensibility.IColorPalette;
 
     // powerbi.extensibility.visual
     import IVisualHost = powerbi.extensibility.visual.IVisualHost;
@@ -65,7 +64,6 @@ module powerbi.extensibility.visual {
     import ValueFormatter = powerbi.visuals.valueFormatter;
     import IMargin = powerbi.visuals.IMargin;
     import IValueFormatter = powerbi.visuals.IValueFormatter;
-    import axisStyle = powerbi.visuals.axisStyle;
     import VisualTooltipDataItem = powerbi.visuals.VisualTooltipDataItem;
     import ColorHelper = powerbi.visuals.ColorHelper;
     import SVGUtil = powerbi.visuals.SVGUtil;
@@ -107,161 +105,10 @@ module powerbi.extensibility.visual {
         right: string;
     }
 
-    interface HistogramProperty {
-        [propertyName: string]: DataViewObjectPropertyIdentifier;
-    }
-
-    interface HistogramProperties {
-        [objectName: string]: HistogramProperty;
-    }
-
     export class Histogram implements IVisual {
         private static ClassName: string = "histogram";
         private static FrequencyText: string = "Frequency";
         private static DensityText: string = "Density";
-
-        private static Properties: HistogramProperties = {
-            general: {
-                bins: {
-                    objectName: "general",
-                    propertyName: "bins"
-                },
-                frequency: {
-                    objectName: "general",
-                    propertyName: "frequency"
-                },
-                formatString: {
-                    objectName: "general",
-                    propertyName: "formatString"
-                }
-            },
-            dataPoint: {
-                fill: {
-                    objectName: "dataPoint",
-                    propertyName: "fill"
-                }
-            },
-            labels: {
-                show: {
-                    objectName: "labels",
-                    propertyName: "show"
-                },
-                color: {
-                    objectName: "labels",
-                    propertyName: "color"
-                },
-                displayUnits: {
-                    objectName: "labels",
-                    propertyName: "displayUnits"
-                },
-                precision: {
-                    objectName: "labels",
-                    propertyName: "precision"
-                },
-                fontSize: {
-                    objectName: "labels",
-                    propertyName: "fontSize"
-                }
-            },
-            xAxis: {
-                show: {
-                    objectName: "xAxis",
-                    propertyName: "show"
-                },
-                axisColor: {
-                    objectName: "xAxis",
-                    propertyName: "axisColor"
-                },
-                title: {
-                    objectName: "xAxis",
-                    propertyName: "title"
-                },
-                displayUnits: {
-                    objectName: "xAxis",
-                    propertyName: "displayUnits"
-                },
-                precision: {
-                    objectName: "xAxis",
-                    propertyName: "precision"
-                },
-                style: {
-                    objectName: "xAxis",
-                    propertyName: "style"
-                }
-            },
-            yAxis: {
-                show: {
-                    objectName: "yAxis",
-                    propertyName: "show"
-                },
-                axisColor: {
-                    objectName: "yAxis",
-                    propertyName: "axisColor"
-                },
-                title: {
-                    objectName: "yAxis",
-                    propertyName: "title"
-                },
-                displayUnits: {
-                    objectName: "yAxis",
-                    propertyName: "displayUnits"
-                },
-                precision: {
-                    objectName: "yAxis",
-                    propertyName: "precision"
-                },
-                style: {
-                    objectName: "yAxis",
-                    propertyName: "style"
-                },
-                start: {
-                    objectName: "yAxis",
-                    propertyName: "start"
-                },
-                end: {
-                    objectName: "yAxis",
-                    propertyName: "end"
-                },
-                position: {
-                    objectName: "yAxis",
-                    propertyName: "position"
-                }
-            }
-        };
-
-        private static DefaultHistogramSettings: HistogramSettings = {
-            frequency: true,
-            displayName: "Histogram",
-            bins: null,
-            fillColor: "#01b8aa",
-            precision: 2,
-            xAxisSettings: {
-                show: true,
-                axisColor: "#777",
-                title: true,
-                displayUnits: 0,
-                precision: 2,
-                style: axisStyle.showTitleOnly,
-            },
-            yAxisSettings: {
-                show: true,
-                axisColor: "#777",
-                title: true,
-                displayUnits: 0,
-                precision: 2,
-                style: axisStyle.showTitleOnly,
-                start: 0,
-                // position: yAxisPosition.left,
-                position: "Left",
-            },
-            labelSettings: {
-                show: false,
-                color: "#777",
-                displayUnits: 0,
-                precision: 2,
-                fontSize: 9
-            },
-        };
 
         private static Axes: ClassAndSelector = createClassAndSelector("axes");
         private static Axis: ClassAndSelector = createClassAndSelector("axis");
@@ -349,8 +196,6 @@ module powerbi.extensibility.visual {
         private interactivityService: IInteractivityService;
         private behavior: IInteractiveBehavior;
 
-        private colors: IColorPalette;
-
         private root: d3.Selection<any>;
         private clearCatcher: d3.Selection<any>;
         private main: d3.Selection<any>;
@@ -380,22 +225,13 @@ module powerbi.extensibility.visual {
             this.interactivityService = createInteractivityService(this.visualHost);
             this.behavior = HistogramBehavior.create();
 
-            this.root = d3.select(options.element)
-                .append("svg");
-
-            // var style: IVisualStyle = options.style;
-
-            this.colors = this.visualHost.colorPalette;
-
             this.tooltipService = createTooltipService(options.host);
 
-            // this.colors = style && style.colorPalette
-            //     ? style.colorPalette.dataColors
-            //     : new DataColorPalette();
+            this.root = d3.select(options.element)
+                .append("svg")
+                .classed(Histogram.ClassName, true);
 
             this.clearCatcher = appendClearCatcher(this.root);
-
-            this.root.classed(Histogram.ClassName, true);
 
             this.main = this.root.append("g");
 
@@ -428,16 +264,14 @@ module powerbi.extensibility.visual {
 
         public static converter(
             dataView: DataView,
-            visualHost: IVisualHost,
-            colors: IColorPalette): HistogramDataView {
+            visualHost: IVisualHost): HistogramDataView {
 
             if (!dataView
                 || !dataView.categorical
                 || !dataView.categorical.categories
                 || !dataView.categorical.categories[0]
                 || !dataView.categorical.categories[0].values
-                || !(dataView.categorical.categories[0].values.length > 0)
-                || !colors) {
+                || !(dataView.categorical.categories[0].values.length > 0)) {
 
                 return null;
             }
@@ -461,7 +295,7 @@ module powerbi.extensibility.visual {
                 yAxisSettings: HistogramYAxisSettings,
                 sourceValues: number[] = categoryColumn.values as number[];
 
-            settings = Histogram.parseSettings(dataView, colors);
+            settings = Histogram.parseSettings(dataView);
 
             if (!settings
                 || !Histogram.areValuesNumbers(categoryColumn)
@@ -470,13 +304,13 @@ module powerbi.extensibility.visual {
                 return null;
             }
 
-            xLegendSize = Histogram.getLegendSize(settings.xAxisSettings);
-            yLegendSize = Histogram.getLegendSize(settings.yAxisSettings);
+            xLegendSize = Histogram.getLegendSize(settings.xAxis);
+            yLegendSize = Histogram.getLegendSize(settings.yAxis);
 
             if (dataView.categorical.values &&
                 dataView.categorical.values[0] &&
                 dataView.categorical.values[0].values) {
-                frequencies = <number[]>dataView.categorical.values[0].values;
+                frequencies = dataView.categorical.values[0].values as number[];
             }
 
             values = Histogram.getValuesByFrequencies(
@@ -492,11 +326,11 @@ module powerbi.extensibility.visual {
 
             histogramLayout = d3.layout.histogram();
 
-            if (settings.bins && settings.bins > Histogram.MinNumberOfBins) {
-                histogramLayout = histogramLayout.bins(settings.bins);
+            if (settings.general.bins && settings.general.bins > Histogram.MinNumberOfBins) {
+                histogramLayout = histogramLayout.bins(settings.general.bins);
             }
 
-            bins = histogramLayout.frequency(settings.frequency)(numericalValues);
+            bins = histogramLayout.frequency(settings.general.frequency)(numericalValues);
 
             bins.forEach((bin: LayoutBin<number>, index: number) => {
                 let filteredValues: HistogramValue[],
@@ -510,7 +344,7 @@ module powerbi.extensibility.visual {
                     return previousValue + currentValue.frequency;
                 }, 0);
 
-                bin.y = settings.frequency
+                bin.y = settings.general.frequency
                     ? frequency
                     : frequency / sumFrequency;
 
@@ -519,7 +353,7 @@ module powerbi.extensibility.visual {
 
             borderValues = Histogram.getBorderValues(bins);
 
-            yAxisSettings = settings.yAxisSettings;
+            yAxisSettings = settings.yAxis;
 
             let maxYvalue: number = (yAxisSettings.end !== null) && (yAxisSettings.end > yAxisSettings.start)
                 ? yAxisSettings.end
@@ -529,27 +363,27 @@ module powerbi.extensibility.visual {
                 ? yAxisSettings.start
                 : 0;
 
-            settings.yAxisSettings.start = Histogram.getCorrectXAxisValue(minYValue);
-            settings.yAxisSettings.end = Histogram.getCorrectXAxisValue(maxYvalue);
+            settings.yAxis.start = Histogram.getCorrectXAxisValue(minYValue);
+            settings.yAxis.end = Histogram.getCorrectXAxisValue(maxYvalue);
 
             if (values.length >= Histogram.MinAmountOfValues) {
                 valueFormatter = ValueFormatter.create({
                     format: ValueFormatter.getFormatStringByColumn(dataView.categorical.categories[0].source),
                     value: values[0].value,
                     value2: values[values.length - 1].value,
-                    precision: settings.precision
+                    precision: settings.labels.precision
                 });
 
                 xLabelFormatter = ValueFormatter.create({
-                    value: settings.xAxisSettings.displayUnits === 0
+                    value: settings.xAxis.displayUnits === 0
                         ? values[values.length - 1].value
-                        : settings.xAxisSettings.displayUnits,
-                    precision: settings.xAxisSettings.precision
+                        : settings.xAxis.displayUnits,
+                    precision: settings.xAxis.precision
                 });
 
                 yLabelFormatter = ValueFormatter.create({
-                    value: settings.yAxisSettings.displayUnits,
-                    precision: settings.yAxisSettings.precision
+                    value: settings.yAxis.displayUnits,
+                    precision: settings.yAxis.precision
                 });
             }
 
@@ -562,19 +396,19 @@ module powerbi.extensibility.visual {
                 xLabelFormatter);
 
             return {
-                dataPoints: dataPoints,
-                borderValues: borderValues,
-                settings: settings,
-                formatter: valueFormatter,
-                xLabelFormatter: xLabelFormatter,
-                yLabelFormatter: yLabelFormatter,
-                xLegendSize: xLegendSize,
-                yLegendSize: yLegendSize
+                dataPoints,
+                borderValues,
+                settings,
+                xLabelFormatter,
+                yLabelFormatter,
+                xLegendSize,
+                yLegendSize,
+                formatter: valueFormatter
             };
         }
 
         public static getBorderValues(bins: LayoutBin<number>[]): HistogramBorderValues {
-            var borderValues: HistogramBorderValues = {
+            const borderValues: HistogramBorderValues = {
                 minX: Number.MAX_VALUE,
                 maxX: -Number.MAX_VALUE,
                 minY: Number.MAX_VALUE,
@@ -582,7 +416,7 @@ module powerbi.extensibility.visual {
             };
 
             bins.forEach((dataPoint: LayoutBin<number>) => {
-                var minX: number = Number.MAX_VALUE,
+                let minX: number = Number.MAX_VALUE,
                     maxX: number = -Number.MAX_VALUE;
 
                 dataPoint.forEach((x: number) => {
@@ -678,7 +512,7 @@ module powerbi.extensibility.visual {
             yValueFormatter: IValueFormatter,
             xValueFormatter: IValueFormatter): HistogramDataPoint[] {
 
-            let fontSizeInPx: string = PixelConverter.fromPoint(settings.labelSettings.fontSize);
+            let fontSizeInPx: string = PixelConverter.fromPoint(settings.labels.fontSize);
 
             return bins.map((bin: any, index: number): HistogramDataPoint => {
                 bin.range = Histogram.getRange(bin.x, bin.dx);
@@ -746,77 +580,51 @@ module powerbi.extensibility.visual {
                 && value.value <= bin.x + bin.dx;
         }
 
-        private static parseSettings(dataView: DataView, colors: IColorPalette): HistogramSettings {
-            if (!dataView ||
-                !dataView.metadata ||
-                !dataView.metadata.columns ||
-                !dataView.metadata.columns[0]) {
-                return null;
-            }
-
-            let histogramSettings: HistogramSettings = <HistogramSettings>{},
-                objects: DataViewObjects,
-                colorHelper: ColorHelper;
-
-            colorHelper = new ColorHelper(
-                colors,
-                Histogram.Properties["dataPoint"]["fill"],
-                Histogram.DefaultHistogramSettings.fillColor);
-
-            histogramSettings.displayName =
-                dataView.metadata.columns[0].displayName || Histogram.DefaultHistogramSettings.displayName;
-
-            objects = Histogram.getObjectsFromDataView(dataView);
-
-            var xAxisSettings: HistogramXAxisSettings = {
-                axisColor: Histogram.getXAxisColor(objects).solid.color,
-                title: Histogram.getXTitle(objects),
-                precision: Histogram.getXPrecision(objects),
-                style: Histogram.getXStyle(objects),
-                displayUnits: Histogram.getXDisplayUnit(objects),
-                show: Histogram.getXAxisShow(objects),
-            };
-
-            var yAxisSettings: HistogramYAxisSettings = {
-                axisColor: Histogram.getYAxisColor(objects).solid.color,
-                title: Histogram.getYTitle(objects),
-                precision: Histogram.getYPrecision(objects),
-                style: Histogram.getYStyle(objects),
-                displayUnits: Histogram.getYDisplayUnit(objects),
-                show: Histogram.getYAxisShow(objects),
-
-                start: Histogram.getYStart(objects),
-                end: Histogram.getYEnd(objects),
-                position: Histogram.getYPosition(objects),
-            };
-
-            var labelSettings: HistogramLabelSettings = {
-                show: Histogram.getLabelShow(objects),
-                color: Histogram.getLabelColor(objects).solid.color,
-                displayUnits: Histogram.getLabelDisplayUnits(objects),
-                precision: Histogram.getLabelPrecision(objects),
-                fontSize: Histogram.getLabelFontSize(objects),
-            };
-
-            histogramSettings.fillColor = colorHelper.getColorForMeasure(objects, "");
-            histogramSettings.bins = Histogram.getBins(objects);
-            histogramSettings.frequency = Histogram.getFrequency(objects);
-            histogramSettings.precision = Histogram.getPrecision(objects);
-
-            histogramSettings.displayName = Histogram.getLegend(
-                histogramSettings.displayName,
-                xAxisSettings.style,
-                xAxisSettings.displayUnits);
-
-            histogramSettings.xAxisSettings = xAxisSettings;
-            histogramSettings.yAxisSettings = yAxisSettings;
-            histogramSettings.labelSettings = labelSettings;
-
-            return histogramSettings;
+        private static getDisplayName(dataView: DataView): string {
+            return (dataView
+                && dataView.metadata
+                && dataView.metadata.columns
+                && dataView.metadata.columns[0]
+                && dataView.metadata.columns[0].displayName) || null;
         }
 
-        public static getLegend(title: string, style: string, displayUnit: number): string {
-            var retValue: string,
+        private static parseSettings(dataView: DataView): HistogramSettings {
+            let settings: HistogramSettings = HistogramSettings.parse<HistogramSettings>(dataView),
+                displayName: string = Histogram.getDisplayName(dataView),
+                bins: number = Math.round(settings.general.bins);
+
+            if (displayName) {
+                settings.general.displayName = displayName;
+            }
+
+            if (isNaN(bins) || bins <= Histogram.MinNumberOfBins) {
+                bins = null;
+            } else if (bins > Histogram.MaxNumberOfBins) {
+                bins = Histogram.MaxNumberOfBins
+            }
+
+            settings.general.bins = bins;
+
+            settings.xAxis.precision = Histogram.getPrecision(settings.xAxis.precision);
+            settings.yAxis.precision = Histogram.getPrecision(settings.yAxis.precision);
+            settings.labels.precision = Histogram.getPrecision(settings.labels.precision);
+
+            settings.general.displayName = Histogram.getLegend(
+                settings.general.displayName,
+                settings.xAxis.style,
+                settings.xAxis.displayUnits);
+
+            return settings;
+        }
+
+        private static getPrecision(precision: number): number {
+            return Math.min(
+                Math.max(precision, Histogram.MinPrecision),
+                Histogram.MaxPrecision);
+        }
+
+        public static getLegend(title: string, style: HistogramAxisStyle, displayUnit: number): string {
+            let retValue: string,
                 formatter: IValueFormatter;
 
             formatter = ValueFormatter.create({
@@ -824,19 +632,19 @@ module powerbi.extensibility.visual {
             });
 
             switch (style) {
-                case axisStyle.showTitleOnly: {
+                case HistogramAxisStyle.showTitleOnly: {
                     retValue = title;
 
                     break;
                 }
-                case axisStyle.showUnitOnly: {
+                case HistogramAxisStyle.showUnitOnly: {
                     retValue = !(displayUnit === 0 || displayUnit === 1) && formatter.displayUnit
                         ? formatter.displayUnit.title
                         : title;
 
                     break;
                 }
-                case axisStyle.showBoth: {
+                case HistogramAxisStyle.showBoth: {
                     retValue = !(displayUnit === 0 || displayUnit === 1) && formatter.displayUnit
                         ? title + " (" + formatter.displayUnit.title + ")"
                         : title;
@@ -846,242 +654,6 @@ module powerbi.extensibility.visual {
             }
 
             return retValue;
-        }
-
-        private static getLabelFontSize(objects: DataViewObjects): number {
-            return DataViewObjects.getValue<number>(
-                objects,
-                Histogram.Properties["labels"]["fontSize"],
-                Histogram.DefaultHistogramSettings.labelSettings.fontSize
-            );
-        }
-
-        private static getLabelShow(objects: DataViewObjects): boolean {
-            return DataViewObjects.getValue<boolean>(
-                objects,
-                Histogram.Properties["labels"]["show"],
-                Histogram.DefaultHistogramSettings.labelSettings.show
-            );
-        }
-
-        private static getLabelColor(objects: DataViewObjects): Fill {
-            return DataViewObjects.getValue<Fill>(
-                objects,
-                Histogram.Properties["labels"]["color"],
-                {
-                    solid: {
-                        color: Histogram.DefaultHistogramSettings.labelSettings.color
-                    }
-                }
-            );
-        }
-
-        private static getLabelDisplayUnits(objects: DataViewObjects): number {
-            return DataViewObjects.getValue<number>(
-                objects,
-                Histogram.Properties["labels"]["displayUnits"],
-                Histogram.DefaultHistogramSettings.labelSettings.displayUnits
-            );
-        }
-
-        private static getLabelPrecision(objects: DataViewObjects): number {
-            var precision: number = DataViewObjects.getValue(
-                objects,
-                Histogram.Properties["labels"]["precision"],
-                Histogram.DefaultHistogramSettings.labelSettings.precision);
-
-            if (precision <= Histogram.MinPrecision) {
-                return Histogram.MinPrecision;
-            } else if (precision >= Histogram.MaxPrecision) {
-                return Histogram.MaxPrecision;
-            }
-
-            return precision;
-        }
-
-        private static getXStyle(objects: DataViewObjects): string {
-            return DataViewObjects.getValue<string>(
-                objects,
-                Histogram.Properties["xAxis"]["style"],
-                Histogram.DefaultHistogramSettings.xAxisSettings.style
-            );
-        }
-
-        private static getXDisplayUnit(objects: DataViewObjects): number {
-            return DataViewObjects.getValue<number>(
-                objects,
-                Histogram.Properties["xAxis"]["displayUnits"],
-                Histogram.DefaultHistogramSettings.xAxisSettings.displayUnits
-            );
-        }
-
-        private static getXPrecision(objects: DataViewObjects): number {
-            var precision: number = DataViewObjects.getValue(
-                objects,
-                Histogram.Properties["xAxis"]["precision"],
-                Histogram.DefaultHistogramSettings.xAxisSettings.precision);
-
-            if (precision <= Histogram.MinPrecision) {
-                return Histogram.MinPrecision;
-            } else if (precision >= Histogram.MaxPrecision) {
-                return Histogram.MaxPrecision;
-            }
-
-            return precision;
-        }
-
-        private static getXAxisShow(objects: DataViewObjects): boolean {
-            return DataViewObjects.getValue<boolean>(
-                objects,
-                Histogram.Properties["xAxis"]["show"],
-                Histogram.DefaultHistogramSettings.xAxisSettings.show
-            );
-        }
-
-        private static getXAxisColor(objects: DataViewObjects): Fill {
-            return DataViewObjects.getValue<Fill>(
-                objects,
-                Histogram.Properties["xAxis"]["axisColor"],
-                {
-                    solid: {
-                        color: Histogram.DefaultHistogramSettings.xAxisSettings.axisColor
-                    }
-                }
-            );
-        }
-
-        private static getXTitle(objects: DataViewObjects): boolean {
-            return DataViewObjects.getValue<boolean>(
-                objects,
-                Histogram.Properties["xAxis"]["title"],
-                Histogram.DefaultHistogramSettings.xAxisSettings.title);
-        }
-
-        private static getYStyle(objects: DataViewObjects): string {
-            return DataViewObjects.getValue<string>(
-                objects,
-                Histogram.Properties["yAxis"]["style"],
-                Histogram.DefaultHistogramSettings.yAxisSettings.style
-            );
-        }
-
-        private static getYPosition(objects: DataViewObjects): string {
-            return DataViewObjects.getValue<string>(
-                objects,
-                Histogram.Properties["yAxis"]["position"],
-                Histogram.DefaultHistogramSettings.yAxisSettings.position
-            );
-        }
-
-        private static getYAxisShow(objects: DataViewObjects): boolean {
-            return DataViewObjects.getValue<boolean>(
-                objects,
-                Histogram.Properties["yAxis"]["show"],
-                Histogram.DefaultHistogramSettings.yAxisSettings.show
-            );
-        }
-
-        private static getYAxisColor(objects: DataViewObjects): Fill {
-            return DataViewObjects.getValue<Fill>(
-                objects,
-                Histogram.Properties["yAxis"]["axisColor"],
-                {
-                    solid: {
-                        color: Histogram.DefaultHistogramSettings.yAxisSettings.axisColor
-                    }
-                }
-            );
-        }
-
-        private static getYStart(objects: DataViewObjects): number {
-            return DataViewObjects.getValue<number>(
-                objects,
-                Histogram.Properties["yAxis"]["start"],
-                Histogram.DefaultHistogramSettings.yAxisSettings.start
-            );
-        }
-
-        private static getYEnd(objects: DataViewObjects): number {
-            return DataViewObjects.getValue<number>(
-                objects,
-                Histogram.Properties["yAxis"]["end"],
-                Histogram.DefaultHistogramSettings.yAxisSettings.end
-            );
-        }
-
-        private static getYDisplayUnit(objects: DataViewObjects): number {
-            return DataViewObjects.getValue<number>(
-                objects,
-                Histogram.Properties["yAxis"]["displayUnits"],
-                Histogram.DefaultHistogramSettings.yAxisSettings.displayUnits
-            );
-        }
-
-        private static getYPrecision(objects: DataViewObjects): number {
-            var precision: number = DataViewObjects.getValue(
-                objects,
-                Histogram.Properties["yAxis"]["precision"],
-                Histogram.DefaultHistogramSettings.yAxisSettings.precision
-            );
-
-            if (precision <= Histogram.MinPrecision) {
-                return Histogram.MinPrecision;
-            } else if (precision >= Histogram.MaxPrecision) {
-                return Histogram.MaxPrecision;
-            }
-
-            return precision;
-        }
-
-        private static getYTitle(objects: DataViewObjects): boolean {
-            return DataViewObjects.getValue<boolean>(
-                objects,
-                Histogram.Properties["yAxis"]["title"],
-                Histogram.DefaultHistogramSettings.yAxisSettings.title);
-        }
-
-        private static getBins(objects: DataViewObjects): number {
-            var binsNumber: number = Number(DataViewObjects.getValue<number>(
-                objects,
-                Histogram.Properties["general"]["bins"],
-                Histogram.DefaultHistogramSettings.bins)
-            );
-
-            if (!binsNumber || isNaN(binsNumber) || (binsNumber <= Histogram.MinNumberOfBins)) {
-                return Histogram.DefaultHistogramSettings.bins;
-            }
-
-            if (binsNumber > Histogram.MaxNumberOfBins) {
-                return Histogram.MaxNumberOfBins;
-            }
-
-            return binsNumber;
-        }
-
-        private static getFrequency(objects: DataViewObjects): boolean {
-            return DataViewObjects.getValue<boolean>(
-                objects,
-                Histogram.Properties["general"]["frequency"],
-                Histogram.DefaultHistogramSettings.frequency
-            );
-        }
-
-        private static getPrecision(objects: DataViewObjects): number {
-            var precision: number = DataViewObjects.getValue(
-                objects,
-                Histogram.Properties["labels"]["precision"],
-                Histogram.DefaultHistogramSettings.precision
-            );
-
-            if (precision <= Histogram.MinPrecision) {
-                return Histogram.MinPrecision;
-            }
-
-            if (precision >= Histogram.MaxPrecision) {
-                return Histogram.MaxPrecision;
-            }
-
-            return precision;
         }
 
         public isDataValid(data: HistogramDataView): boolean {
@@ -1110,8 +682,7 @@ module powerbi.extensibility.visual {
 
             this.dataView = Histogram.converter(
                 dataView,
-                this.visualHost,
-                this.colors);
+                this.visualHost);
 
             if (!this.isDataValid(this.dataView)) {
                 this.clear();
@@ -1189,7 +760,7 @@ module powerbi.extensibility.visual {
         }
 
         private createScales(): void {
-            var yAxisSettings: HistogramYAxisSettings = this.dataView.settings.yAxisSettings,
+            var yAxisSettings: HistogramYAxisSettings = this.dataView.settings.yAxis,
                 borderValues: HistogramBorderValues = this.dataView.borderValues;
 
             this.dataView.xScale = d3.scale.linear()
@@ -1293,7 +864,7 @@ module powerbi.extensibility.visual {
             if (valueFormatter) {
                 labelText = valueFormatter.format(labelValue);
             } else {
-                labelText = <string>labelValue;
+                labelText = labelValue as string;
             }
 
             return Histogram.getTextProperties(labelText);
@@ -1336,15 +907,14 @@ module powerbi.extensibility.visual {
         }
 
         public shouldShowYOnRight(): boolean {
-            // return this.dataView.settings.yAxisSettings.position === yAxisPosition.right;
-            return this.dataView.settings.yAxisSettings.position === "Right";
+            return this.dataView.settings.yAxis.position === HistogramPositionType.Right;
         }
 
         private columsAndAxesTransform(labelWidth: number): void {
             var offsetToRightStr: string,
                 offsetToRight: number = this.shouldShowYOnRight()
                     ? Histogram.Margin.left
-                    : this.dataView.settings.yAxisSettings.title
+                    : this.dataView.settings.yAxis.title
                         ? Histogram.Margin.left + labelWidth + Histogram.YAxisMargin
                         : Histogram.Margin.left + labelWidth;
 
@@ -1365,7 +935,7 @@ module powerbi.extensibility.visual {
         }
 
         private render(): void {
-            var columnsSelection: UpdateSelection<any> = this.renderColumns();
+            const columnsSelection: UpdateSelection<any> = this.renderColumns();
 
             this.bindTooltipsToSelection(columnsSelection);
 
@@ -1377,7 +947,7 @@ module powerbi.extensibility.visual {
         }
 
         private renderColumns(): UpdateSelection<HistogramDataPoint> {
-            var data: HistogramDataPoint[] = this.dataView.dataPoints,
+            let data: HistogramDataPoint[] = this.dataView.dataPoints,
                 xScale: LinearScale<any, any> = this.dataView.xScale,
                 yScale: LinearScale<any, any> = this.dataView.yScale,
                 updateColumnsSelection: UpdateSelection<any>;
@@ -1398,11 +968,11 @@ module powerbi.extensibility.visual {
                         return yScale(dataPoint.y);
                     },
                     "width": this.widthOfColumn,
-                    "height": (item: HistogramDataPoint) => {
-                        return this.getColumnHeight(item, yScale);
+                    "height": (dataPoint: HistogramDataPoint) => {
+                        return this.getColumnHeight(dataPoint, yScale);
                     }
                 })
-                .style("fill", this.dataView.settings.fillColor);
+                .style("fill", this.dataView.settings.dataPoint.fill);
 
             histogramUtils.updateFillOpacity(
                 updateColumnsSelection,
@@ -1430,16 +1000,16 @@ module powerbi.extensibility.visual {
 
         private renderXAxis(): void {
             var xAxis: SVGAxis,
-                xShow: boolean = this.dataView.settings.xAxisSettings.show,
-                axisColor: string = this.dataView.settings.xAxisSettings.axisColor;
+                xShow: boolean = this.dataView.settings.xAxis.show,
+                axisColor: string = this.dataView.settings.xAxis.axisColor;
 
             xAxis = this.xAxisProperties.axis
-                .tickFormat(((value: number, index: number) => { // TODO: check the second argument of the arrow function.
+                .tickFormat(((value: number, index: number) => {
                     var tickValues: any[] = this.xAxisProperties.axis.tickValues(),
                         amountOfLabels: number = (tickValues && tickValues.length) || 0;
 
                     return this.formatLabelOfXAxis(value, index, amountOfLabels);
-                }) as any)
+                }) as any) // We cast this function to any, because the type definition doesn't contain the second argument
                 .orient("bottom");
 
             if (xShow) {
@@ -1486,11 +1056,11 @@ module powerbi.extensibility.visual {
 
         private renderYAxis(): void {
             var yAxis: SVGAxis,
-                yShow: boolean = this.dataView.settings.yAxisSettings.show,
-                axisColor: string = this.dataView.settings.yAxisSettings.axisColor;
+                yShow: boolean = this.dataView.settings.yAxis.show,
+                axisColor: string = this.dataView.settings.yAxis.axisColor;
 
             yAxis = this.yAxisProperties.axis
-                .orient(this.dataView.settings.yAxisSettings.position.toLowerCase())
+                .orient(this.dataView.settings.yAxis.position.toString().toLowerCase())
                 .tickFormat((item: number) => {
                     return this.dataView.yLabelFormatter.format(item);
                 });
@@ -1515,7 +1085,7 @@ module powerbi.extensibility.visual {
         }
 
         private getLabelLayout(): ILabelLayout {
-            let labelSettings: HistogramLabelSettings = this.dataView.settings.labelSettings,
+            let labelSettings: HistogramLabelSettings = this.dataView.settings.labels,
                 fontSizeInPx: string = PixelConverter.fromPoint(labelSettings.fontSize),
                 fontFamily: string = dataLabelUtils.LabelTextProperties.fontFamily,
                 xScale: LinearScale<any, any> = this.dataView.xScale,
@@ -1531,7 +1101,7 @@ module powerbi.extensibility.visual {
                 },
                 labelLayout: {
                     x: (dataPoint: HistogramDataPoint) => {
-                        var x: number,
+                        let x: number,
                             dx: number;
 
                         x = xScale(dataPoint.x);
@@ -1540,7 +1110,7 @@ module powerbi.extensibility.visual {
                         return x - dx;
                     },
                     y: (dataPoint: HistogramDataPoint) => {
-                        var y: number,
+                        let y: number,
                             dy: number;
 
                         y = yScale(dataPoint.y);
@@ -1561,7 +1131,7 @@ module powerbi.extensibility.visual {
         }
 
         private renderLabels(): void {
-            var labelSettings: HistogramLabelSettings = this.dataView.settings.labelSettings,
+            let labelSettings: HistogramLabelSettings = this.dataView.settings.labels,
                 dataPointsArray: HistogramDataPoint[] = this.dataView.dataPoints,
                 labels: UpdateSelection<HistogramDataPoint>;
 
@@ -1653,14 +1223,14 @@ module powerbi.extensibility.visual {
             this.legend
                 .select("text")
                 .style({
-                    "display": Histogram.getDispayForAxisTitle(this.dataView.settings.xAxisSettings)
+                    "display": Histogram.getDispayForAxisTitle(this.dataView.settings.xAxis)
                 });
 
             this.legend
                 .selectAll("text")
                 .filter((d, index) => index === 1)
                 .style({
-                    "display": Histogram.getDispayForAxisTitle(this.dataView.settings.yAxisSettings)
+                    "display": Histogram.getDispayForAxisTitle(this.dataView.settings.yAxis)
                 });
         }
 
@@ -1671,12 +1241,12 @@ module powerbi.extensibility.visual {
         }
 
         private getDataLegends(settings: HistogramSettings): Legend[] {
-            var bottomLegendText: string = Histogram.getLegendText(settings);
+            let bottomLegendText: string = Histogram.getLegendText(settings);
 
             bottomLegendText = Histogram.getLegend(
                 bottomLegendText,
-                settings.yAxisSettings.style,
-                settings.yAxisSettings.displayUnits);
+                settings.yAxis.style,
+                settings.yAxis.displayUnits);
 
             return [
                 {
@@ -1684,7 +1254,7 @@ module powerbi.extensibility.visual {
                         this.viewport.width / 2,
                         this.viewport.height),
                     text: Histogram.getTailoredTextOrDefault(
-                        settings.displayName,
+                        settings.general.displayName,
                         this.viewportIn.width),
                     dx: "-0.5em",
                     dy: "-1em"
@@ -1704,7 +1274,7 @@ module powerbi.extensibility.visual {
         }
 
         private static getLegendText(settings: HistogramSettings): string {
-            return settings.frequency
+            return settings.general.frequency
                 ? Histogram.FrequencyText
                 : Histogram.DensityText;
         }
@@ -1736,157 +1306,11 @@ module powerbi.extensibility.visual {
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-            var instances: VisualObjectInstance[] = [],
-                settings: HistogramSettings;
+            const settings: HistogramSettings = this.dataView && this.dataView.settings
+                ? this.dataView.settings
+                : HistogramSettings.getDefault() as HistogramSettings;
 
-            if (!this.dataView ||
-                !this.dataView.settings) {
-                return [];
-            }
-
-            settings = this.dataView.settings;
-
-            switch (options.objectName) {
-                case "general": {
-                    this.enumerateGeneral(instances, settings);
-
-                    break;
-                }
-                case "dataPoint": {
-                    this.enumerateDataPoint(instances, settings);
-
-                    break;
-                }
-                case "labels": {
-                    this.enumerateLabels(instances, settings);
-
-                    break;
-                }
-                case "xAxis": {
-                    this.enumerateXAxis(instances, settings);
-
-                    break;
-                }
-                case "yAxis": {
-                    this.enumerateYAxis(instances, settings);
-
-                    break;
-                }
-            }
-
-            return instances;
-        }
-
-        private enumerateGeneral(
-            instances: VisualObjectInstance[],
-            settings: HistogramSettings): void {
-
-            var general: VisualObjectInstance = {
-                objectName: "general",
-                displayName: "general",
-                selector: null,
-                properties: {
-                    bins: settings.bins,
-                    frequency: settings.frequency
-                }
-            };
-
-            instances.push(general);
-        }
-
-        private enumerateDataPoint(
-            instances: VisualObjectInstance[],
-            settings: HistogramSettings): void {
-
-            var dataPoint: VisualObjectInstance = {
-                objectName: "dataPoint",
-                displayName: "dataPoint",
-                selector: null,
-                properties: {
-                    fill: settings.fillColor
-                }
-            };
-
-            instances.push(dataPoint);
-        }
-
-        private enumerateLabels(
-            instances: VisualObjectInstance[],
-            settings: HistogramSettings): void {
-
-            var labelsSettings: HistogramLabelSettings = settings.labelSettings,
-                labels: VisualObjectInstance = {
-                    objectName: "labels",
-                    displayName: "labels",
-                    selector: null,
-                    properties: {
-                        show: labelsSettings.show,
-                        color: labelsSettings.color,
-                        displayUnits: labelsSettings.displayUnits,
-                        precision: labelsSettings.precision,
-                        fontSize: labelsSettings.fontSize
-                    }
-                };
-
-            instances.push(labels);
-        }
-
-        private enumerateXAxis(
-            instances: VisualObjectInstance[],
-            settings: HistogramSettings): void {
-
-            var xAxisSettings: HistogramXAxisSettings = settings.xAxisSettings,
-                xAxis: VisualObjectInstance = {
-                    objectName: "xAxis",
-                    displayName: "X-Axis",
-                    selector: null,
-                    properties: {
-                        show: xAxisSettings.show,
-                        title: xAxisSettings.title,
-                        style: xAxisSettings.style,
-                        axisColor: xAxisSettings.axisColor,
-                        displayUnits: xAxisSettings.displayUnits,
-                        precision: xAxisSettings.precision,
-                    }
-                };
-
-            instances.push(xAxis);
-        }
-
-        private enumerateYAxis(
-            instances: VisualObjectInstance[],
-            settings: HistogramSettings): void {
-
-            var yAxisSettings: HistogramYAxisSettings = settings.yAxisSettings,
-                yAxis: VisualObjectInstance = {
-                    objectName: "yAxis",
-                    displayName: "Y-Axis",
-                    selector: null,
-                    properties: {
-                        show: yAxisSettings.show,
-                        position: yAxisSettings.position,
-                        start: yAxisSettings.start,
-                        end: yAxisSettings.end,
-                        title: yAxisSettings.title,
-                        style: yAxisSettings.style,
-                        axisColor: yAxisSettings.axisColor,
-                        displayUnits: yAxisSettings.displayUnits,
-                        precision: yAxisSettings.precision,
-                    }
-                };
-
-            instances.push(yAxis);
-        }
-
-        private static getObjectsFromDataView(dataView: DataView): DataViewObjects {
-            if (!dataView ||
-                !dataView.metadata ||
-                !dataView.metadata.columns ||
-                !dataView.metadata.objects) {
-                return null;
-            }
-
-            return dataView.metadata.objects;
+            return HistogramSettings.enumerateObjectInstances(settings, options);
         }
 
         public destroy(): void {
@@ -1935,9 +1359,7 @@ module powerbi.extensibility.visual {
                 pixelSpan: this.viewportIn.width,
                 dataDomain: forcedXDomain,
                 metaDataColumn: metaDataColumn,
-                formatString: valueFormatter.getFormatString(
-                    metaDataColumn,
-                    Histogram.Properties["general"]["formatString"]),
+                formatString: valueFormatter.getFormatStringByColumn(metaDataColumn),
                 outerPadding: 0,
                 isScalar: false,
                 isVertical: false,
@@ -1950,7 +1372,7 @@ module powerbi.extensibility.visual {
                 tickLabelPadding: undefined
             });
 
-            xAxisProperties.axisLabel = this.dataView.settings.displayName;
+            xAxisProperties.axisLabel = this.dataView.settings.general.displayName;
 
             return xAxisProperties;
         }
@@ -1959,7 +1381,7 @@ module powerbi.extensibility.visual {
             source: DataViewMetadataColumn,
             heightOfLabel: number): IAxisProperties {
 
-            var yAxisSettings: HistogramYAxisSettings = this.dataView.settings.yAxisSettings;
+            let yAxisSettings: HistogramYAxisSettings = this.dataView.settings.yAxis;
 
             return this.calculateYAxesProperties(
                 [yAxisSettings.start, yAxisSettings.end],
@@ -1978,10 +1400,8 @@ module powerbi.extensibility.visual {
 
             var formatString: string = undefined;
 
-            if (this.dataView.settings.frequency) {
-                formatString = valueFormatter.getFormatString(
-                    metaDataColumn,
-                    Histogram.Properties["general"]["formatString"]);
+            if (this.dataView.settings.general.frequency) {
+                formatString = valueFormatter.getFormatStringByColumn(metaDataColumn);
             }
 
             return HistogramAxisHelper.createAxis({
@@ -1994,7 +1414,7 @@ module powerbi.extensibility.visual {
                 isVertical: true,
                 useTickIntervalForDisplayUnits: true,
                 isCategoryAxis: false,
-                getValueFn: (index, type) => index,
+                getValueFn: (index: number) => index,
                 scaleType: categoryAxisScaleType,
                 innerPaddingRatio: innerPaddingRatio,
                 minOrdinalRectThickness: minOrdinalRectThickness,

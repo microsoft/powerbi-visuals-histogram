@@ -32,10 +32,12 @@
     "node_modules/@powerbi-visuals-utils/controls-touchutils/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/displayunitsystemtype/lib/index.d.ts",
     "node_modules/@powerbi-visuals-utils/displayunitsystem/lib/index.d.ts",
+    "node_modules/@powerbi-visuals-utils/settingsparser/lib/index.d.ts",
     "src/dataInterfaces.ts",
     "src/utils.ts",
     "src/behavior.ts",
     "src/axisHelper.ts",
+    "src/settings.ts",
     "src/visual.ts"
   ]
 }
