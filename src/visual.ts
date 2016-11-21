@@ -1049,9 +1049,7 @@ module powerbi.extensibility.visual {
             if (xShow) {
                 this.axisX.call(xAxis);
             } else {
-                this.axisX
-                    .selectAll("*")
-                    .remove();
+                this.clearElement(this.axisX);
             }
 
             this.updateFillColorOfAxis(this.axisX, axisColor);
@@ -1102,9 +1100,7 @@ module powerbi.extensibility.visual {
             if (yShow) {
                 this.axisY.call(yAxis);
             } else {
-                this.axisY
-                    .selectAll("*")
-                    .remove();
+                this.clearElement(this.axisY);
             }
 
             this.updateFillColorOfAxis(this.axisY, axisColor);

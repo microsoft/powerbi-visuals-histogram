@@ -66,6 +66,20 @@ module powerbi.extensibility.visual {
 
         const PowerOfTenOffset: number = 1e-12;
 
+        const DefaultMinInterval: number = 0;
+        const MinTickInterval100Pct: number = 0.01;
+        const MinTickIntervalInteger: number = 1;
+
+        const RecommendedNumberOfTicksSmall: number = 3;
+        const RecommendedNumberOfTicksMiddle: number = 5;
+        const RecommendedNumberOfTicksLarge: number = 8;
+
+        const AvailableWidthXAxisSmall: number = 300;
+        const AvailableWidthXAxisMiddle: number = 500;
+
+        const AvailableWidthYAxisSmall: number = 150;
+        const AvailableWidthYAxisMiddle: number = 300;
+
         /**
          * Default ranges are for when we have a field chosen for the axis,
          * but no values are returned by the query.
@@ -176,8 +190,9 @@ module powerbi.extensibility.visual {
                 .tickValues(tickValues);
 
             let formattedTickValues: any[] = [];
-            if (metaDataColumn)
+            if (metaDataColumn) {
                 formattedTickValues = formatAxisTickValues(axis, tickValues, formatter, dataType, getValueFn);
+            }
 
             let xLabelMaxWidth: number;
             // Use category layout of labels if specified, otherwise use scalar layout of labels
@@ -322,13 +337,13 @@ module powerbi.extensibility.visual {
                 return Math.pow(10, -precision);
             }
             else if (is100Pct) {
-                return 0.01;
+                return MinTickInterval100Pct;
             }
             else if (columnType.integer) {
-                return 1;
+                return MinTickIntervalInteger;
             }
 
-            return 0;
+            return DefaultMinInterval;
         }
 
         /**
@@ -359,7 +374,7 @@ module powerbi.extensibility.visual {
         }
 
         export function isLogScalePossible(domain: any[], axisType?: ValueType): boolean {
-            if (domain == null || isDateTime(axisType)) {
+            if (domain == null || domain.length < 2 || isDateTime(axisType)) {
                 return false;
             }
 
@@ -702,9 +717,8 @@ module powerbi.extensibility.visual {
             if (axisScaleType === axisScale.log && isLogScalePossible(dataDomain, dataType)) {
                 return createLogScale(pixelSpan, dataDomain, outerPadding, niceCount);
             }
-            else {
-                return createLinearScale(pixelSpan, dataDomain, outerPadding, niceCount, shouldClamp);
-            }
+
+            return createLinearScale(pixelSpan, dataDomain, outerPadding, niceCount, shouldClamp);
         }
 
         function createLogScale(
@@ -747,27 +761,27 @@ module powerbi.extensibility.visual {
         }
 
         export function getRecommendedNumberOfTicksForXAxis(availableWidth: number): number {
-            if (availableWidth < 300) {
-                return 3;
+            if (availableWidth < AvailableWidthXAxisSmall) {
+                return RecommendedNumberOfTicksSmall;
             }
 
-            if (availableWidth < 500) {
-                return 5;
+            if (availableWidth < AvailableWidthXAxisMiddle) {
+                return RecommendedNumberOfTicksMiddle;
             }
 
-            return 8;
+            return RecommendedNumberOfTicksLarge;
         }
 
         export function getRecommendedNumberOfTicksForYAxis(availableWidth: number): number {
-            if (availableWidth < 150) {
-                return 3;
+            if (availableWidth < AvailableWidthYAxisSmall) {
+                return RecommendedNumberOfTicksSmall;
             }
 
-            if (availableWidth < 300) {
-                return 5;
+            if (availableWidth < AvailableWidthYAxisMiddle) {
+                return RecommendedNumberOfTicksMiddle;
             }
 
-            return 8;
+            return RecommendedNumberOfTicksLarge;
         }
 
         export function isOrdinal(type: ValueTypeDescriptor): boolean {
