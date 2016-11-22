@@ -1,0 +1,285 @@
+{
+    "dataRoles": [
+        {
+            "name": "Values",
+            "kind": "Grouping",
+            "displayName": "Values"
+        },
+        {
+            "name": "Frequency",
+            "kind": "Measure",
+            "displayName": "Frequency"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "Values": {
+                        "min": 1,
+                        "max": 1
+                    },
+                    "Frequency": {
+                        "min": 0,
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "bind": {
+                        "to": "Values"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {}
+                    }
+                },
+                "values": {
+                    "for": {
+                        "in": "Frequency"
+                    }
+                }
+            }
+        }
+    ],
+    "sorting": {
+        "implicit": {
+            "clauses": [
+                {
+                    "role": "Values",
+                    "direction": 1
+                }
+            ]
+        }
+    },
+    "objects": {
+        "general": {
+            "displayName": "General",
+            "properties": {
+                "bins": {
+                    "displayName": "Bins",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "frequency": {
+                    "displayName": "Frequency",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
+        "dataPoint": {
+            "displayName": "Data colors",
+            "properties": {
+                "fill": {
+                    "displayName": "Fill",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "xAxis": {
+            "displayName": "X-Axis",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "axisColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "displayName": "Title",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "displayUnits": {
+                    "displayName": "Display Units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "precision": {
+                    "displayName": "Decimal Places",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "style": {
+                    "displayName": "Style",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "showTitleOnly",
+                                "displayName": "Show title only"
+                            },
+                            {
+                                "value": "showUnitOnly",
+                                "displayName": "Show unit only"
+                            },
+                            {
+                                "value": "showBoth",
+                                "displayName": "Show both"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "yAxis": {
+            "displayName": "Y-Axis",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "axisColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "displayName": "Title",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "displayUnits": {
+                    "displayName": "Display Units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "precision": {
+                    "displayName": "Decimal Places",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "style": {
+                    "displayName": "Style",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "showTitleOnly",
+                                "displayName": "Show title only"
+                            },
+                            {
+                                "value": "showUnitOnly",
+                                "displayName": "Show unit only"
+                            },
+                            {
+                                "value": "showBoth",
+                                "displayName": "Show both"
+                            }
+                        ]
+                    }
+                },
+                "start": {
+                    "displayName": "Start",
+                    "type": {
+                        "numeric": true
+                    },
+                    "placeHolderText": "Start",
+                    "suppressFormatPainterCopy": true
+                },
+                "end": {
+                    "displayName": "End",
+                    "type": {
+                        "numeric": true
+                    },
+                    "placeHolderText": "End",
+                    "suppressFormatPainterCopy": true
+                },
+                "position": {
+                    "displayName": "Position",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "Left",
+                                "displayName": "Left"
+                            },
+                            {
+                                "value": "Right",
+                                "displayName": "Right"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "labels": {
+            "displayName": "Data Labels",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "color": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "displayUnits": {
+                    "displayName": "Display Units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "precision": {
+                    "displayName": "Decimal Places",
+                    "type": {
+                        "numeric": true
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
