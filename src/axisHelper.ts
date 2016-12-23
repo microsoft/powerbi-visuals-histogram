@@ -26,27 +26,31 @@
 
 module powerbi.extensibility.visual {
     // d3
-    import OrdinalScale = d3.scale.Ordinal;
-    import LinearScale = d3.scale.Linear;
-    import LogScale = d3.scale.Log;
     import SVGAxis = d3.svg.Axis;
+    import LogScale = d3.scale.Log;
+    import LinearScale = d3.scale.Linear;
+    import OrdinalScale = d3.scale.Ordinal;
 
     // powerbi
-    import NumberFormat = powerbi.NumberFormat;
-    import ValueType = powerbi.ValueType;
     import NumberRange = powerbi.NumberRange;
     import ValueTypeDescriptor = powerbi.ValueTypeDescriptor;
-    import DateTimeSequence = powerbi.DateTimeSequence;
     import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
 
-    // powerbi.visuals
-    import BaseCreateAxisOptions = powerbi.visuals.CreateAxisOptions;
-    import IAxisProperties = powerbi.visuals.IAxisProperties;
-    import IValueFormatter = powerbi.visuals.IValueFormatter;
-    import valueFormatter = powerbi.visuals.valueFormatter;
-    import axisScale = powerbi.visuals.axisScale;
-    import ValueFormatterOptions = powerbi.visuals.ValueFormatterOptions;
-    import AxisHelper = powerbi.visuals.AxisHelper;
+    // powerbi.extensibility.utils.type
+    import ValueType = powerbi.extensibility.utils.type.ValueType;
+
+    // powerbi.extensibility.utils.formatting
+    import numberFormat = powerbi.extensibility.utils.formatting.numberFormat;
+    import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
+    import IValueFormatter = powerbi.extensibility.utils.formatting.IValueFormatter;
+    import DateTimeSequence = powerbi.extensibility.utils.formatting.DateTimeSequence;
+    import ValueFormatterOptions = powerbi.extensibility.utils.formatting.ValueFormatterOptions;
+
+    // powerbi.extensibility.utils.chart
+    import AxisHelper = powerbi.extensibility.utils.chart.axis;
+    import axisScale = powerbi.extensibility.utils.chart.axis.scale;
+    import IAxisProperties = powerbi.extensibility.utils.chart.axis.IAxisProperties;
+    import BaseCreateAxisOptions = powerbi.extensibility.utils.chart.axis.CreateAxisOptions;
 
     /**
      * HistogramAxisHelper based on AxisHelper.
@@ -325,10 +329,10 @@ module powerbi.extensibility.visual {
         }
 
         export function getMinTickValueInterval(formatString: string, columnType: ValueType, is100Pct?: boolean): number {
-            let isCustomFormat: boolean = formatString && !NumberFormat.isStandardFormat(formatString);
+            let isCustomFormat: boolean = formatString && !numberFormat.isStandardFormat(formatString);
 
             if (isCustomFormat) {
-                let precision: number = NumberFormat.getCustomFormatMetadata(formatString, true).precision;
+                let precision: number = numberFormat.getCustomFormatMetadata(formatString, true).precision;
 
                 if (formatString.indexOf("%") > -1) {
                     precision += 2; // percent values are multiplied by 100 during formatting

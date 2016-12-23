@@ -26,67 +26,75 @@
 
 module powerbi.extensibility.visual {
     // d3
-    import Selection = d3.Selection;
-    import UpdateSelection = d3.selection.Update;
     import SVGAxis = d3.svg.Axis;
-    import LayoutBin = d3.layout.histogram.Bin;
+    import Selection = d3.Selection;
     import LinearScale = d3.scale.Linear;
+    import LayoutBin = d3.layout.histogram.Bin;
+    import UpdateSelection = d3.selection.Update;
     import HistogramLayout = d3.layout.Histogram;
 
-    // jsCommon
-    import PixelConverter = jsCommon.PixelConverter;
-    import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
-    import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
-
     // powerbi
-    import IViewport = powerbi.IViewport;
-
-    import TextProperties = powerbi.TextProperties;
-    import DataView = powerbi.DataView;
     import Fill = powerbi.Fill;
+    import DataView = powerbi.DataView;
+    import IViewport = powerbi.IViewport;
+    import DataViewObjects = powerbi.DataViewObjects;
     import VisualObjectInstance = powerbi.VisualObjectInstance;
     import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
-    import DataViewObjects = powerbi.DataViewObjects;
-    import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
-    import TextMeasurementService = powerbi.TextMeasurementService;
-    import DataViewObjectPropertyIdentifier = powerbi.DataViewObjectPropertyIdentifier;
-    import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
     import DataViewCategoryColumn = powerbi.DataViewCategoryColumn;
+    import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
+    import DataViewObjectPropertyIdentifier = powerbi.DataViewObjectPropertyIdentifier;
+    import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
 
     // powerbi.extensibility
     import IVisual = powerbi.extensibility.IVisual;
 
     // powerbi.extensibility.visual
-    import IVisualHost = powerbi.extensibility.visual.IVisualHost;
-    import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
-    import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
-
     import ISelectionId = powerbi.visuals.ISelectionId;
-    import ValueFormatter = powerbi.visuals.valueFormatter;
-    import IMargin = powerbi.visuals.IMargin;
-    import IValueFormatter = powerbi.visuals.IValueFormatter;
-    import VisualTooltipDataItem = powerbi.visuals.VisualTooltipDataItem;
-    import ColorHelper = powerbi.visuals.ColorHelper;
-    import SVGUtil = powerbi.visuals.SVGUtil;
-    import TooltipManager = powerbi.visuals.TooltipManager;
-    import TooltipEvent = powerbi.visuals.TooltipEvent;
-    import ILabelLayout = powerbi.visuals.ILabelLayout;
-    import dataLabelUtils = powerbi.visuals.dataLabelUtils;
-    import willLabelsFit = powerbi.visuals.AxisHelper.LabelLayoutStrategy.willLabelsFit;
-    import willLabelsWordBreak = powerbi.visuals.AxisHelper.LabelLayoutStrategy.willLabelsWordBreak;
-    import axisScale = powerbi.visuals.axisScale;
-    import valueFormatter = powerbi.visuals.valueFormatter;
-    import IAxisProperties = powerbi.visuals.IAxisProperties;
-    import IInteractiveBehavior = powerbi.visuals.IInteractiveBehavior;
-    import ISelectionHandler = powerbi.visuals.ISelectionHandler;
-    import IInteractivityService = powerbi.visuals.IInteractivityService;
-    import appendClearCatcher = powerbi.visuals.appendClearCatcher;
-    import createInteractivityService = powerbi.visuals.createInteractivityService;
-    import SelectableDataPoint = powerbi.visuals.SelectableDataPoint;
-    import ITooltipService = powerbi.visuals.ITooltipService;
-    import createTooltipService = powerbi.visuals.createTooltipService;
-    import TooltipEventArgs = powerbi.visuals.TooltipEventArgs;
-    import ISize = powerbi.visuals.shapes.ISize;
+    import IVisualHost = powerbi.extensibility.visual.IVisualHost;
+    import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
+    import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
+
+    // powerbi.extensibility.utils.type
+    import PixelConverter = powerbi.extensibility.utils.type.PixelConverter;
+
+    // powerbi.extensibility.utils.svg
+    import IMargin = powerbi.extensibility.utils.svg.IMargin;
+    import ISize = powerbi.extensibility.utils.svg.shapes.ISize;
+    import translate = powerbi.extensibility.utils.svg.translate;
+    import translateAndRotate = powerbi.extensibility.utils.svg.translateAndRotate;
+    import ClassAndSelector = powerbi.extensibility.utils.svg.CssConstants.ClassAndSelector;
+    import createClassAndSelector = powerbi.extensibility.utils.svg.CssConstants.createClassAndSelector;
+
+    // powerbi.extensibility.utils.formatting
+    import ValueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
+    import TextProperties = powerbi.extensibility.utils.formatting.TextProperties;
+    import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
+    import IValueFormatter = powerbi.extensibility.utils.formatting.IValueFormatter;
+    import textMeasurementService = powerbi.extensibility.utils.formatting.textMeasurementService;
+
+    // powerbi.extensibility.utils.color
+    import ColorHelper = powerbi.extensibility.utils.color.ColorHelper;
+
+    // powerbi.extensibility.utils.chart
+    import axisScale = powerbi.extensibility.utils.chart.axis.scale;
+    import dataLabelUtils = powerbi.extensibility.utils.chart.dataLabel.utils;
+    import ILabelLayout = powerbi.extensibility.utils.chart.dataLabel.ILabelLayout;
+    import IAxisProperties = powerbi.extensibility.utils.chart.axis.IAxisProperties;
+    import willLabelsFit = powerbi.extensibility.utils.chart.axis.LabelLayoutStrategy.willLabelsFit;
+    import willLabelsWordBreak = powerbi.extensibility.utils.chart.axis.LabelLayoutStrategy.willLabelsWordBreak;
+
+    // powerbi.extensibility.utils.interactivity
+    import ISelectionHandler = powerbi.extensibility.utils.interactivity.ISelectionHandler;
+    import appendClearCatcher = powerbi.extensibility.utils.interactivity.appendClearCatcher;
+    import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
+    import IInteractiveBehavior = powerbi.extensibility.utils.interactivity.IInteractiveBehavior;
+    import IInteractivityService = powerbi.extensibility.utils.interactivity.IInteractivityService;
+    import createInteractivityService = powerbi.extensibility.utils.interactivity.createInteractivityService;
+
+    // powerbi.extensibility.utils.tooltip
+    import TooltipEventArgs = powerbi.extensibility.utils.tooltip.TooltipEventArgs;
+    import ITooltipServiceWrapper = powerbi.extensibility.utils.tooltip.ITooltipServiceWrapper;
+    import createTooltipServiceWrapper = powerbi.extensibility.utils.tooltip.createTooltipServiceWrapper;
 
     interface HistogramValue {
         value: number;
@@ -197,7 +205,7 @@ module powerbi.extensibility.visual {
         };
 
         private static DefaultTextProperties: TextProperties = {
-            fontFamily: "'Segoe UI', 'wf_segoe-ui_normal', helvetica, arial, sans-serif",
+            fontFamily: "helvetica, arial, sans-serif",
             fontSize: PixelConverter.toString(11) // Note: This value and font-size in histogram.less should be the same.
         };
 
@@ -226,7 +234,7 @@ module powerbi.extensibility.visual {
 
         private dataView: HistogramDataView;
 
-        private tooltipService: ITooltipService;
+        private tooltipServiceWrapper: ITooltipServiceWrapper;
 
         private get columnsSelection(): d3.Selection<HistogramDataPoint> {
             return this.main.select(Histogram.Columns.selector)
@@ -243,7 +251,9 @@ module powerbi.extensibility.visual {
             this.interactivityService = createInteractivityService(this.visualHost);
             this.behavior = HistogramBehavior.create();
 
-            this.tooltipService = createTooltipService(options.host);
+            this.tooltipServiceWrapper = createTooltipServiceWrapper(
+                options.host.tooltipService,
+                options.element);
 
             this.root = d3.select(options.element)
                 .append("svg")
@@ -869,7 +879,7 @@ module powerbi.extensibility.visual {
             const textProperties: TextProperties =
                 Histogram.getTextPropertiesForMeasurement(labelValue, valueFormatter);
 
-            return TextMeasurementService.measureSvgTextWidth(textProperties) + Histogram.AdditionalWidthOfLabel;
+            return textMeasurementService.measureSvgTextWidth(textProperties) + Histogram.AdditionalWidthOfLabel;
         }
 
         private static getHeightOfLabel(
@@ -879,7 +889,7 @@ module powerbi.extensibility.visual {
             const textProperties: TextProperties =
                 Histogram.getTextPropertiesForMeasurement(labelValue, valueFormatter);
 
-            return TextMeasurementService.measureSvgTextHeight(textProperties) + Histogram.AdditionalHeightOfLabel;
+            return textMeasurementService.measureSvgTextHeight(textProperties) + Histogram.AdditionalHeightOfLabel;
         }
 
         private static getTextPropertiesForMeasurement(
@@ -920,7 +930,7 @@ module powerbi.extensibility.visual {
         }
 
         private updateElements(height: number, width: number): void {
-            const transform: string = SVGUtil.translate(
+            const transform: string = translate(
                 Histogram.Margin.left,
                 Histogram.Margin.top);
 
@@ -945,24 +955,24 @@ module powerbi.extensibility.visual {
                         ? Histogram.Margin.left + labelWidth + Histogram.YAxisMargin
                         : Histogram.Margin.left + labelWidth;
 
-            offsetToRightStr = SVGUtil.translate(
+            offsetToRightStr = translate(
                 offsetToRight + Histogram.ColumnAndLabelOffset,
                 Histogram.DefaultPosition);
 
             this.columns.attr("transform", offsetToRightStr);
             this.labelGraphicsContext.attr("transform", offsetToRightStr);
 
-            this.axes.attr("transform", SVGUtil.translate(
+            this.axes.attr("transform", translate(
                 offsetToRight,
                 Histogram.DefaultPosition));
 
-            this.axisY.attr("transform", SVGUtil.translate(
+            this.axisY.attr("transform", translate(
                 this.shouldShowYOnRight()
                     ? this.viewportIn.width
                     : Histogram.DefaultPosition,
                 Histogram.DefaultPosition));
 
-            this.axisX.attr("transform", SVGUtil.translate(
+            this.axisX.attr("transform", translate(
                 Histogram.DefaultPosition,
                 this.viewportIn.height));
         }
@@ -1020,7 +1030,7 @@ module powerbi.extensibility.visual {
         }
 
         private bindTooltipsToSelection(selection: UpdateSelection<any>): void {
-            this.tooltipService.addTooltip(selection, (eventArgs: TooltipEventArgs<HistogramDataPoint>) => {
+            this.tooltipServiceWrapper.addTooltip(selection, (eventArgs: TooltipEventArgs<HistogramDataPoint>) => {
                 return eventArgs.data.tooltipInfo;
             });
         }
@@ -1075,7 +1085,7 @@ module powerbi.extensibility.visual {
         private static getTailoredTextOrDefault(text: string, maxWidth: number): string {
             const textProperties = Histogram.getTextProperties(text);
 
-            return TextMeasurementService.getTailoredTextOrDefault(textProperties, maxWidth);
+            return textMeasurementService.getTailoredTextOrDefault(textProperties, maxWidth);
         }
 
         private static getTextProperties(text: string): TextProperties {
@@ -1187,7 +1197,7 @@ module powerbi.extensibility.visual {
                     dx = size.width / Histogram.DataLabelXOffset;
                     dy = size.height / Histogram.DataLabelYOffset;
 
-                    return SVGUtil.translate(dx, dy);
+                    return translate(dx, dy);
                 });
             }
         }
@@ -1281,7 +1291,7 @@ module powerbi.extensibility.visual {
 
             return [
                 {
-                    transform: SVGUtil.translate(
+                    transform: translate(
                         this.viewport.width / Histogram.MiddleFactor,
                         this.viewport.height),
                     text: Histogram.getTailoredTextOrDefault(
@@ -1290,7 +1300,7 @@ module powerbi.extensibility.visual {
                     dx: Histogram.DefaultXAxisDx,
                     dy: Histogram.DefaultXAxisDy
                 }, {
-                    transform: SVGUtil.translateAndRotate(
+                    transform: translateAndRotate(
                         this.shouldShowYOnRight()
                             ? this.yTitleMargin
                             : Histogram.DefaultPosition,
@@ -1369,13 +1379,13 @@ module powerbi.extensibility.visual {
             axes.willLabelsFit = willLabelsFit(
                 axes,
                 width,
-                TextMeasurementService.measureSvgTextWidth,
+                textMeasurementService.measureSvgTextWidth,
                 textProperties);
 
             // If labels do not fit and we are not scrolling, try word breaking
             axes.willLabelsWordBreak = (!axes.willLabelsFit && !scrollbarVisible) && willLabelsWordBreak(
-                axes, Histogram.Margin, width, TextMeasurementService.measureSvgTextWidth,
-                TextMeasurementService.estimateSvgTextHeight, TextMeasurementService.getTailoredTextOrDefault,
+                axes, Histogram.Margin, width, textMeasurementService.measureSvgTextWidth,
+                textMeasurementService.estimateSvgTextHeight, textMeasurementService.getTailoredTextOrDefault,
                 textProperties);
 
             return axes;

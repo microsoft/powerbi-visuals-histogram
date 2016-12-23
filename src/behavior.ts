@@ -29,11 +29,13 @@ module powerbi.extensibility.visual {
     import Selection = d3.Selection;
 
     // powerbi.visuals
-    import IInteractivityService = powerbi.visuals.IInteractivityService;
-    import IInteractiveBehavior = powerbi.visuals.IInteractiveBehavior;
-    import SelectableDataPoint = powerbi.visuals.SelectableDataPoint;
-    import ISelectionHandler = powerbi.visuals.ISelectionHandler;
     import ISelectionId = powerbi.visuals.ISelectionId;
+
+    // powerbi.extensibility.utils.interactivity
+    import ISelectionHandler = powerbi.extensibility.utils.interactivity.ISelectionHandler;
+    import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
+    import IInteractiveBehavior = powerbi.extensibility.utils.interactivity.IInteractiveBehavior;
+    import IInteractivityService = powerbi.extensibility.utils.interactivity.IInteractivityService;
 
     export interface HistogramBehaviorOptions {
         columns: Selection<HistogramDataPoint>;
