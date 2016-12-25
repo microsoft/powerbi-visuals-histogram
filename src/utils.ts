@@ -28,8 +28,8 @@ module powerbi.extensibility.visual {
     // d3
     import Selection = d3.Selection;
 
-    // powerbi.visuals
-    import IInteractivityService = powerbi.visuals.IInteractivityService;
+    // powerbi.extensibility.utils.interactivity
+    import IInteractivityService = powerbi.extensibility.utils.interactivity.IInteractivityService;
 
     export interface StateOfDataPoint {
         selected: boolean;

@@ -28,11 +28,17 @@ module powerbi.extensibility.visual {
     // d3
     import HistogramBin = d3.layout.histogram.Bin;
 
-    // powerbi.visuals
-    import TooltipEnabledDataPoint = powerbi.visuals.TooltipEnabledDataPoint;
-    import SelectableDataPoint = powerbi.visuals.SelectableDataPoint;
-    import IValueFormatter = powerbi.visuals.IValueFormatter;
-    import ISize = powerbi.visuals.shapes.ISize;
+    // powerbi.extensibility.utils.formatting
+    import IValueFormatter = powerbi.extensibility.utils.formatting.IValueFormatter;
+
+    // powerbi.extensibility.utils.tooltip
+    import TooltipEnabledDataPoint = powerbi.extensibility.utils.tooltip.TooltipEnabledDataPoint;
+
+    // powerbi.extensibility.utils.interactivity
+    import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
+
+    // powerbi.extensibility.utils.svg
+    import ISize = powerbi.extensibility.utils.svg.shapes.ISize;
 
     export interface HistogramSubDataPoint extends SelectableDataPoint {
         highlight?: boolean;
