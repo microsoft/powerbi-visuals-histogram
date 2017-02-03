@@ -32,11 +32,10 @@ module powerbi.extensibility.visual.test {
 
     // Histogram1445664487616
     import VisualClass = powerbi.extensibility.visual.Histogram1445664487616.Histogram;
-    import VisualPlugin = powerbi.visuals.plugins.Histogram1445664487616;
 
     export class HistogramChartBuilder extends VisualBuilderBase<VisualClass> {
         constructor(width: number, height: number) {
-            super(width, height, VisualPlugin.name);
+            super(width, height, "Histogram1445664487616");
         }
 
         protected build(options: VisualConstructorOptions): VisualClass {
