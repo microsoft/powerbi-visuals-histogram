@@ -79,6 +79,21 @@ module powerbi.extensibility.visual.test {
                 });
             });
 
+            it("update with one category", (done) => {
+                dataView.categorical.categories[0].values = [1];
+                dataView.categorical.values = null;
+
+                visualBuilder.updateRenderTimeout(dataView, () => {
+                    const binsNumber: number = d3.layout
+                        .histogram()
+                        .frequency(true)(dataView.categorical.categories[0].values as number[]).length;
+
+                    expect(visualBuilder.mainElement.find(".column").length).toBe(binsNumber);
+
+                    done();
+                });
+            });
+
             it("data labels position validation", (done) => {
                 dataViewBuilder.valuesCategory = [
                     10, 11, 12, 15, 16, 20,
@@ -351,6 +366,7 @@ module powerbi.extensibility.visual.test {
                     visualBuilder.updateFlushAllD3Transitions(dataView);
 
                     expect(visualBuilder.labelTexts).toBeInDOM();
+                    expect(visualBuilder.columnRects.length).toBe(visualBuilder.labelTexts.length);
 
                     (dataView.metadata.objects as any).labels.show = false;
                     visualBuilder.updateFlushAllD3Transitions(dataView);

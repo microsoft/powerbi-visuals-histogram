@@ -1,6 +1,6 @@
 {
   "name": "powerbi-visuals-histogram",
-  "version": "0.3.1",
+  "version": "1.0.1",
   "description": "A histogram chart plots data ranges into intervals. Useful for estimating density.",
   "repository": {
     "type": "git",
@@ -10,8 +10,7 @@
     "powerbi-visuals"
   ],
   "scripts": {
-    "postinstall": "typings install && pbiviz update 1.3.0",
-    "typings": "typings",
+    "postinstall": "pbiviz update 1.6.0",
     "pbiviz": "pbiviz",
     "start": "pbiviz start",
     "package": "pbiviz package",
@@ -29,8 +28,11 @@
   },
   "homepage": "https://github.com/Microsoft/PowerBI-visuals-histogram#readme",
   "devDependencies": {
+    "@types/d3": "3.5.36",
     "@types/jasmine": "2.5.37",
     "@types/jasmine-jquery": "1.5.28",
+    "@types/lodash": "4.14.52",    
+    "@types/jquery": "^2.0.46",
     "coveralls": "2.11.15",
     "jasmine": "2.5.2",
     "jasmine-jquery": "2.1.1",
@@ -44,7 +46,7 @@
     "d3": "3.5.5",
     "jquery": "3.1.1",
     "lodash": "4.16.2",
-    "powerbi-visuals-tools": "1.4.3",
+    "powerbi-visuals-tools": "1.6.4",
     "powerbi-visuals-utils-chartutils": "^0.2.3",
     "powerbi-visuals-utils-colorutils": "^0.2.1",
     "powerbi-visuals-utils-dataviewutils": "^1.0.1",
@@ -54,7 +56,6 @@
     "powerbi-visuals-utils-testutils": "^0.2.2",
     "powerbi-visuals-utils-tooltiputils": "^0.3.0",
     "powerbi-visuals-utils-typeutils": "^0.2.1",
-    "tslint": "3.15.1",
-    "typings": "1.5.0"
+    "tslint": "3.15.1"
   }
 }
