@@ -145,7 +145,7 @@ module powerbi.extensibility.visual {
         private static MinViewportSize: number = 100;
         private static MinViewportInSize: number = 0;
 
-        private static MinAmountOfValues: number = 2;
+        private static MinAmountOfValues: number = 1;
         private static MinAmountOfDataPoints: number = 0;
 
         private static AdditionalWidthOfLabel: number = 3;
@@ -1152,12 +1152,14 @@ module powerbi.extensibility.visual {
                     },
                     y: (dataPoint: HistogramDataPoint) => {
                         let y: number,
-                            dy: number;
+                            dy: number,
+                            delta: number;
 
                         y = yScale(dataPoint.y);
                         dy = dataPoint.size.height;
+                        delta = y - dy;
 
-                        return y - dy;
+                        return delta < 0 ? y + dy / 2 : delta;
                     }
                 },
                 filter: (dataPoint: HistogramDataPoint) => {
