@@ -55,15 +55,18 @@
     "objects": {
         "general": {
             "displayName": "General",
+            "displayNameKey": "Visual_General",
             "properties": {
                 "bins": {
                     "displayName": "Bins",
+                    "displayNameKey": "Visual_General_Bins",
                     "type": {
                         "numeric": true
                     }
                 },
                 "frequency": {
                     "displayName": "Frequency",
+                    "displayNameKey": "Visual_General_Frequency",
                     "type": {
                         "bool": true
                     }
@@ -71,10 +74,12 @@
             }
         },
         "dataPoint": {
-            "displayName": "Data colors",
+            "displayName": "Data colors",            
+            "displayNameKey": "Visual_DataColors",
             "properties": {
                 "fill": {
                     "displayName": "Fill",
+                    "displayNameKey": "Visual_Fill",
                     "type": {
                         "fill": {
                             "solid": {
@@ -87,15 +92,18 @@
         },
         "xAxis": {
             "displayName": "X-Axis",
+            "displayNameKey": "Visual_XAxis",
             "properties": {
                 "show": {
                     "displayName": "Show",
+                    "displayNameKey": "Visual_Show",
                     "type": {
                         "bool": true
                     }
                 },
                 "axisColor": {
                     "displayName": "Color",
+                    "displayNameKey": "Visual_Color",
                     "type": {
                         "fill": {
                             "solid": {
@@ -106,12 +114,14 @@
                 },
                 "title": {
                     "displayName": "Title",
+                    "displayNameKey": "Visual_Title",
                     "type": {
                         "bool": true
                     }
                 },
                 "displayUnits": {
                     "displayName": "Display Units",
+                    "displayNameKey": "Visual_DisplayUnits",
                     "type": {
                         "formatting": {
                             "labelDisplayUnits": true
@@ -120,25 +130,30 @@
                 },
                 "precision": {
                     "displayName": "Decimal Places",
+                    "displayNameKey": "Visual_Precision",
                     "type": {
                         "numeric": true
                     }
                 },
                 "style": {
                     "displayName": "Style",
+                    "displayNameKey": "Visual_Style",
                     "type": {
                         "enumeration": [
                             {
                                 "value": "showTitleOnly",
-                                "displayName": "Show title only"
+                                "displayName": "Show title only",
+                                "displayNameKey": "Visual_Style_ShowTitleOnly"
                             },
                             {
                                 "value": "showUnitOnly",
-                                "displayName": "Show unit only"
+                                "displayName": "Show unit only",
+                                "displayNameKey": "Visual_Style_ShowUnitOnly"
                             },
                             {
                                 "value": "showBoth",
-                                "displayName": "Show both"
+                                "displayName": "Show both",
+                                "displayNameKey": "Visual_Style_ShowBoth"
                             }
                         ]
                     }
@@ -147,15 +162,18 @@
         },
         "yAxis": {
             "displayName": "Y-Axis",
+            "displayNameKey": "Visual_YAxis",
             "properties": {
                 "show": {
                     "displayName": "Show",
+                    "displayNameKey": "Visual_Show",
                     "type": {
                         "bool": true
                     }
                 },
                 "axisColor": {
                     "displayName": "Color",
+                    "displayNameKey": "Visual_Color",
                     "type": {
                         "fill": {
                             "solid": {
@@ -166,12 +184,14 @@
                 },
                 "title": {
                     "displayName": "Title",
+                    "displayNameKey": "Visual_Title",
                     "type": {
                         "bool": true
                     }
                 },
                 "displayUnits": {
                     "displayName": "Display Units",
+                    "displayNameKey": "Visual_DisplayUnits",
                     "type": {
                         "formatting": {
                             "labelDisplayUnits": true
@@ -180,31 +200,37 @@
                 },
                 "precision": {
                     "displayName": "Decimal Places",
+                    "displayNameKey": "Visual_Precision",
                     "type": {
                         "numeric": true
                     }
                 },
                 "style": {
                     "displayName": "Style",
+                    "displayNameKey": "Visual_Style",
                     "type": {
                         "enumeration": [
                             {
                                 "value": "showTitleOnly",
-                                "displayName": "Show title only"
+                                "displayName": "Show title only",
+                                "displayNameKey": "Visual_Style_ShowTitleOnly"
                             },
                             {
                                 "value": "showUnitOnly",
-                                "displayName": "Show unit only"
+                                "displayName": "Show unit only",
+                                "displayNameKey": "Visual_Style_ShowUnitOnly"
                             },
                             {
                                 "value": "showBoth",
-                                "displayName": "Show both"
+                                "displayName": "Show both",
+                                "displayNameKey": "Visual_Style_ShowBoth"
                             }
                         ]
                     }
                 },
                 "start": {
                     "displayName": "Start",
+                    "displayNameKey": "Visual_YAxis_Start",
                     "type": {
                         "numeric": true
                     },
@@ -213,6 +239,7 @@
                 },
                 "end": {
                     "displayName": "End",
+                    "displayNameKey": "Visual_YAxis_End",
                     "type": {
                         "numeric": true
                     },
@@ -221,15 +248,18 @@
                 },
                 "position": {
                     "displayName": "Position",
+                    "displayNameKey": "Visual_Position",
                     "type": {
                         "enumeration": [
                             {
                                 "value": "Left",
-                                "displayName": "Left"
+                                "displayName": "Left",
+                                "displayNameKey": "Visual_Position_Left"
                             },
                             {
                                 "value": "Right",
-                                "displayName": "Right"
+                                "displayName": "Right",
+                                "displayNameKey": "Visual_Position_Right"
                             }
                         ]
                     }
@@ -238,15 +268,18 @@
         },
         "labels": {
             "displayName": "Data Labels",
+            "displayNameKey": "Visual_DataLabels",
             "properties": {
                 "show": {
                     "displayName": "Show",
+                    "displayNameKey": "Visual_Show",
                     "type": {
                         "bool": true
                     }
                 },
                 "color": {
                     "displayName": "Color",
+                    "displayNameKey": "Visual_Color",
                     "type": {
                         "fill": {
                             "solid": {
@@ -257,6 +290,7 @@
                 },
                 "displayUnits": {
                     "displayName": "Display Units",
+                    "displayNameKey": "Visual_DisplayUnits",
                     "type": {
                         "formatting": {
                             "labelDisplayUnits": true
@@ -266,6 +300,7 @@
                 },
                 "precision": {
                     "displayName": "Decimal Places",
+                    "displayNameKey": "Visual_Precision",
                     "type": {
                         "numeric": true
                     },
@@ -273,6 +308,7 @@
                 },
                 "fontSize": {
                     "displayName": "Text Size",
+                    "displayNameKey": "Visual_TextSize",
                     "type": {
                         "formatting": {
                             "fontSize": true
