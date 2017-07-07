@@ -1,7 +1,6 @@
 {
     "Visual_General": "General",
     "Visual_General_Bins": "Bins",
-    "Visual_General_Frequency": "Frequency",
     "Visual_DataColors": "Data colors",
     "Visual_DataColors_Fill": "Fill",
     "Visual_XAxis": "X-Axis",
@@ -21,5 +20,7 @@
     "Visual_Position_Left": "Left",
     "Visual_Position_Right": "Right",
     "Visual_DataLabels": "Data Labels",
-    "Visual_TextSize": "Text Size"
+    "Visual_TextSize": "Text Size",
+    "Visual_Values": "Values",
+    "Visual_Frequency": "Frequency"
 }
