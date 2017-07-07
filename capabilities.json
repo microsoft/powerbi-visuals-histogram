@@ -3,12 +3,14 @@
         {
             "name": "Values",
             "kind": "Grouping",
-            "displayName": "Values"
+            "displayName": "Values",
+            "displayNameKey": "Visual_Values"
         },
         {
             "name": "Frequency",
             "kind": "Measure",
-            "displayName": "Frequency"
+            "displayName": "Frequency",
+            "displayNameKey": "Visual_Frequency"
         }
     ],
     "dataViewMappings": [
@@ -66,7 +68,7 @@
                 },
                 "frequency": {
                     "displayName": "Frequency",
-                    "displayNameKey": "Visual_General_Frequency",
+                    "displayNameKey": "Visual_Frequency",
                     "type": {
                         "bool": true
                     }
