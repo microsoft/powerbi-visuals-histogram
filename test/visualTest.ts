@@ -549,6 +549,10 @@ module powerbi.extensibility.visual.test {
                     checkStateOfDataPoint(true, true);
                 });
 
+                it("method should return { selected: true, highlight: false } when the dataPoint is selected", () => {
+                    checkStateOfDataPoint(true, false);
+                });
+
                 function checkStateOfDataPoint(selected: boolean, highlight: boolean): void {
                     let dataPoint: HistogramDataPoint = createDataPoint(selected, highlight),
                         stateOfDataPoint: StateOfDataPoint;
