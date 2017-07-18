@@ -1410,7 +1410,7 @@ module powerbi.extensibility.visual {
                 isVertical: false,
                 useTickIntervalForDisplayUnits: true,
                 isCategoryAxis: true,
-                getValueFn: (index, type) => index,
+                getValueFn: (index, valueType) => index,
                 scaleType: categoryAxisScaleType,
                 innerPaddingRatio: innerPaddingRatio,
                 minOrdinalRectThickness: minOrdinalRectThickness,

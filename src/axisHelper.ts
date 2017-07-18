@@ -124,7 +124,7 @@ module powerbi.extensibility.visual {
                 isScalar: boolean = !!options.isScalar,
                 isVertical: boolean = !!options.isVertical,
                 useTickIntervalForDisplayUnits: boolean = !!options.useTickIntervalForDisplayUnits,
-                getValueFn: (index: number, type: ValueType) => any = options.getValueFn,
+                getValueFn: (index: number, valueType: ValueType) => any = options.getValueFn,
                 categoryThickness: number = options.categoryThickness,
                 axisDisplayUnits: number = options.axisDisplayUnits,
                 axisPrecision: number = options.axisPrecision,
@@ -358,7 +358,7 @@ module powerbi.extensibility.visual {
             tickValues: any[],
             formatter: IValueFormatter,
             dataType: ValueType,
-            getValueFn?: (index: number, type: ValueType) => any): any[] {
+            getValueFn?: (index: number, valueType: ValueType) => any): any[] {
 
             let formattedTickValues: any[] = [];
 
@@ -386,8 +386,8 @@ module powerbi.extensibility.visual {
                 || (domain[0] < 0 && domain[1] < 0); // doman must exclude 0
         }
 
-        export function isDateTime(type: ValueTypeDescriptor): boolean {
-            return !!(type && type.dateTime);
+        export function isDateTime(descriptor: ValueTypeDescriptor): boolean {
+            return !!(descriptor && descriptor.dateTime);
         }
 
         export function getRecommendedTickValues(
@@ -797,18 +797,18 @@ module powerbi.extensibility.visual {
             return RecommendedNumberOfTicksLarge;
         }
 
-        export function isOrdinal(type: ValueTypeDescriptor): boolean {
-            return !!(type
-                && (type.text
-                    || type.bool
-                    || (type.misc && type.misc.barcode)
-                    || (type.geography && type.geography.postalCode)));
+        export function isOrdinal(descriptor: ValueTypeDescriptor): boolean {
+            return !!(descriptor
+                && (descriptor.text
+                    || descriptor.bool
+                    || (descriptor.misc && descriptor.misc.barcode)
+                    || (descriptor.geography && descriptor.geography.postalCode)));
         }
 
         /**
          * Get the best number of ticks based on minimum value, maximum value,
          * measure metadata and max tick count.
-         * 
+         *
          * @param min The minimum of the data domain.
          * @param max The maximum of the data domain.
          * @param valuesMetadata The measure metadata array.
@@ -869,12 +869,12 @@ module powerbi.extensibility.visual {
             return false;
         }
 
-        /** 
+        /**
          * Round out very small zero tick values (e.g. -1e-33 becomes 0).
-         * 
+         *
          * @param ticks Array of numbers (from d3.scale.ticks([maxTicks])).
          * @param epsilon Max ratio of calculated tick interval which we will recognize as zero.
-         * 
+         *
          * e.g.
          *     ticks = [-2, -1, 1e-10, 3, 4]; epsilon = 1e-5;
          *     closeZero = 1e-5 * | 2 - 1 | = 1e-5
