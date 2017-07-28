@@ -11,4 +11,4 @@ The data is grouped into bins, that is, divide the entire range of values into a
 
 Customize the number of bins, whether to use frequency or density, and the data colors.
 
-See also [Histogramm chart at Microsoft Office store](https://store.office.com/en-us/app.aspx?assetid=WA104380776&sourcecorrid=e26ecce9-0b9e-47f4-9c7a-a023465dafdc&searchapppos=0&ui=en-US&rs=en-US&ad=US&appredirect=false)
+See also [Histogram chart at Microsoft Office store](https://store.office.com/en-us/app.aspx?assetid=WA104380776&sourcecorrid=e26ecce9-0b9e-47f4-9c7a-a023465dafdc&searchapppos=0&ui=en-US&rs=en-US&ad=US&appredirect=false)
