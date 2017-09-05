@@ -16,6 +16,8 @@
 	"Visual_YAxis": "Y-Axis",
 	"Visual_YAxis_Start": "Start",
 	"Visual_YAxis_End": "End",
+    "Visual_XAxis_Start": "Start",
+	"Visual_XAxis_End": "End",
 	"Visual_Position": "Position",
 	"Visual_Position_Left": "Left",
 	"Visual_Position_Right": "Right",

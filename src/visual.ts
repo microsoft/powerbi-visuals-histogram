@@ -321,6 +321,7 @@ module powerbi.extensibility.visual {
                 yLegendSize: number,
                 borderValues: HistogramBorderValues,
                 yAxisSettings: HistogramYAxisSettings,
+                xAxisSettings: HistogramXAxisSettings,
                 sourceValues: number[] = categoryColumn.values as number[];
 
             settings = Histogram.parseSettings(dataView);
@@ -381,18 +382,27 @@ module powerbi.extensibility.visual {
 
             borderValues = Histogram.getBorderValues(bins);
 
+            // min-max for Y axis
             yAxisSettings = settings.yAxis;
-
             let maxYvalue: number = (yAxisSettings.end !== null) && (yAxisSettings.end > yAxisSettings.start)
                 ? yAxisSettings.end
                 : borderValues.maxY;
-
             let minYValue: number = yAxisSettings.start < maxYvalue
                 ? yAxisSettings.start
                 : 0;
-
             settings.yAxis.start = Histogram.getCorrectXAxisValue(minYValue);
             settings.yAxis.end = Histogram.getCorrectXAxisValue(maxYvalue);
+
+            // min-max for X axis
+            xAxisSettings = settings.xAxis;
+            let maxXvalue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > xAxisSettings.start)
+            ? xAxisSettings.end
+            : borderValues.maxX;
+            let minXValue: number = xAxisSettings.start < maxXvalue
+            ? xAxisSettings.start
+            : 0;
+            settings.xAxis.start = Histogram.getCorrectXAxisValue(minXValue);
+            settings.xAxis.end = Histogram.getCorrectXAxisValue(maxXvalue);
 
             if (values.length >= Histogram.MinAmountOfValues) {
                 valueFormatter = ValueFormatter.create({
@@ -706,6 +716,9 @@ module powerbi.extensibility.visual {
         }
 
         public update(options: VisualUpdateOptions): void {
+            let borderValues: HistogramBorderValues,
+            xAxisSettings: HistogramXAxisSettings;
+
             if (!options
                 || !options.dataViews
                 || !options.dataViews[0]) {
@@ -721,6 +734,9 @@ module powerbi.extensibility.visual {
                 dataView,
                 this.visualHost);
 
+                borderValues = this.dataView.borderValues;
+                xAxisSettings = this.dataView.settings.xAxis;
+
             if (!this.isDataValid(this.dataView)) {
                 this.clear();
 
@@ -733,13 +749,19 @@ module powerbi.extensibility.visual {
 
             this.columsAndAxesTransform(maxWidthOfVerticalAxisLabel);
 
-            this.updateWidthOfColumn();
+            this.updateWidthOfColumn(false);
 
             this.createScales();
 
             this.applySelectionStateToData();
 
             this.render();
+
+            // The second rendering is necessary to calculate the width of rendered columns area and make correction of bins width
+            if (borderValues.maxX !== xAxisSettings.end) {
+                this.updateWidthOfColumn(true);
+                this.render();
+            }
         }
 
         private updateAxes(dataView: DataView): number {
@@ -798,12 +820,12 @@ module powerbi.extensibility.visual {
 
         private createScales(): void {
             const yAxisSettings: HistogramYAxisSettings = this.dataView.settings.yAxis,
-                borderValues: HistogramBorderValues = this.dataView.borderValues;
+                xAxisSettings: HistogramXAxisSettings = this.dataView.settings.xAxis;
 
             this.dataView.xScale = d3.scale.linear()
                 .domain([
-                    borderValues.minX,
-                    borderValues.maxX
+                    xAxisSettings.start,
+                    xAxisSettings.end
                 ])
                 .range([
                     0,
@@ -837,12 +859,14 @@ module powerbi.extensibility.visual {
             };
         }
 
-        private updateWidthOfColumn(): void {
+        private updateWidthOfColumn(makeCorrection: boolean): void {
             let countOfValues: number = this.dataView.dataPoints.length,
-                widthOfColumn: number;
+                widthOfColumn: number,
+                columnsRect: any = d3.selectAll("g")[0].filter(function(d: any) { return d.classList.contains("columns"); })[0] as any,
+                columnsWidth: number = columnsRect.getBoundingClientRect().width;
 
             widthOfColumn = countOfValues
-                ? this.viewportIn.width / countOfValues - Histogram.ColumnPadding
+                ? (makeCorrection ? columnsWidth : this.viewportIn.width) / countOfValues - Histogram.ColumnPadding
                 : Histogram.MinViewportInSize;
 
             this.widthOfColumn = Math.max(widthOfColumn, Histogram.MinViewportInSize);
@@ -1369,10 +1393,11 @@ module powerbi.extensibility.visual {
             scrollbarVisible: boolean): IAxisProperties {
 
             let axes: IAxisProperties,
-                width: number = this.viewportIn.width;
+                width: number = this.viewportIn.width,
+                xAxisSettings: HistogramXAxisSettings = this.dataView.settings.xAxis;
 
             axes = this.calculateXAxesProperties(
-                Histogram.rangesToArray(this.dataView.dataPoints),
+                [xAxisSettings.start, xAxisSettings.end],
                 axisScale.linear,
                 source,
                 Histogram.InnerPaddingRatio,

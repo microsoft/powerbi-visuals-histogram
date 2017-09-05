@@ -39,7 +39,7 @@ module powerbi.extensibility.visual {
     export class HistogramGeneralSettings {
         public static DefaultBins: number = null;
         public static MinNumberOfBins: number = 0;
-        public static MaxNumberOfBins: number = 100;
+        public static MaxNumberOfBins: number = 5000;
 
         /**
          * Please note that this property isn't enumerated in capabilities.json.
@@ -70,7 +70,10 @@ module powerbi.extensibility.visual {
         public style: HistogramAxisStyle = HistogramAxisStyle.showTitleOnly;
     }
 
-    export class HistogramXAxisSettings extends HistogramAxisSettings { }
+    export class HistogramXAxisSettings extends HistogramAxisSettings {
+        public start: number = 0;
+        public end: number = null;
+    }
 
     export class HistogramYAxisSettings extends HistogramAxisSettings {
         public start: number = 0;
