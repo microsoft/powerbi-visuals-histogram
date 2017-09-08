@@ -150,7 +150,6 @@ module powerbi.extensibility.visual {
 
         private static MinViewportSize: number = 100;
         private static MinViewportInSize: number = 0;
-        private static PointMarkSize: number = 1;
 
         private static MinAmountOfValues: number = 1;
         private static MinAmountOfDataPoints: number = 0;
@@ -726,8 +725,7 @@ module powerbi.extensibility.visual {
 
         public update(options: VisualUpdateOptions): void {
             let borderValues: HistogramBorderValues,
-            xAxisSettings: HistogramXAxisSettings,
-            isXaxisBordersOverriden: boolean;
+            xAxisSettings: HistogramXAxisSettings;
 
             if (!options
                 || !options.dataViews
@@ -746,7 +744,6 @@ module powerbi.extensibility.visual {
 
             borderValues = this.dataView.borderValues;
             xAxisSettings = this.dataView.settings.xAxis;
-            isXaxisBordersOverriden = borderValues.maxX !== xAxisSettings.end || borderValues.minX !== xAxisSettings.start;
 
             if (!this.isDataValid(this.dataView)) {
                 this.clear();
@@ -760,19 +757,11 @@ module powerbi.extensibility.visual {
 
             this.columsAndAxesTransform(maxWidthOfVerticalAxisLabel);
 
-            this.updateWidthOfColumn(isXaxisBordersOverriden ? UpdateColumnsWidthMode.markOnly : UpdateColumnsWidthMode.standardCalculation);
-
             this.createScales();
 
             this.applySelectionStateToData();
 
             this.render();
-
-            // The second rendering is necessary to calculate the width of rendered columns with counting of offset (when start and end x axis is set)
-            if (isXaxisBordersOverriden) {
-                this.updateWidthOfColumn(UpdateColumnsWidthMode.calculatePointsDiff);
-                this.render();
-            }
         }
 
         private updateAxes(dataView: DataView): number {
@@ -874,60 +863,10 @@ module powerbi.extensibility.visual {
         private updateWidthOfColumn(updateMode: UpdateColumnsWidthMode): void {
             let countOfValues: number = this.dataView.dataPoints.length,
                 widthOfColumn: number,
-                columnsRect: any,
-                xAxisTicks: any,
-                leftBorderOffset,
-                rightBorderOffset,
                 borderValues: HistogramBorderValues = this.dataView.borderValues,
-                minX: string,
-                maxX: string,
-                minXOffset: number,
-                maxXOffset: number;
+                firstDataPoint: number = this.dataView.xCorrectedMin ? this.dataView.xCorrectedMin : borderValues.minX;
 
-            switch (updateMode) {
-                case UpdateColumnsWidthMode.markOnly :
-                    widthOfColumn = Histogram.PointMarkSize;
-                break;
-                case UpdateColumnsWidthMode.standardCalculation :
-                    widthOfColumn = countOfValues ? (this.viewportIn.width / countOfValues - Histogram.ColumnPadding) : Histogram.MinViewportInSize;
-                break;
-                case UpdateColumnsWidthMode.calculatePointsDiff :
-                default :
-                    // If number of points (bins) is 1, it means that we need to calculate difference between borders (else case)
-                    if (countOfValues && countOfValues > 1) {
-                        columnsRect = d3.selectAll("g")[0].filter(function(d: any) { return d.classList.contains("columns"); })[0] as any;
-                        widthOfColumn = columnsRect.children[1].attributes.x.value - columnsRect.children[0].attributes.x.value - Histogram.ColumnPadding;
-                    }
-                    else {
-                        // Find border ticks positions and their offsets to solve issue with 1 bin width
-                        xAxisTicks = $("g.xAxis g.tick text");
-
-                        if (xAxisTicks) {
-
-                            minX = this.dataView.xLabelFormatter.format(borderValues.minX);
-                            maxX = this.dataView.xLabelFormatter.format(borderValues.maxX);
-
-                            xAxisTicks.each(function(index) {
-                                let jTick: any = $(this);
-                                let tickVal: string = jTick.text();
-
-                                if (tickVal === minX) {
-                                    minXOffset = jTick.offset().left;
-                                }
-
-                                if (tickVal === maxX) {
-                                    maxXOffset = jTick.offset().left;
-                                }
-                            });
-
-                            if (minXOffset && maxXOffset) {
-                                widthOfColumn = maxXOffset - minXOffset;
-                            } else {
-                                widthOfColumn = Histogram.PointMarkSize;
-                            }
-                        }
-                    }
-                }
+            widthOfColumn = countOfValues ? this.dataView.xScale(firstDataPoint + this.dataView.dataPoints[0].dx) - Histogram.ColumnPadding : Histogram.MinViewportInSize;
 
             this.widthOfColumn = Math.max(widthOfColumn, Histogram.MinViewportInSize);
         }
@@ -1085,6 +1024,9 @@ module powerbi.extensibility.visual {
                 .enter()
                 .append("svg:rect")
                 .classed(Histogram.Column.class, true);
+
+            // We can operate by xScale inside this function only when scale was created
+            this.updateWidthOfColumn(UpdateColumnsWidthMode.standardCalculation);
 
             updateColumnsSelection
                 .attr({
@@ -1446,18 +1388,43 @@ module powerbi.extensibility.visual {
             this.root = null;
         }
 
-        private findDatPointCloserToInterval(
-            findMax: boolean,
-            limit: number,
-            settingVal: number,
+        /// Using in case when xAxis end (set in options) is lesser than calculated border max.
+        /// This function detect the closest point to xAxis end (set in options).
+        /// Each iteration tries to shift border limit left corresponding to interval
+        /// and be closer to xAxis end at the same time.
+        private findBorderMaxCloserToXAxisEnd(
+            currentBorderMax: number,
+            xAxisEnd: number,
             interval: number
         ): number {
-            while (findMax ? limit > settingVal && settingVal <= limit - interval : limit < settingVal && settingVal >= limit + interval) {
-                if (findMax) limit -= interval;
-                else limit += interval;
+            while (currentBorderMax > xAxisEnd && xAxisEnd <= currentBorderMax - interval) {
+                currentBorderMax -= interval;
             }
 
-            return limit;
+            return this.formatXlabelsForFiltering(currentBorderMax);
+        }
+
+        /// Using in case when xAxis start (set in options) is greater than calculated border min.
+        /// This function detect the closest point to xAxis start (set in options).
+        /// Each iteration tries to shift border limit right corresponding to interval
+        /// and be closer to xAxis start at the same time.
+        private findBorderMinCloserToXAxisStart(
+            currentBorderMin: number,
+            xAxisStart: number,
+            interval: number
+        ): number {
+            while (currentBorderMin < xAxisStart && xAxisStart >= currentBorderMin + interval) {
+                currentBorderMin += interval;
+            }
+
+            return this.formatXlabelsForFiltering(currentBorderMin);
+        }
+
+        private formatXlabelsForFiltering(
+            nonFormattedPoint: number
+        ): number {
+            let formattedPoint: string = this.dataView.xLabelFormatter.format(nonFormattedPoint);
+            return parseFloat(formattedPoint);
         }
 
         private calculateXAxes(
@@ -1475,7 +1442,7 @@ module powerbi.extensibility.visual {
                 tmpStart: number,
                 tmpEnd: number,
                 tmpArr: number[],
-                tmpNewPoint: number;
+                closerLimit: number;
 
             xPoints = Histogram.rangesToArray(this.dataView.dataPoints);
 
@@ -1485,7 +1452,8 @@ module powerbi.extensibility.visual {
 
                 // If start point is greater than min border, it is necessary to remove non-using data points
                 if (xAxisSettings.start > borderValues.minX) {
-                    xPoints = xPoints.filter(dpv => dpv >= this.findDatPointCloserToInterval(false, borderValues.minX, xAxisSettings.start, interval));
+                    closerLimit = this.findBorderMinCloserToXAxisStart(borderValues.minX, xAxisSettings.start, interval);
+                    xPoints = xPoints.filter(dpv => this.formatXlabelsForFiltering(dpv) >= closerLimit);
                     this.dataView.xCorrectedMin = xPoints && xPoints.length > 0 ? xPoints[0] : null;
                 }
                 else {
@@ -1503,7 +1471,8 @@ module powerbi.extensibility.visual {
 
                 // If end point is lesser than max border, it is necessary to remove non-using data points
                 if (xAxisSettings.end < borderValues.maxX) {
-                    xPoints = xPoints.filter(dpv => dpv <= this.findDatPointCloserToInterval(true, borderValues.maxX, xAxisSettings.end, interval));
+                    closerLimit = this.findBorderMaxCloserToXAxisEnd(borderValues.maxX, xAxisSettings.end, interval);
+                    xPoints = xPoints.filter(dpv => this.formatXlabelsForFiltering(dpv) <= closerLimit);
                     this.dataView.xCorrectedMax = xPoints && xPoints.length > 0 ? xPoints[xPoints.length - 1] : null;
                 }
                 else {

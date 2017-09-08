@@ -302,6 +302,33 @@ module powerbi.extensibility.visual.test {
                 expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(12.33);
             });
 
+            it("X-axis end is lesser than max and bins=6 and periodic number case", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        end: 13
+                    },
+                    general: {
+                        bins: 6
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.xAxisTicks.length).toBe(6);
+                expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
+                expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(13.17);
+            });
+
             it("X-axis start is greater than max", () => {
                 dataViewBuilder.valuesCategory = [
                     9, 10, 11, 12, 13, 14
