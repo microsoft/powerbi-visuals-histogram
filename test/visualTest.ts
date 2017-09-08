@@ -196,7 +196,7 @@ module powerbi.extensibility.visual.test {
                 dataView = dataViewBuilder.getDataView();
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
-                
+
                 expect(visualBuilder.xAxisTicks.length).toBe(5);
                 expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
             });
@@ -219,7 +219,7 @@ module powerbi.extensibility.visual.test {
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
-                
+
                 expect(visualBuilder.xAxisTicks.length).toBe(8);
                 expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(5.25);
             });
@@ -245,7 +245,7 @@ module powerbi.extensibility.visual.test {
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
-                
+
                 expect(visualBuilder.xAxisTicks.length).toBe(13);
                 expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(17.57);
             });
@@ -271,7 +271,7 @@ module powerbi.extensibility.visual.test {
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
-                
+
                 expect(visualBuilder.xAxisTicks.length).toBe(7);
                 expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9.71);
             });
@@ -297,7 +297,7 @@ module powerbi.extensibility.visual.test {
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
-                
+
                 expect(visualBuilder.xAxisTicks.length).toBe(9);
                 expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(12.33);
             });
@@ -320,7 +320,7 @@ module powerbi.extensibility.visual.test {
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
-                
+
                 expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
             });
 
@@ -342,7 +342,7 @@ module powerbi.extensibility.visual.test {
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
-                
+
                 expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(14);
             });
 
@@ -365,7 +365,7 @@ module powerbi.extensibility.visual.test {
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
-                
+
                 expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(7.75);
                 expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(14);
             });
@@ -389,7 +389,7 @@ module powerbi.extensibility.visual.test {
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
-                
+
                 expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
                 expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(16.5);
             });
