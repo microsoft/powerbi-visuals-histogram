@@ -71,7 +71,7 @@ module powerbi.extensibility.visual {
     }
 
     export class HistogramXAxisSettings extends HistogramAxisSettings {
-        public start: number = 0;
+        public start: number = null;
         public end: number = null;
     }
 

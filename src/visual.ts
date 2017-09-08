@@ -114,6 +114,12 @@ module powerbi.extensibility.visual {
         right: string;
     }
 
+    enum UpdateColumnsWidthMode {
+        markOnly = "markOnly" as any,
+        calculatePointsDiff = "calculatePointsDiff" as any,
+        standardCalculation = "standardCalculation" as any
+    }
+
     export class Histogram implements IVisual {
         private static ClassName: string = "histogram";
         private static FrequencyText: string = "Frequency";
@@ -144,6 +150,7 @@ module powerbi.extensibility.visual {
 
         private static MinViewportSize: number = 100;
         private static MinViewportInSize: number = 0;
+        private static PointMarkSize: number = 1;
 
         private static MinAmountOfValues: number = 1;
         private static MinAmountOfDataPoints: number = 0;
@@ -395,12 +402,12 @@ module powerbi.extensibility.visual {
 
             // min-max for X axis
             xAxisSettings = settings.xAxis;
-            let maxXvalue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > xAxisSettings.start)
+            let maxXvalue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > borderValues.minX)
             ? xAxisSettings.end
             : borderValues.maxX;
-            let minXValue: number = xAxisSettings.start < maxXvalue
+            let minXValue: number = (xAxisSettings.start !== null) && xAxisSettings.start < maxXvalue
             ? xAxisSettings.start
-            : 0;
+            : borderValues.minX;
             settings.xAxis.start = Histogram.getCorrectXAxisValue(minXValue);
             settings.xAxis.end = Histogram.getCorrectXAxisValue(maxXvalue);
 
@@ -441,7 +448,9 @@ module powerbi.extensibility.visual {
                 yLabelFormatter,
                 xLegendSize,
                 yLegendSize,
-                formatter: valueFormatter
+                formatter: valueFormatter,
+                xCorrectedMin: null,
+                xCorrectedMax: null
             };
         }
 
@@ -717,7 +726,8 @@ module powerbi.extensibility.visual {
 
         public update(options: VisualUpdateOptions): void {
             let borderValues: HistogramBorderValues,
-            xAxisSettings: HistogramXAxisSettings;
+            xAxisSettings: HistogramXAxisSettings,
+            isXaxisBordersOverriden: boolean;
 
             if (!options
                 || !options.dataViews
@@ -734,8 +744,9 @@ module powerbi.extensibility.visual {
                 dataView,
                 this.visualHost);
 
-                borderValues = this.dataView.borderValues;
-                xAxisSettings = this.dataView.settings.xAxis;
+            borderValues = this.dataView.borderValues;
+            xAxisSettings = this.dataView.settings.xAxis;
+            isXaxisBordersOverriden = borderValues.maxX !== xAxisSettings.end || borderValues.minX !== xAxisSettings.start;
 
             if (!this.isDataValid(this.dataView)) {
                 this.clear();
@@ -749,7 +760,7 @@ module powerbi.extensibility.visual {
 
             this.columsAndAxesTransform(maxWidthOfVerticalAxisLabel);
 
-            this.updateWidthOfColumn(false);
+            this.updateWidthOfColumn(isXaxisBordersOverriden ? UpdateColumnsWidthMode.markOnly : UpdateColumnsWidthMode.standardCalculation);
 
             this.createScales();
 
@@ -757,9 +768,9 @@ module powerbi.extensibility.visual {
 
             this.render();
 
-            // The second rendering is necessary to calculate the width of rendered columns area and make correction of bins width
-            if (borderValues.maxX !== xAxisSettings.end) {
-                this.updateWidthOfColumn(true);
+            // The second rendering is necessary to calculate the width of rendered columns with counting of offset (when start and end x axis is set)
+            if (isXaxisBordersOverriden) {
+                this.updateWidthOfColumn(UpdateColumnsWidthMode.calculatePointsDiff);
                 this.render();
             }
         }
@@ -820,12 +831,13 @@ module powerbi.extensibility.visual {
 
         private createScales(): void {
             const yAxisSettings: HistogramYAxisSettings = this.dataView.settings.yAxis,
-                xAxisSettings: HistogramXAxisSettings = this.dataView.settings.xAxis;
+                xAxisSettings: HistogramXAxisSettings = this.dataView.settings.xAxis,
+                borderValues: HistogramBorderValues = this.dataView.borderValues;
 
             this.dataView.xScale = d3.scale.linear()
                 .domain([
-                    xAxisSettings.start,
-                    xAxisSettings.end
+                    this.dataView.xCorrectedMin !== null ? this.dataView.xCorrectedMin : xAxisSettings.start,
+                    this.dataView.xCorrectedMax !== null ? this.dataView.xCorrectedMax : xAxisSettings.end
                 ])
                 .range([
                     0,
@@ -859,15 +871,63 @@ module powerbi.extensibility.visual {
             };
         }
 
-        private updateWidthOfColumn(makeCorrection: boolean): void {
+        private updateWidthOfColumn(updateMode: UpdateColumnsWidthMode): void {
             let countOfValues: number = this.dataView.dataPoints.length,
                 widthOfColumn: number,
-                columnsRect: any = d3.selectAll("g")[0].filter(function(d: any) { return d.classList.contains("columns"); })[0] as any,
-                columnsWidth: number = columnsRect.getBoundingClientRect().width;
+                columnsRect: any,
+                xAxisTicks: any,
+                leftBorderOffset,
+                rightBorderOffset,
+                borderValues: HistogramBorderValues = this.dataView.borderValues,
+                minX: string,
+                maxX: string,
+                minXOffset: number,
+                maxXOffset: number;
 
-            widthOfColumn = countOfValues
-                ? (makeCorrection ? columnsWidth : this.viewportIn.width) / countOfValues - Histogram.ColumnPadding
-                : Histogram.MinViewportInSize;
+            switch (updateMode) {
+                case UpdateColumnsWidthMode.markOnly :
+                    widthOfColumn = Histogram.PointMarkSize;
+                break;
+                case UpdateColumnsWidthMode.standardCalculation :
+                    widthOfColumn = countOfValues ? (this.viewportIn.width / countOfValues - Histogram.ColumnPadding) : Histogram.MinViewportInSize;
+                break;
+                case UpdateColumnsWidthMode.calculatePointsDiff :
+                default :
+                    // If number of points (bins) is 1, it means that we need to calculate difference between borders (else case)
+                    if (countOfValues && countOfValues > 1) {
+                        columnsRect = d3.selectAll("g")[0].filter(function(d: any) { return d.classList.contains("columns"); })[0] as any;
+                        widthOfColumn = columnsRect.children[1].attributes.x.value - columnsRect.children[0].attributes.x.value - Histogram.ColumnPadding;
+                    }
+                    else {
+                        // Find border ticks positions and their offsets to solve issue with 1 bin width
+                        xAxisTicks = $("g.xAxis g.tick text");
+
+                        if (xAxisTicks) {
+
+                            minX = this.dataView.xLabelFormatter.format(borderValues.minX);
+                            maxX = this.dataView.xLabelFormatter.format(borderValues.maxX);
+
+                            xAxisTicks.each(function(index) {
+                                let jTick: any = $(this);
+                                let tickVal: string = jTick.text();
+
+                                if (tickVal === minX) {
+                                    minXOffset = jTick.offset().left;
+                                }
+
+                                if (tickVal === maxX) {
+                                    maxXOffset = jTick.offset().left;
+                                }
+                            });
+
+                            if (minXOffset && maxXOffset) {
+                                widthOfColumn = maxXOffset - minXOffset;
+                            } else {
+                                widthOfColumn = Histogram.PointMarkSize;
+                            }
+                        }
+                    }
+                }
 
             this.widthOfColumn = Math.max(widthOfColumn, Histogram.MinViewportInSize);
         }
@@ -1386,6 +1446,20 @@ module powerbi.extensibility.visual {
             this.root = null;
         }
 
+        private findDatPointCloserToInterval(
+            findMax: boolean,
+            limit: number,
+            settingVal: number,
+            interval: number
+        ): number {
+            while (findMax ? limit > settingVal && settingVal <= limit - interval : limit < settingVal && settingVal >= limit + interval) {
+                if (findMax) limit -= interval;
+                else limit += interval;
+            }
+
+            return limit;
+        }
+
         private calculateXAxes(
             source: DataViewMetadataColumn,
             textProperties: TextProperties,
@@ -1394,10 +1468,57 @@ module powerbi.extensibility.visual {
 
             let axes: IAxisProperties,
                 width: number = this.viewportIn.width,
-                xAxisSettings: HistogramXAxisSettings = this.dataView.settings.xAxis;
+                xAxisSettings: HistogramXAxisSettings = this.dataView.settings.xAxis,
+                xPoints: number[],
+                interval: number,
+                borderValues: HistogramBorderValues = this.dataView.borderValues,
+                tmpStart: number,
+                tmpEnd: number,
+                tmpArr: number[],
+                tmpNewPoint: number;
+
+            xPoints = Histogram.rangesToArray(this.dataView.dataPoints);
+
+            // It is necessary to find out interval to calculate all necessary points before and after offset (if start and end for X axis was changed by user)
+            if ((borderValues.maxX !== xAxisSettings.end || borderValues.minX !== xAxisSettings.start) && xPoints.length > 1) {
+                interval = this.dataView.dataPoints[0].dx;
+
+                // If start point is greater than min border, it is necessary to remove non-using data points
+                if (xAxisSettings.start > borderValues.minX) {
+                    xPoints = xPoints.filter(dpv => dpv >= this.findDatPointCloserToInterval(false, borderValues.minX, xAxisSettings.start, interval));
+                    this.dataView.xCorrectedMin = xPoints && xPoints.length > 0 ? xPoints[0] : null;
+                }
+                else {
+                    // Add points before
+                    tmpArr = [];
+                    tmpStart = borderValues.minX;
+                    while (xAxisSettings.start < tmpStart) {
+                        tmpStart = tmpStart - interval;
+                        tmpArr.push(tmpStart);
+                        this.dataView.xCorrectedMin = tmpStart;
+                    }
+                    tmpArr.reverse();
+                    xPoints = tmpArr.concat(xPoints);
+                }
+
+                // If end point is lesser than max border, it is necessary to remove non-using data points
+                if (xAxisSettings.end < borderValues.maxX) {
+                    xPoints = xPoints.filter(dpv => dpv <= this.findDatPointCloserToInterval(true, borderValues.maxX, xAxisSettings.end, interval));
+                    this.dataView.xCorrectedMax = xPoints && xPoints.length > 0 ? xPoints[xPoints.length - 1] : null;
+                }
+                else {
+                    // Add points after
+                    tmpEnd = borderValues.maxX;
+                    while (xAxisSettings.end > tmpEnd) {
+                        tmpEnd = tmpEnd + interval;
+                        xPoints.push(tmpEnd);
+                        this.dataView.xCorrectedMax = tmpEnd;
+                    }
+                }
+            }
 
             axes = this.calculateXAxesProperties(
-                [xAxisSettings.start, xAxisSettings.end],
+                xPoints,
                 axisScale.linear,
                 source,
                 Histogram.InnerPaddingRatio,
