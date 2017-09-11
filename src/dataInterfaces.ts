@@ -71,6 +71,9 @@ module powerbi.extensibility.visual {
         xLegendSize: number;
         yLegendSize: number;
 
+        xCorrectedMax: number;
+        xCorrectedMin: number;
+
         xScale?: d3.scale.Linear<any, any>;
         yScale?: d3.scale.Linear<any, any>;
 

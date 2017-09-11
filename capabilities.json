@@ -33,7 +33,9 @@
                         "to": "Values"
                     },
                     "dataReductionAlgorithm": {
-                        "top": {}
+                        "top": {
+                            "count": 10000
+                        }
                     }
                 },
                 "values": {
@@ -159,6 +161,24 @@
                             }
                         ]
                     }
+                },
+                "start": {
+                    "displayName": "Start",
+                    "displayNameKey": "Visual_XAxis_Start",
+                    "type": {
+                        "numeric": true
+                    },
+                    "placeHolderText": "Start",
+                    "suppressFormatPainterCopy": true
+                },
+                "end": {
+                    "displayName": "End",
+                    "displayNameKey": "Visual_XAxis_End",
+                    "type": {
+                        "numeric": true
+                    },
+                    "placeHolderText": "End",
+                    "suppressFormatPainterCopy": true
                 }
             }
         },

@@ -1,6 +1,6 @@
 {
   "name": "powerbi-visuals-histogram",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A histogram chart plots data ranges into intervals. Useful for estimating density.",
   "repository": {
     "type": "git",

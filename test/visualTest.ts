@@ -183,6 +183,243 @@ module powerbi.extensibility.visual.test {
 
                 expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
             });
+
+            it("X-axis default ticks", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.xAxisTicks.length).toBe(5);
+                expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
+            });
+
+            it("X-axis start is lesser than min", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        start: 6
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.xAxisTicks.length).toBe(8);
+                expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(5.25);
+            });
+
+            it("X-axis end is greater than max and bins=7", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        end: 17.34
+                    },
+                    general: {
+                        bins: 7
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.xAxisTicks.length).toBe(13);
+                expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(17.57);
+            });
+
+            it("X-axis start is greater than min and bins=7", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        start: 10
+                    },
+                    general: {
+                        bins: 7
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.xAxisTicks.length).toBe(7);
+                expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9.71);
+            });
+
+            it("X-axis end is lesser than max and bins=12", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        end: 12
+                    },
+                    general: {
+                        bins: 12
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.xAxisTicks.length).toBe(9);
+                expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(12.33);
+            });
+
+            it("X-axis end is lesser than max and bins=6 and periodic number case", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        end: 13
+                    },
+                    general: {
+                        bins: 6
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.xAxisTicks.length).toBe(6);
+                expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
+                expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(13.17);
+            });
+
+            it("X-axis start is greater than max", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        start: 17
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
+            });
+
+            it("X-axis end is lesser than min", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        end: 8
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(14);
+            });
+
+            it("X-axis start and end is lesser than min", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        start: 8,
+                        end: 8
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(7.75);
+                expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(14);
+            });
+
+            it("X-axis start and end is greater than max", () => {
+                dataViewBuilder.valuesCategory = [
+                    9, 10, 11, 12, 13, 14
+                ];
+
+                dataViewBuilder.valuesValue = [
+                    772, 878, 398, 616, 170, 267,
+                ];
+
+                dataView = dataViewBuilder.getDataView();
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        start: 16,
+                        end: 16
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
+                expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(16.5);
+            });
         });
 
         describe("Format settings test", () => {
