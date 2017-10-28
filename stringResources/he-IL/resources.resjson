@@ -1,13 +1,13 @@
 {
 	"Visual_General": "כללי",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "תאים",
 	"Visual_DataColors": "צבעי נתונים",
 	"Visual_DataColors_Fill": "מילוי",
 	"Visual_XAxis": "ציר X",
 	"Visual_Show": "‏‏הצג",
 	"Visual_Color": "צבע",
 	"Visual_Title": "כותרת",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "יחידות תצוגה",
 	"Visual_Precision": "‏‏מקומות עשרוניים",
 	"Visual_Style": "סגנון",
 	"Visual_Style_ShowTitleOnly": "הצג כותרת בלבד",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "תוויות נתונים",
 	"Visual_TextSize": "גודל טקסט",
 	"Visual_Values": "ערכים",
-	"Visual_Frequency": "תדירות"
+	"Visual_Frequency": "תדירות",
+	"Visual_Fill": "מילוי"
 }

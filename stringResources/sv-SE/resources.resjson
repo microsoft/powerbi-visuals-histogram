@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Allmänt",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Lagerplatser",
 	"Visual_DataColors": "Datafärger",
 	"Visual_DataColors_Fill": "Fyllning",
 	"Visual_XAxis": "X-axel",
 	"Visual_Show": "Visa",
 	"Visual_Color": "Färg",
 	"Visual_Title": "Rubrik",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Visningsenheter",
 	"Visual_Precision": "Decimaler",
 	"Visual_Style": "Format",
 	"Visual_Style_ShowTitleOnly": "Visa enbart rubrik",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Dataetiketter",
 	"Visual_TextSize": "Textstorlek",
 	"Visual_Values": "Värden",
-	"Visual_Frequency": "Frekvens"
+	"Visual_Frequency": "Frekvens",
+	"Visual_Fill": "Fyll"
 }

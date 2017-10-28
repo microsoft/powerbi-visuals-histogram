@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Загальні",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Групи",
 	"Visual_DataColors": "Кольори даних",
 	"Visual_DataColors_Fill": "Заповнити",
 	"Visual_XAxis": "Вісь X",
 	"Visual_Show": "Відображення",
 	"Visual_Color": "Колір",
 	"Visual_Title": "Назва",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Одиниці для відображення",
 	"Visual_Precision": "Кількість знаків після десяткової коми",
 	"Visual_Style": "Стиль",
 	"Visual_Style_ShowTitleOnly": "Показати лише заголовок",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Підписи даних",
 	"Visual_TextSize": "Розмір тексту",
 	"Visual_Values": "Значення",
-	"Visual_Frequency": "Періодичність"
+	"Visual_Frequency": "Періодичність",
+	"Visual_Fill": "Заповнити"
 }

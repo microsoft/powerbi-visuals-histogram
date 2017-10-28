@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Yleinen",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Lokerot",
 	"Visual_DataColors": "Tietojen värit",
 	"Visual_DataColors_Fill": "Täyttö",
 	"Visual_XAxis": "X-akseli",
 	"Visual_Show": "Näytä",
 	"Visual_Color": "Väri",
 	"Visual_Title": "Otsikko",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Näytön yksiköt",
 	"Visual_Precision": "Desimaalit",
 	"Visual_Style": "Tyyli",
 	"Visual_Style_ShowTitleOnly": "Näytä vain otsikko",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Arvopisteiden nimet",
 	"Visual_TextSize": "Tekstin koko",
 	"Visual_Values": "Arvot",
-	"Visual_Frequency": "Tiheys"
+	"Visual_Frequency": "Tiheys",
+	"Visual_Fill": "Täyttö"
 }

@@ -1,13 +1,13 @@
 {
 	"Visual_General": "全般",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "ビン",
 	"Visual_DataColors": "データの色",
 	"Visual_DataColors_Fill": "塗りつぶし",
 	"Visual_XAxis": "X 軸",
 	"Visual_Show": "表示",
 	"Visual_Color": "色",
 	"Visual_Title": "タイトル",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "表示単位",
 	"Visual_Precision": "小数点以下桁数",
 	"Visual_Style": "スタイル",
 	"Visual_Style_ShowTitleOnly": "タイトルのみを表示",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "データ ラベル",
 	"Visual_TextSize": "テキスト サイズ",
 	"Visual_Values": "値",
-	"Visual_Frequency": "頻度"
+	"Visual_Frequency": "頻度",
+	"Visual_Fill": "フィル"
 }

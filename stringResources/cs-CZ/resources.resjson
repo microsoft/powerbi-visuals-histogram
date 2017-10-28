@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Obecné",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Přihrádky",
 	"Visual_DataColors": "Barvy dat",
 	"Visual_DataColors_Fill": "Výplň",
 	"Visual_XAxis": "Osa X",
 	"Visual_Show": "Zobrazení",
 	"Visual_Color": "Barva",
 	"Visual_Title": "Název",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Zobrazit jednotky",
 	"Visual_Precision": "Desetinná místa",
 	"Visual_Style": "Styl",
 	"Visual_Style_ShowTitleOnly": "Zobrazit jenom nadpis",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Popisky dat",
 	"Visual_TextSize": "Velikost textu",
 	"Visual_Values": "Hodnoty",
-	"Visual_Frequency": "Frekvence"
+	"Visual_Frequency": "Frekvence",
+	"Visual_Fill": "Vyplnit"
 }

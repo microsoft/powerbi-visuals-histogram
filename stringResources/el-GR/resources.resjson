@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Γενικά",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Κάδοι",
 	"Visual_DataColors": "Χρώματα δεδομένων",
 	"Visual_DataColors_Fill": "Γέμισμα",
 	"Visual_XAxis": "Άξονας Χ",
 	"Visual_Show": "Εμφάνιση",
 	"Visual_Color": "Χρώμα",
 	"Visual_Title": "Τίτλος",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Εμφάνιση μονάδων",
 	"Visual_Precision": "Δεκαδικά ψηφία",
 	"Visual_Style": "Στυλ",
 	"Visual_Style_ShowTitleOnly": "Εμφάνιση τίτλου μόνο",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Ετικέτες δεδομένων",
 	"Visual_TextSize": "Μέγεθος κειμένου",
 	"Visual_Values": "Τιμές",
-	"Visual_Frequency": "Συχνότητα"
+	"Visual_Frequency": "Συχνότητα",
+	"Visual_Fill": "Συμπλήρωση"
 }

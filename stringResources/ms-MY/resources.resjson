@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Umum",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Bin",
 	"Visual_DataColors": "Warna data",
 	"Visual_DataColors_Fill": "Isian",
 	"Visual_XAxis": "Paksi X",
 	"Visual_Show": "Tunjukkan",
 	"Visual_Color": "Warna",
 	"Visual_Title": "Tajuk",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Paparkan Unit",
 	"Visual_Precision": "Tempat Perpuluhan",
 	"Visual_Style": "Gaya",
 	"Visual_Style_ShowTitleOnly": "Tunjukkan tajuk sahaja",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Label Data",
 	"Visual_TextSize": "Saiz Teks",
 	"Visual_Values": "Nilai",
-	"Visual_Frequency": "Kekerapan"
+	"Visual_Frequency": "Kekerapan",
+	"Visual_Fill": "Isi"
 }

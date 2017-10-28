@@ -1,13 +1,13 @@
 {
 	"Visual_General": "ทั่วไป",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "ช่องเก็บ",
 	"Visual_DataColors": "สีของข้อมูล",
 	"Visual_DataColors_Fill": "เติม",
 	"Visual_XAxis": "แกน X",
 	"Visual_Show": "แสดง",
 	"Visual_Color": "สี",
 	"Visual_Title": "ชื่อ",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "หน่วยแสดงผล",
 	"Visual_Precision": "จุดทศนิยม",
 	"Visual_Style": "ลักษณะ",
 	"Visual_Style_ShowTitleOnly": "แสดงเฉพาะหัวข้อ",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "ป้ายชื่อข้อมูล",
 	"Visual_TextSize": "ขนาดแบบอักษร",
 	"Visual_Values": "มูลค่า",
-	"Visual_Frequency": "ความถี่"
+	"Visual_Frequency": "ความถี่",
+	"Visual_Fill": "เติม"
 }

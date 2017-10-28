@@ -1,13 +1,13 @@
 {
 	"Visual_General": "General",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Recipiente",
 	"Visual_DataColors": "Culori pentru date",
 	"Visual_DataColors_Fill": "Completare",
 	"Visual_XAxis": "Axa X",
 	"Visual_Show": "Afişare",
 	"Visual_Color": "Culoare",
 	"Visual_Title": "Titlu",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Afișare unități",
 	"Visual_Precision": "Zecimale",
 	"Visual_Style": "Stil",
 	"Visual_Style_ShowTitleOnly": "Afișați doar titlul",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Etichete de date",
 	"Visual_TextSize": "Dimensiune text",
 	"Visual_Values": "Valori",
-	"Visual_Frequency": "Frecvență"
+	"Visual_Frequency": "Frecvență",
+	"Visual_Fill": "Completare"
 }

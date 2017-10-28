@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Vispārīgi",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Nodalījumi",
 	"Visual_DataColors": "Datu krāsas",
 	"Visual_DataColors_Fill": "Aizpildīt",
 	"Visual_XAxis": "X ass",
 	"Visual_Show": "Rādīt",
 	"Visual_Color": "Krāsa",
 	"Visual_Title": "Nosaukums",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Rādāmās vienības",
 	"Visual_Precision": "Decimāldaļas",
 	"Visual_Style": "Stils",
 	"Visual_Style_ShowTitleOnly": "Rādīt tikai virsrakstu",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Datu etiķetes",
 	"Visual_TextSize": "Teksta lielums",
 	"Visual_Values": "Vērtības",
-	"Visual_Frequency": "Biežums"
+	"Visual_Frequency": "Biežums",
+	"Visual_Fill": "Aizpildīt"
 }

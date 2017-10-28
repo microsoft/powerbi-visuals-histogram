@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Genel",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Kutular",
 	"Visual_DataColors": "Veri renkleri",
 	"Visual_DataColors_Fill": "Doldur",
 	"Visual_XAxis": "X Ekseni",
 	"Visual_Show": "Göster",
 	"Visual_Color": "Renk",
 	"Visual_Title": "Başlık",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Birimleri Görüntüle",
 	"Visual_Precision": "Ondalık Basamaklar",
 	"Visual_Style": "Stil",
 	"Visual_Style_ShowTitleOnly": "Yalnızca başlığı göster",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Veri Etiketleri",
 	"Visual_TextSize": "Metin Boyutu",
 	"Visual_Values": "Değerler",
-	"Visual_Frequency": "Sıklık"
+	"Visual_Frequency": "Sıklık",
+	"Visual_Fill": "Doldur"
 }

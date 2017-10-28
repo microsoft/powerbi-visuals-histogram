@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Chung",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Bin",
 	"Visual_DataColors": "Màu dữ liệu",
 	"Visual_DataColors_Fill": "Điền",
 	"Visual_XAxis": "Trục X",
 	"Visual_Show": "Hiện",
 	"Visual_Color": "Màu",
 	"Visual_Title": "Tiêu đề",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Đơn vị hiển thị",
 	"Visual_Precision": "Dấu Thập phân",
 	"Visual_Style": "Kiểu",
 	"Visual_Style_ShowTitleOnly": "Chỉ hiển thị tiêu đề",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Nhãn Dữ liệu",
 	"Visual_TextSize": "Kích thước Văn bản",
 	"Visual_Values": "Giá trị",
-	"Visual_Frequency": "Tần suất"
+	"Visual_Frequency": "Tần suất",
+	"Visual_Fill": "Điền"
 }

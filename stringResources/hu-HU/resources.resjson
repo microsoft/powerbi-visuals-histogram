@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Általános",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Rekeszek",
 	"Visual_DataColors": "Adatszínek",
 	"Visual_DataColors_Fill": "Kitöltés",
 	"Visual_XAxis": "X tengely",
 	"Visual_Show": "Megjelenítés",
 	"Visual_Color": "Szín",
 	"Visual_Title": "Cím",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Megjelenítési egységek",
 	"Visual_Precision": "Tizedesjegyek",
 	"Visual_Style": "Stílus",
 	"Visual_Style_ShowTitleOnly": "Csak a cím megjelenítése",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Adatfeliratok",
 	"Visual_TextSize": "Szöveg mérete",
 	"Visual_Values": "Értékek",
-	"Visual_Frequency": "Gyakoriság"
+	"Visual_Frequency": "Gyakoriság",
+	"Visual_Fill": "Kitöltés"
 }

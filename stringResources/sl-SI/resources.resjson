@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Splošno",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Koši",
 	"Visual_DataColors": "Barve podatkov",
 	"Visual_DataColors_Fill": "Zapolni",
 	"Visual_XAxis": "Os X",
 	"Visual_Show": "Pokaži",
 	"Visual_Color": "Barva",
 	"Visual_Title": "Naslov",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Enote prikaza",
 	"Visual_Precision": "Decimalna mesta",
 	"Visual_Style": "Slog",
 	"Visual_Style_ShowTitleOnly": "Pokaži samo naslov",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Oznake podatkov",
 	"Visual_TextSize": "Velikost besedila",
 	"Visual_Values": "Vrednosti",
-	"Visual_Frequency": "Frekvenca"
+	"Visual_Frequency": "Frekvenca",
+	"Visual_Fill": "Zapolni"
 }

@@ -1,13 +1,13 @@
 {
 	"Visual_General": "일반",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "저장소",
 	"Visual_DataColors": "데이터 색",
 	"Visual_DataColors_Fill": "채우기",
 	"Visual_XAxis": "X축",
 	"Visual_Show": "표시",
 	"Visual_Color": "색",
 	"Visual_Title": "제목",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "표시 단위",
 	"Visual_Precision": "소수 자릿수",
 	"Visual_Style": "스타일",
 	"Visual_Style_ShowTitleOnly": "제목만 표시",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "데이터 레이블",
 	"Visual_TextSize": "텍스트 크기",
 	"Visual_Values": "값",
-	"Visual_Frequency": "빈도"
+	"Visual_Frequency": "빈도",
+	"Visual_Fill": "채우기"
 }

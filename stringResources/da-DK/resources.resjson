@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Generelt",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Placeringer",
 	"Visual_DataColors": "Datafarver",
 	"Visual_DataColors_Fill": "Udfyldning",
 	"Visual_XAxis": "X-akse",
 	"Visual_Show": "Vis",
 	"Visual_Color": "Farve",
 	"Visual_Title": "Titel",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Vis enheder",
 	"Visual_Precision": "Decimaler",
 	"Visual_Style": "Type",
 	"Visual_Style_ShowTitleOnly": "Vis kun titel",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Datanavne",
 	"Visual_TextSize": "Tekststørrelse",
 	"Visual_Values": "Værdier",
-	"Visual_Frequency": "Hyppighed"
+	"Visual_Frequency": "Hyppighed",
+	"Visual_Fill": "Udfyldning"
 }

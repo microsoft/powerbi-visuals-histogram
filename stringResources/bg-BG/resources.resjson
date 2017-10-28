@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Общи",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Кошчета",
 	"Visual_DataColors": "Цветове на данните",
 	"Visual_DataColors_Fill": "Запълване",
 	"Visual_XAxis": "Ос X",
 	"Visual_Show": "Показване",
 	"Visual_Color": "Цвят",
 	"Visual_Title": "Заглавие",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Показване на единици",
 	"Visual_Precision": "Знаци след десетичната запетая",
 	"Visual_Style": "Стил",
 	"Visual_Style_ShowTitleOnly": "Показване само на заглавие",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Етикети на данни",
 	"Visual_TextSize": "Размер на текста",
 	"Visual_Values": "Стойности",
-	"Visual_Frequency": "Честота"
+	"Visual_Frequency": "Честота",
+	"Visual_Fill": "Запълни"
 }

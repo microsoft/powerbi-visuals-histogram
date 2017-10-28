@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Жалпы",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Ұяшықтар",
 	"Visual_DataColors": "Деректер түстері",
 	"Visual_DataColors_Fill": "Толтыру",
 	"Visual_XAxis": "X осі",
 	"Visual_Show": "Көрсету",
 	"Visual_Color": "Түс",
 	"Visual_Title": "Тақырып",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Бірліктерді көрсету",
 	"Visual_Precision": "Ондық таңбалар саны",
 	"Visual_Style": "Мәнер",
 	"Visual_Style_ShowTitleOnly": "Тек тақырыпты көрсету",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Деректер белгілері",
 	"Visual_TextSize": "Мәтін өлшемі",
 	"Visual_Values": "Мәндер",
-	"Visual_Frequency": "Жиілік"
+	"Visual_Frequency": "Жиілік",
+	"Visual_Fill": "Толтыру"
 }

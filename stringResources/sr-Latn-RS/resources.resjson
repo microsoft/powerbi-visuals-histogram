@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Opšte",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Korpe",
 	"Visual_DataColors": "Boje podataka",
 	"Visual_DataColors_Fill": "Popuni",
 	"Visual_XAxis": "X-osa",
 	"Visual_Show": "Prikaži",
 	"Visual_Color": "Boja",
 	"Visual_Title": "Naslov",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Jedinice za prikaz",
 	"Visual_Precision": "Decimalna mesta",
 	"Visual_Style": "Stil",
 	"Visual_Style_ShowTitleOnly": "Prikaži samo naslov",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Oznake podataka",
 	"Visual_TextSize": "Veličina teksta",
 	"Visual_Values": "Vrednosti",
-	"Visual_Frequency": "Učestalost"
+	"Visual_Frequency": "Učestalost",
+	"Visual_Fill": "Popuni"
 }

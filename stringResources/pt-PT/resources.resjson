@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Geral",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Posições",
 	"Visual_DataColors": "Cores de dados",
 	"Visual_DataColors_Fill": "Preenchimento",
 	"Visual_XAxis": "Eixo X",
 	"Visual_Show": "Mostrar",
 	"Visual_Color": "Cor",
 	"Visual_Title": "Título",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Mostrar Unidades",
 	"Visual_Precision": "Casas Decimais",
 	"Visual_Style": "Estilo",
 	"Visual_Style_ShowTitleOnly": "Mostrar apenas título",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Etiquetas de Dados",
 	"Visual_TextSize": "Tamanho do Texto",
 	"Visual_Values": "Valores",
-	"Visual_Frequency": "Frequência"
+	"Visual_Frequency": "Frequência",
+	"Visual_Fill": "Preenchimento"
 }

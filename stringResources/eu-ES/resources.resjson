@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Orokorra",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Ontziak",
 	"Visual_DataColors": "Datuen koloreak",
 	"Visual_DataColors_Fill": "Bete",
 	"Visual_XAxis": "X ardatza",
 	"Visual_Show": "Erakutsi",
 	"Visual_Color": "Kolorea",
 	"Visual_Title": "Titulua",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Bistaratze-unitateak",
 	"Visual_Precision": "Hamartarrak",
 	"Visual_Style": "Estiloa",
 	"Visual_Style_ShowTitleOnly": "Erakutsi izenburua soilik",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Datu-etiketak",
 	"Visual_TextSize": "Testu-tamaina",
 	"Visual_Values": "Balioak",
-	"Visual_Frequency": "Maiztasuna"
+	"Visual_Frequency": "Maiztasuna",
+	"Visual_Fill": "Bete"
 }

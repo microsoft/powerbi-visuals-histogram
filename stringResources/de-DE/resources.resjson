@@ -1,13 +1,13 @@
 {
 	"Visual_General": "Allgemein",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Container",
 	"Visual_DataColors": "Datenfarben",
 	"Visual_DataColors_Fill": "Ausfüllen",
 	"Visual_XAxis": "X-Achse",
 	"Visual_Show": "Anzeigen",
 	"Visual_Color": "Farbe",
 	"Visual_Title": "Titel",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Anzeigeeinheiten",
 	"Visual_Precision": "Dezimalstellen",
 	"Visual_Style": "Stil",
 	"Visual_Style_ShowTitleOnly": "Nur Titel anzeigen",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Datenbeschriftungen",
 	"Visual_TextSize": "Textgröße",
 	"Visual_Values": "Werte",
-	"Visual_Frequency": "Häufigkeit"
+	"Visual_Frequency": "Häufigkeit",
+	"Visual_Fill": "Ausfüllen"
 }

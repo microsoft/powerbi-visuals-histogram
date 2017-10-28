@@ -1,13 +1,13 @@
 {
 	"Visual_General": "عام",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "خانات",
 	"Visual_DataColors": "ألوان البيانات",
 	"Visual_DataColors_Fill": "تعبئة",
 	"Visual_XAxis": "محور س",
 	"Visual_Show": "‏‏إظهار",
 	"Visual_Color": "اللون",
 	"Visual_Title": "العنوان",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "وحدات العرض",
 	"Visual_Precision": "المنازل العشرية",
 	"Visual_Style": "نمط",
 	"Visual_Style_ShowTitleOnly": "إظهار العنوان فقط",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "تسميات البيانات",
 	"Visual_TextSize": "حجم النص",
 	"Visual_Values": "القيم",
-	"Visual_Frequency": "التردد"
+	"Visual_Frequency": "التردد",
+	"Visual_Fill": "تعبئة"
 }

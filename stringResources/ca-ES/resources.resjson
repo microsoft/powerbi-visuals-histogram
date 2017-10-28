@@ -1,13 +1,13 @@
 {
 	"Visual_General": "General",
-	"Visual_General_Bins": "Bins",
+	"Visual_General_Bins": "Intervals",
 	"Visual_DataColors": "Colors de dades",
 	"Visual_DataColors_Fill": "Emplena",
 	"Visual_XAxis": "Eix de les X",
 	"Visual_Show": "Mostra",
 	"Visual_Color": "Color",
 	"Visual_Title": "Títol",
-	"Visual_DisplayUnits": "Display Units",
+	"Visual_DisplayUnits": "Mostra les unitats",
 	"Visual_Precision": "Posicions decimals",
 	"Visual_Style": "Estil",
 	"Visual_Style_ShowTitleOnly": "Mostra només el títol",
@@ -22,5 +22,6 @@
 	"Visual_DataLabels": "Etiquetes de dades",
 	"Visual_TextSize": "Mida del text",
 	"Visual_Values": "Valors",
-	"Visual_Frequency": "Freqüència"
+	"Visual_Frequency": "Freqüència",
+	"Visual_Fill": "Emplena"
 }
