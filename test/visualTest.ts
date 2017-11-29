@@ -739,7 +739,7 @@ module powerbi.extensibility.visual.test {
             });
 
             it("the method should return a value that equals MinXAxisStartValue", () => {
-                checkCorrectXAxisValue(-Number.MIN_VALUE, VisualClass.MinXAxisStartValue);
+                checkCorrectXAxisValue(-Number.MAX_VALUE, VisualClass.MinXAxisStartValue);
             });
 
             it("the method should return the same value", () => {

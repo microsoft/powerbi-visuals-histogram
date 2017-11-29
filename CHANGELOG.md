@@ -1,3 +1,7 @@
+## 1.1.1
+* FIX: Negative values are supported
+* UPD: API was updated up to version 1.8
+
 ## 1.1.0
 * ADD: Support of 10000 records
 * ADD: Max number of bins was increased from 100 to 5000
