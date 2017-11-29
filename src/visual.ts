@@ -141,7 +141,7 @@ module powerbi.extensibility.visual {
         private static MinPrecision: number = 0;
         private static MaxPrecision: number = 17; // max number of decimals in float
 
-        public static MinXAxisStartValue: number = 0;
+        public static MinXAxisStartValue: number = -(1e+25);
         public static MaxXAxisEndValue: number = 1e+25;
 
         private static YTitleMargin: number = 70;
@@ -243,8 +243,8 @@ module powerbi.extensibility.visual {
         private tooltipServiceWrapper: ITooltipServiceWrapper;
 
         private get columnsSelection(): d3.Selection<HistogramDataPoint> {
-            return this.main.select(Histogram.Columns.selector)
-                .selectAll(Histogram.Column.selector);
+            return this.main.select(Histogram.Columns.selectorName)
+                .selectAll(Histogram.Column.selectorName);
         }
 
         constructor(options: VisualConstructorOptions) {
@@ -271,29 +271,29 @@ module powerbi.extensibility.visual {
 
             this.columns = this.main
                 .append("g")
-                .classed(Histogram.Columns.class, true);
+                .classed(Histogram.Columns.className, true);
 
             this.axes = this.main
                 .append("g")
-                .classed(Histogram.Axes.class, true);
+                .classed(Histogram.Axes.className, true);
 
             this.axisX = this.axes
                 .append("g")
-                .classed(Histogram.Axis.class, true)
-                .classed(Histogram.XAxis.class, true);
+                .classed(Histogram.Axis.className, true)
+                .classed(Histogram.XAxis.className, true);
 
             this.axisY = this.axes
                 .append("g")
-                .classed(Histogram.Axis.class, true)
-                .classed(Histogram.YAxis.class, true);
+                .classed(Histogram.Axis.className, true)
+                .classed(Histogram.YAxis.className, true);
 
             this.legend = this.main
                 .append("g")
-                .classed(Histogram.Legends.class, true);
+                .classed(Histogram.Legends.className, true);
 
             this.labelGraphicsContext = this.main
                 .append("g")
-                .classed(Histogram.LabelGraphicsContext.class, true);
+                .classed(Histogram.LabelGraphicsContext.className, true);
         }
 
         public static converter(
@@ -1023,7 +1023,7 @@ module powerbi.extensibility.visual {
             updateColumnsSelection
                 .enter()
                 .append("svg:rect")
-                .classed(Histogram.Column.class, true);
+                .classed(Histogram.Column.className, true);
 
             // We can operate by xScale inside this function only when scale was created
             this.updateWidthOfColumn(UpdateColumnsWidthMode.standardCalculation);
@@ -1265,8 +1265,8 @@ module powerbi.extensibility.visual {
                 datalegends: Legend[] = this.getDataLegends(this.dataView.settings);
 
             legendElements = this.main
-                .select(Histogram.Legends.selector)
-                .selectAll(Histogram.Legend.selector);
+                .select(Histogram.Legends.selectorName)
+                .selectAll(Histogram.Legend.selectorName);
 
             legendSelection = legendElements.data(datalegends);
 
@@ -1283,7 +1283,7 @@ module powerbi.extensibility.visual {
                     "transform": (legend: Legend) => legend.transform
                 })
                 .text((item: Legend) => item.text)
-                .classed(Histogram.Legend.class, true);
+                .classed(Histogram.Legend.className, true);
 
             legendSelection
                 .exit()
