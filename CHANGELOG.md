@@ -1,3 +1,6 @@
+## 1.1.2
+* FIX: Bins selection performance was increased
+
 ## 1.1.1
 * FIX: Negative values are supported
 * UPD: API was updated up to version 1.8
