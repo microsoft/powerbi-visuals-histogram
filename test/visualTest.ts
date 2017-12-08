@@ -184,6 +184,60 @@ module powerbi.extensibility.visual.test {
                 expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
             });
 
+            it("Y-axis start < 0 validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: -52,
+                        end: 78
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+            });
+
+            it("Y-axis end < 0 validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: 20,
+                        end: -78
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(20);
+                expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(20);
+            });
+
+            it("Y-axis start is undefined validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: undefined,
+                        end: 78
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+            });
+
+            it("Y-axis end is undefined validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: 3,
+                        end: undefined
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(3);
+                expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(3);
+            });
+
             it("X-axis default ticks", () => {
                 dataViewBuilder.valuesCategory = [
                     9, 10, 11, 12, 13, 14
