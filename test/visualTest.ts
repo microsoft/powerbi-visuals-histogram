@@ -184,6 +184,60 @@ module powerbi.extensibility.visual.test {
                 expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
             });
 
+            it("Y-axis start < 0 validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: -52,
+                        end: 78
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+            });
+
+            it("Y-axis end < 0 validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: 0,
+                        end: -78
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+                expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(0);
+            });
+
+            it("Y-axis start is undefined validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: undefined,
+                        end: 78
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+            });
+
+            it("Y-axis end is undefined validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: 0,
+                        end: undefined
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+                expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(0);
+            });
+
             it("X-axis default ticks", () => {
                 dataViewBuilder.valuesCategory = [
                     9, 10, 11, 12, 13, 14
@@ -733,6 +787,39 @@ module powerbi.extensibility.visual.test {
             }
         });
 
+        describe("getCorrectYAxisValue", () => {
+            it("the method should return a value that equals MaxXAxisEndValue", () => {
+                checkCorrectYAxisValue(Number.MAX_VALUE, VisualClass.MaxXAxisEndValue);
+            });
+
+            it("the method should return a value that equals MinXAxisStartValue", () => {
+                checkCorrectYAxisValue(-Number.MAX_VALUE, 0);
+            });
+
+            it("the method should return the same value", () => {
+                const value: number = 42;
+
+                checkCorrectYAxisValue(value, value);
+            });
+
+            it("the method should return a 0 if value is undefined ", () => {
+                checkCorrectYAxisValue(undefined, 0);
+            });
+
+            it("the method should return a 0 if value is NaN ", () => {
+                checkCorrectYAxisValue(parseInt("someString"), 0);
+            });
+
+            function checkCorrectYAxisValue(
+                actualValue: number,
+                expectedValue: number): void {
+
+                const value: number = VisualClass.getCorrectYAxisValue(actualValue);
+
+                expect(value).toBe(expectedValue);
+            }
+        });
+
         describe("getCorrectXAxisValue", () => {
             it("the method should return a value that equals MaxXAxisEndValue", () => {
                 checkCorrectXAxisValue(Number.MAX_VALUE, VisualClass.MaxXAxisEndValue);
@@ -746,6 +833,14 @@ module powerbi.extensibility.visual.test {
                 const value: number = 42;
 
                 checkCorrectXAxisValue(value, value);
+            });
+
+            it("the method should return a 0 if value is undefined ", () => {
+                checkCorrectXAxisValue(undefined, 0);
+            });
+
+            it("the method should return a 0 if value is NaN ", () => {
+                checkCorrectXAxisValue(parseInt("someString"), 0);
             });
 
             function checkCorrectXAxisValue(

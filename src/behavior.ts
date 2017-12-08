@@ -70,8 +70,10 @@ module powerbi.extensibility.visual {
 
                 if (!areDataPointsSelected) {
                     dataPoint.subDataPoints.forEach((subDataPoint: SelectableDataPoint) => {
-                        selectionHandler.handleSelection(subDataPoint, true);
+                        selectionHandler.handleSelection(subDataPoint, true, true);
                     });
+
+                    selectionHandler.syncSelectionState(false);
 
                     this.selectedDataPoints = dataPoint.subDataPoints;
                 } else {

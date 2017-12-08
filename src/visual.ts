@@ -396,8 +396,8 @@ module powerbi.extensibility.visual {
             let minYValue: number = yAxisSettings.start < maxYvalue
                 ? yAxisSettings.start
                 : 0;
-            settings.yAxis.start = Histogram.getCorrectXAxisValue(minYValue);
-            settings.yAxis.end = Histogram.getCorrectXAxisValue(maxYvalue);
+            settings.yAxis.start = Histogram.getCorrectYAxisValue(minYValue);
+            settings.yAxis.end = Histogram.getCorrectYAxisValue(maxYvalue);
 
             // min-max for X axis
             xAxisSettings = settings.xAxis;
@@ -496,9 +496,23 @@ module powerbi.extensibility.visual {
         }
 
         public static getCorrectXAxisValue(value: number): number {
+            if (value === undefined || isNaN(value)) {
+                return 0;
+            }
+
             return Math.max(
                 Math.min(value, Histogram.MaxXAxisEndValue),
                 Histogram.MinXAxisStartValue);
+        }
+
+        public static getCorrectYAxisValue(value: number): number {
+            if (value === undefined || isNaN(value)) {
+                return 0;
+            }
+
+            return Math.max(
+                Math.min(value, Histogram.MaxXAxisEndValue),
+                0);
         }
 
         public static areValuesNumbers(categoryColumn: DataViewCategoryColumn): boolean {
