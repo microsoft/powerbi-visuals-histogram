@@ -200,15 +200,15 @@ module powerbi.extensibility.visual.test {
             it("Y-axis end < 0 validation", () => {
                 dataView.metadata.objects = {
                     yAxis: {
-                        start: 20,
+                        start: 0,
                         end: -78
                     }
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(20);
-                expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(20);
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+                expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(0);
             });
 
             it("Y-axis start is undefined validation", () => {
@@ -227,15 +227,15 @@ module powerbi.extensibility.visual.test {
             it("Y-axis end is undefined validation", () => {
                 dataView.metadata.objects = {
                     yAxis: {
-                        start: 3,
+                        start: 0,
                         end: undefined
                     }
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(3);
-                expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(3);
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+                expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(0);
             });
 
             it("X-axis default ticks", () => {
@@ -787,6 +787,36 @@ module powerbi.extensibility.visual.test {
             }
         });
 
+        describe("getCorrectYAxisValue", () => {
+            it("the method should return a value that equals MaxXAxisEndValue", () => {
+                checkCorrectYAxisValue(Number.MAX_VALUE, VisualClass.MaxXAxisEndValue);
+            });
+
+            it("the method should return a value that equals MinXAxisStartValue", () => {
+                checkCorrectYAxisValue(-Number.MAX_VALUE, 0);
+            });
+
+            it("the method should return the same value", () => {
+                const value: number = 42;
+
+                checkCorrectYAxisValue(value, value);
+            });
+
+            it("the method should return a NaN if value is undefined ", () => {
+                const value: number = VisualClass.getCorrectYAxisValue(undefined);
+                expect(value).toBeNaN();
+            });
+
+            function checkCorrectYAxisValue(
+                actualValue: number,
+                expectedValue: number): void {
+
+                const value: number = VisualClass.getCorrectYAxisValue(actualValue);
+
+                expect(value).toBe(expectedValue);
+            }
+        });
+
         describe("getCorrectXAxisValue", () => {
             it("the method should return a value that equals MaxXAxisEndValue", () => {
                 checkCorrectXAxisValue(Number.MAX_VALUE, VisualClass.MaxXAxisEndValue);
@@ -800,6 +830,11 @@ module powerbi.extensibility.visual.test {
                 const value: number = 42;
 
                 checkCorrectXAxisValue(value, value);
+            });
+
+            it("the method should return a NaN if value is undefined ", () => {
+                const value: number = VisualClass.getCorrectXAxisValue(undefined);
+                expect(value).toBeNaN();
             });
 
             function checkCorrectXAxisValue(
