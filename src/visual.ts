@@ -496,12 +496,20 @@ module powerbi.extensibility.visual {
         }
 
         public static getCorrectXAxisValue(value: number): number {
+            if (value === undefined || isNaN(value)) {
+                return 0;
+            }
+
             return Math.max(
                 Math.min(value, Histogram.MaxXAxisEndValue),
                 Histogram.MinXAxisStartValue);
         }
 
         public static getCorrectYAxisValue(value: number): number {
+            if (value === undefined || isNaN(value)) {
+                return 0;
+            }
+
             return Math.max(
                 Math.min(value, Histogram.MaxXAxisEndValue),
                 0);

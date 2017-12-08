@@ -802,9 +802,12 @@ module powerbi.extensibility.visual.test {
                 checkCorrectYAxisValue(value, value);
             });
 
-            it("the method should return a NaN if value is undefined ", () => {
-                const value: number = VisualClass.getCorrectYAxisValue(undefined);
-                expect(value).toBeNaN();
+            it("the method should return a 0 if value is undefined ", () => {
+                checkCorrectYAxisValue(undefined, 0);
+            });
+
+            it("the method should return a 0 if value is NaN ", () => {
+                checkCorrectYAxisValue(parseInt("someString"), 0);
             });
 
             function checkCorrectYAxisValue(
@@ -832,9 +835,12 @@ module powerbi.extensibility.visual.test {
                 checkCorrectXAxisValue(value, value);
             });
 
-            it("the method should return a NaN if value is undefined ", () => {
-                const value: number = VisualClass.getCorrectXAxisValue(undefined);
-                expect(value).toBeNaN();
+            it("the method should return a 0 if value is undefined ", () => {
+                checkCorrectXAxisValue(undefined, 0);
+            });
+
+            it("the method should return a 0 if value is NaN ", () => {
+                checkCorrectXAxisValue(parseInt("someString"), 0);
             });
 
             function checkCorrectXAxisValue(
