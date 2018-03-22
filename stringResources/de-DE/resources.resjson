@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Textgröße",
 	"Visual_Values": "Werte",
 	"Visual_Frequency": "Häufigkeit",
-	"Visual_Fill": "Ausfüllen"
+	"Visual_Fill": "Ausfüllen",
+	"Visual_XAxis_Start": "Start",
+	"Visual_XAxis_End": "Ende"
 }

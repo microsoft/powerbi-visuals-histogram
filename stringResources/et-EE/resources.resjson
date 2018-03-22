@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Teksti suurus",
 	"Visual_Values": "Väärtused",
 	"Visual_Frequency": "Sagedus",
-	"Visual_Fill": "Täida"
+	"Visual_Fill": "Täida",
+	"Visual_XAxis_Start": "Käivita",
+	"Visual_XAxis_End": "Lõpp"
 }

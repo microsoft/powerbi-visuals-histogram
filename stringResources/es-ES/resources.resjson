@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Tamaño del texto",
 	"Visual_Values": "Valores",
 	"Visual_Frequency": "Frecuencia",
-	"Visual_Fill": "Rellenar"
+	"Visual_Fill": "Rellenar",
+	"Visual_XAxis_Start": "Iniciar",
+	"Visual_XAxis_End": "Finalizar"
 }

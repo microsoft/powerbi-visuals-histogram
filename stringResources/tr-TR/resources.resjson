@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Metin Boyutu",
 	"Visual_Values": "Değerler",
 	"Visual_Frequency": "Sıklık",
-	"Visual_Fill": "Doldur"
+	"Visual_Fill": "Doldur",
+	"Visual_XAxis_Start": "Başlat",
+	"Visual_XAxis_End": "Son"
 }

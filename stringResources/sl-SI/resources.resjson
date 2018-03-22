@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Velikost besedila",
 	"Visual_Values": "Vrednosti",
 	"Visual_Frequency": "Frekvenca",
-	"Visual_Fill": "Zapolni"
+	"Visual_Fill": "Zapolni",
+	"Visual_XAxis_Start": "Zaženi",
+	"Visual_XAxis_End": "Konec"
 }

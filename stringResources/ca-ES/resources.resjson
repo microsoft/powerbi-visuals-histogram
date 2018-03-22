@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Mida del text",
 	"Visual_Values": "Valors",
 	"Visual_Frequency": "Freqüència",
-	"Visual_Fill": "Emplena"
+	"Visual_Fill": "Emplena",
+	"Visual_XAxis_Start": "Inicia",
+	"Visual_XAxis_End": "Final"
 }

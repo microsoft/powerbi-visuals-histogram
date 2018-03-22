@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Размер на текста",
 	"Visual_Values": "Стойности",
 	"Visual_Frequency": "Честота",
-	"Visual_Fill": "Запълни"
+	"Visual_Fill": "Запълни",
+	"Visual_XAxis_Start": "Старт",
+	"Visual_XAxis_End": "Край"
 }

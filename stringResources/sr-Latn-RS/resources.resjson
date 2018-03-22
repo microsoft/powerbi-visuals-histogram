@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Veličina teksta",
 	"Visual_Values": "Vrednosti",
 	"Visual_Frequency": "Učestalost",
-	"Visual_Fill": "Popuni"
+	"Visual_Fill": "Popuni",
+	"Visual_XAxis_Start": "Pokreni",
+	"Visual_XAxis_End": "Kraj"
 }

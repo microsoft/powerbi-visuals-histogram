@@ -23,5 +23,7 @@
 	"Visual_TextSize": "ขนาดแบบอักษร",
 	"Visual_Values": "มูลค่า",
 	"Visual_Frequency": "ความถี่",
-	"Visual_Fill": "เติม"
+	"Visual_Fill": "เติม",
+	"Visual_XAxis_Start": "เริ่ม",
+	"Visual_XAxis_End": "สิ้นสุด"
 }

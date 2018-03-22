@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Dimensioni testo",
 	"Visual_Values": "Valori",
 	"Visual_Frequency": "Frequenza",
-	"Visual_Fill": "Riempimento"
+	"Visual_Fill": "Riempimento",
+	"Visual_XAxis_Start": "Inizio",
+	"Visual_XAxis_End": "Fine"
 }

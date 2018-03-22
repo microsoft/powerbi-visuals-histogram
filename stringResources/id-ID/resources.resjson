@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Ukuran Teks",
 	"Visual_Values": "Nilai",
 	"Visual_Frequency": "Frekuensi",
-	"Visual_Fill": "Isi"
+	"Visual_Fill": "Isi",
+	"Visual_XAxis_Start": "Mulai",
+	"Visual_XAxis_End": "Ujung"
 }

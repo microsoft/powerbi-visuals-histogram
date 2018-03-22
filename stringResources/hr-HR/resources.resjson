@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Veličina teksta",
 	"Visual_Values": "Vrijednosti",
 	"Visual_Frequency": "Učestalost",
-	"Visual_Fill": "Ispuna"
+	"Visual_Fill": "Ispuna",
+	"Visual_XAxis_Start": "Početak",
+	"Visual_XAxis_End": "Kraj"
 }

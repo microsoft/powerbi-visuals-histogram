@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Tekstin koko",
 	"Visual_Values": "Arvot",
 	"Visual_Frequency": "Tiheys",
-	"Visual_Fill": "Täyttö"
+	"Visual_Fill": "Täyttö",
+	"Visual_XAxis_Start": "Alku",
+	"Visual_XAxis_End": "Loppu"
 }

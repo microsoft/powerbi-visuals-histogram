@@ -23,5 +23,7 @@
 	"Visual_TextSize": "文字大小",
 	"Visual_Values": "值",
 	"Visual_Frequency": "頻率",
-	"Visual_Fill": "填滿"
+	"Visual_Fill": "填滿",
+	"Visual_XAxis_Start": "開始",
+	"Visual_XAxis_End": "結束"
 }

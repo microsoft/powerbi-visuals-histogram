@@ -23,5 +23,7 @@
 	"Visual_TextSize": "पाठ आकार",
 	"Visual_Values": "मान",
 	"Visual_Frequency": "आवृत्ति",
-	"Visual_Fill": "भरण"
+	"Visual_Fill": "भरण",
+	"Visual_XAxis_Start": "प्रारंभ करें",
+	"Visual_XAxis_End": "समाप्त"
 }

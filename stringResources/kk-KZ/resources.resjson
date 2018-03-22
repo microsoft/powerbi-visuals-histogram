@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Мәтін өлшемі",
 	"Visual_Values": "Мәндер",
 	"Visual_Frequency": "Жиілік",
-	"Visual_Fill": "Толтыру"
+	"Visual_Fill": "Толтыру",
+	"Visual_XAxis_Start": "Бастау",
+	"Visual_XAxis_End": "Аяқтау"
 }

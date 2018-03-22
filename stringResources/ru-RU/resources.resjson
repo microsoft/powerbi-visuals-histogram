@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Размер текста",
 	"Visual_Values": "Значения",
 	"Visual_Frequency": "Частота",
-	"Visual_Fill": "Заливка"
+	"Visual_Fill": "Заливка",
+	"Visual_XAxis_Start": "Начать",
+	"Visual_XAxis_End": "Завершить"
 }

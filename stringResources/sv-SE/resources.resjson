@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Textstorlek",
 	"Visual_Values": "Värden",
 	"Visual_Frequency": "Frekvens",
-	"Visual_Fill": "Fyll"
+	"Visual_Fill": "Fyll",
+	"Visual_XAxis_Start": "Starta",
+	"Visual_XAxis_End": "Slut"
 }

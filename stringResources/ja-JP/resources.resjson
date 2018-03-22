@@ -23,5 +23,7 @@
 	"Visual_TextSize": "テキスト サイズ",
 	"Visual_Values": "値",
 	"Visual_Frequency": "頻度",
-	"Visual_Fill": "フィル"
+	"Visual_Fill": "フィル",
+	"Visual_XAxis_Start": "開始",
+	"Visual_XAxis_End": "終了"
 }

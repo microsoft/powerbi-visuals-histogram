@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Kích thước Văn bản",
 	"Visual_Values": "Giá trị",
 	"Visual_Frequency": "Tần suất",
-	"Visual_Fill": "Điền"
+	"Visual_Fill": "Điền",
+	"Visual_XAxis_Start": "Bắt đầu",
+	"Visual_XAxis_End": "Kết thúc"
 }

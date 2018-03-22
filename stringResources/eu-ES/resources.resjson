@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Testu-tamaina",
 	"Visual_Values": "Balioak",
 	"Visual_Frequency": "Maiztasuna",
-	"Visual_Fill": "Bete"
+	"Visual_Fill": "Bete",
+	"Visual_XAxis_Start": "Hasi",
+	"Visual_XAxis_End": "Amaiera"
 }

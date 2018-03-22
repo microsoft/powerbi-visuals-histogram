@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Μέγεθος κειμένου",
 	"Visual_Values": "Τιμές",
 	"Visual_Frequency": "Συχνότητα",
-	"Visual_Fill": "Συμπλήρωση"
+	"Visual_Fill": "Συμπλήρωση",
+	"Visual_XAxis_Start": "Έναρξη",
+	"Visual_XAxis_End": "Τέλος"
 }

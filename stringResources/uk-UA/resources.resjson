@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Розмір тексту",
 	"Visual_Values": "Значення",
 	"Visual_Frequency": "Періодичність",
-	"Visual_Fill": "Заповнити"
+	"Visual_Fill": "Заповнити",
+	"Visual_XAxis_Start": "Запустити",
+	"Visual_XAxis_End": "Кінець"
 }

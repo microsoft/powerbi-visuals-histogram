@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Velikost textu",
 	"Visual_Values": "Hodnoty",
 	"Visual_Frequency": "Frekvence",
-	"Visual_Fill": "Vyplnit"
+	"Visual_Fill": "Vyplnit",
+	"Visual_XAxis_Start": "Spustit",
+	"Visual_XAxis_End": "Konec"
 }

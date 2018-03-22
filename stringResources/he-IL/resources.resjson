@@ -23,5 +23,7 @@
 	"Visual_TextSize": "גודל טקסט",
 	"Visual_Values": "ערכים",
 	"Visual_Frequency": "תדירות",
-	"Visual_Fill": "מילוי"
+	"Visual_Fill": "מילוי",
+	"Visual_XAxis_Start": "הפעל",
+	"Visual_XAxis_End": "סיום"
 }

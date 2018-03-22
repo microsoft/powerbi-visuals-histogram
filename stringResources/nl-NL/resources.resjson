@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Tekengrootte",
 	"Visual_Values": "Waarden",
 	"Visual_Frequency": "Frequentie",
-	"Visual_Fill": "Opvullen"
+	"Visual_Fill": "Opvullen",
+	"Visual_XAxis_Start": "Starten",
+	"Visual_XAxis_End": "Einde"
 }

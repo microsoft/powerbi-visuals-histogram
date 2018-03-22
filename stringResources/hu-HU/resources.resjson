@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Szöveg mérete",
 	"Visual_Values": "Értékek",
 	"Visual_Frequency": "Gyakoriság",
-	"Visual_Fill": "Kitöltés"
+	"Visual_Fill": "Kitöltés",
+	"Visual_XAxis_Start": "Indítás",
+	"Visual_XAxis_End": "Befejezés"
 }

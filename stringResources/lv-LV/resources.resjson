@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Teksta lielums",
 	"Visual_Values": "Vērtības",
 	"Visual_Frequency": "Biežums",
-	"Visual_Fill": "Aizpildīt"
+	"Visual_Fill": "Aizpildīt",
+	"Visual_XAxis_Start": "Sākt",
+	"Visual_XAxis_End": "Beigas"
 }

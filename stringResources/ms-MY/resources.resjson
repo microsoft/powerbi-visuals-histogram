@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Saiz Teks",
 	"Visual_Values": "Nilai",
 	"Visual_Frequency": "Kekerapan",
-	"Visual_Fill": "Isi"
+	"Visual_Fill": "Isi",
+	"Visual_XAxis_Start": "Mula",
+	"Visual_XAxis_End": "Tamat"
 }

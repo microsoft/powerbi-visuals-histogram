@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Dimensiune text",
 	"Visual_Values": "Valori",
 	"Visual_Frequency": "Frecvență",
-	"Visual_Fill": "Completare"
+	"Visual_Fill": "Completare",
+	"Visual_XAxis_Start": "Start",
+	"Visual_XAxis_End": "Sfârșit"
 }

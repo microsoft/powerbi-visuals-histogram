@@ -23,5 +23,7 @@
 	"Visual_TextSize": "Tekststørrelse",
 	"Visual_Values": "Verdier",
 	"Visual_Frequency": "Hyppighet",
-	"Visual_Fill": "Fyll"
+	"Visual_Fill": "Fyll",
+	"Visual_XAxis_Start": "Start",
+	"Visual_XAxis_End": "Slutt"
 }
