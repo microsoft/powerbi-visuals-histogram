@@ -55,75 +55,28 @@ module powerbi.extensibility.visual {
 
         public bindEvents(
             behaviorOptions: HistogramBehaviorOptions,
-            selectionHandler: ISelectionHandler): void {
+            selectionHandler: ISelectionHandler
+        ): void {
 
             this.columns = behaviorOptions.columns;
             this.interactivityService = behaviorOptions.interactivityService;
             this.clearCatcher = behaviorOptions.clearCatcher;
 
             this.columns.on("click", (dataPoint: HistogramDataPoint) => {
-                selectionHandler.handleClearSelection();
+                const isCtrlPressed: boolean = d3.event && (d3.event as MouseEvent).ctrlKey;
 
-                const areDataPointsSelected: boolean = HistogramBehavior.areDataPointsSelected(
-                    this.selectedDataPoints,
-                    dataPoint.subDataPoints);
-
-                if (!areDataPointsSelected) {
-                    dataPoint.subDataPoints.forEach((subDataPoint: SelectableDataPoint) => {
-                        selectionHandler.handleSelection(subDataPoint, true, true);
-                    });
-
-                    selectionHandler.syncSelectionState(false);
-
-                    this.selectedDataPoints = dataPoint.subDataPoints;
-                } else {
-                    this.createAnEmptySelectedDataPoints();
-                }
+                selectionHandler.handleSelection(dataPoint.subDataPoints, isCtrlPressed);
             });
 
-            this.clearCatcher.on("click", () => {
-                selectionHandler.handleClearSelection();
-                this.createAnEmptySelectedDataPoints();
-            });
+            this.clearCatcher.on("click", selectionHandler.handleClearSelection.bind(selectionHandler));
         }
 
         public renderSelection(hasSelection: boolean): void {
             histogramUtils.updateFillOpacity(
                 this.columns,
                 this.interactivityService,
-                hasSelection);
-        }
-
-        public static areDataPointsSelected(
-            selectedDataPoints: SelectableDataPoint[],
-            dataPoints: SelectableDataPoint[]): boolean {
-            if (!dataPoints
-                || !selectedDataPoints
-                || dataPoints.length !== selectedDataPoints.length) {
-
-                return false;
-            }
-
-            return selectedDataPoints.every((firstDataPoint: SelectableDataPoint) => {
-                return dataPoints.some((secondDataPoint: SelectableDataPoint) => {
-                    return HistogramBehavior.areSelectionIdsTheSame(firstDataPoint, secondDataPoint);
-                });
-            });
-        }
-
-        private static areSelectionIdsTheSame(
-            firstDataPoint: SelectableDataPoint,
-            secondDataPoint: SelectableDataPoint): boolean {
-
-            return firstDataPoint
-                && secondDataPoint
-                && firstDataPoint.identity
-                && secondDataPoint.identity
-                && (firstDataPoint.identity as ISelectionId).equals(secondDataPoint.identity as ISelectionId);
-        }
-
-        private createAnEmptySelectedDataPoints(): void {
-            this.selectedDataPoints = [];
+                hasSelection
+            );
         }
     }
 }
