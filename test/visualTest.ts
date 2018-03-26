@@ -909,40 +909,6 @@ module powerbi.extensibility.visual.test {
             });
         });
 
-        describe("HistogramBehavior", () => {
-            describe("areDataPointsSelected", () => {
-                it("method should return false when dataPoint aren't the same", () => {
-                    let areDataPointsSelected: boolean,
-                        firstDataPoint: SelectableDataPoint[] = [createSelectableDataPoint()],
-                        secondDataPoint: SelectableDataPoint[] = [
-                            createSelectableDataPoint(true, null)
-                        ];
-
-                    areDataPointsSelected = HistogramBehavior.areDataPointsSelected(
-                        firstDataPoint, secondDataPoint);
-
-                    expect(areDataPointsSelected).toBeFalsy();
-                });
-
-                it("method should return true when dataPoint are the same", () => {
-                    let areDataPointsSelected: boolean,
-                        selectableDataPoint: SelectableDataPoint[] = [createSelectableDataPoint()];
-
-                    areDataPointsSelected = HistogramBehavior.areDataPointsSelected(
-                        selectableDataPoint, selectableDataPoint);
-
-                    expect(areDataPointsSelected).toBeTruthy();
-                });
-            });
-
-            function createSelectableDataPoint(
-                selected: boolean = false,
-                identity: ISelectionId = createSelectionId()): SelectableDataPoint {
-
-                return { selected, identity };
-            }
-        });
-
         describe("Capabilities tests", () => {
             it("all items having displayName should have displayNameKey property", () => {
                 jasmine.getJSONFixtures().fixturesPath = "base";

@@ -1,3 +1,11 @@
+## 1.2.0
+* UPD: powerbi-visuals-tools has been updated to 1.11.2 to support Bookmarks
+* UPD: API has been updated to 1.11.2 to support Bookmarks
+* UPD: powerbi-visuals-utils-interactivityutils has been updated to 3.2.0 to support Bookmarks
+* UPD: powerbi-visuals-utils-testutils has been updated to "1.2.0" to support Bookmarks
+* UPD: Improved selection performance by removing useless code
+* ADD: Multi selection is supported by Ctrl + Left Click
+
 ## 1.1.2
 * FIX: Bins selection performance was increased
 
