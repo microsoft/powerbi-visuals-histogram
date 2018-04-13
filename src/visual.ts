@@ -122,8 +122,6 @@ module powerbi.extensibility.visual {
 
     export class Histogram implements IVisual {
         private static ClassName: string = "histogram";
-        private static FrequencyText: string = "Frequency";
-        private static DensityText: string = "Density";
 
         private static Axes: ClassAndSelector = createClassAndSelector("axes");
         private static Axis: ClassAndSelector = createClassAndSelector("axis");
@@ -170,7 +168,6 @@ module powerbi.extensibility.visual {
 
         private static MinColumnHeight: number = 1;
 
-        private static TooltipDisplayName: string = "Range";
         private static SeparatorNumbers: string = ", ";
 
         private static MaxWidthOfTheLatestLabel: number = 40;
@@ -225,6 +222,7 @@ module powerbi.extensibility.visual {
         private viewportIn: IViewport;
 
         private visualHost: IVisualHost;
+        private localizationManager: ILocalizationManager;
         private interactivityService: IInteractivityService;
         private behavior: IInteractiveBehavior;
 
@@ -253,6 +251,7 @@ module powerbi.extensibility.visual {
 
         public init(options: VisualConstructorOptions): void {
             this.visualHost = options.host;
+            this.localizationManager = this.visualHost.createLocalizationManager();
 
             this.interactivityService = createInteractivityService(this.visualHost);
             this.behavior = HistogramBehavior.create();
@@ -298,7 +297,8 @@ module powerbi.extensibility.visual {
 
         public static converter(
             dataView: DataView,
-            visualHost: IVisualHost): HistogramDataView {
+            visualHost: IVisualHost,
+            localizationManager: ILocalizationManager): HistogramDataView {
 
             if (!dataView
                 || !dataView.categorical
@@ -437,7 +437,8 @@ module powerbi.extensibility.visual {
                 bins,
                 settings,
                 yLabelFormatter,
-                xLabelFormatter);
+                xLabelFormatter,
+                localizationManager);
 
             return {
                 dataPoints,
@@ -574,7 +575,8 @@ module powerbi.extensibility.visual {
             bins: LayoutBin<number>[],
             settings: HistogramSettings,
             yValueFormatter: IValueFormatter,
-            xValueFormatter: IValueFormatter): HistogramDataPoint[] {
+            xValueFormatter: IValueFormatter,
+            localizationManager: ILocalizationManager): HistogramDataPoint[] {
 
             let fontSizeInPx: string = PixelConverter.fromPoint(settings.labels.fontSize);
 
@@ -587,7 +589,8 @@ module powerbi.extensibility.visual {
                     settings,
                     index === 0,
                     yValueFormatter,
-                    xValueFormatter);
+                    xValueFormatter,
+                    localizationManager);
 
                 bin.subDataPoints = Histogram.getSubDataPoints(values, bin, index);
 
@@ -607,14 +610,15 @@ module powerbi.extensibility.visual {
             settings: HistogramSettings,
             includeLeftBorder: boolean,
             yValueFormatter: IValueFormatter,
-            xValueFormatter: IValueFormatter): VisualTooltipDataItem[] {
+            xValueFormatter: IValueFormatter,
+            localizationManager: ILocalizationManager): VisualTooltipDataItem[] {
 
             return [
                 {
-                    displayName: Histogram.getLegendText(settings),
+                    displayName: Histogram.getLegendText(settings, localizationManager),
                     value: yValueFormatter.format(value)
                 }, {
-                    displayName: Histogram.TooltipDisplayName,
+                    displayName: localizationManager.getDisplayName("Visual_TooltipDisplayName"),
                     value: Histogram.rangeToString(range, includeLeftBorder, xValueFormatter)
                 }
             ];
@@ -754,7 +758,8 @@ module powerbi.extensibility.visual {
 
             this.dataView = Histogram.converter(
                 dataView,
-                this.visualHost);
+                this.visualHost,
+                this.localizationManager);
 
             borderValues = this.dataView.borderValues;
             xAxisSettings = this.dataView.settings.xAxis;
@@ -1324,7 +1329,7 @@ module powerbi.extensibility.visual {
         }
 
         private getDataLegends(settings: HistogramSettings): Legend[] {
-            let bottomLegendText: string = Histogram.getLegendText(settings);
+            let bottomLegendText: string = Histogram.getLegendText(settings, this.localizationManager);
 
             bottomLegendText = Histogram.getLegend(
                 bottomLegendText,
@@ -1358,10 +1363,10 @@ module powerbi.extensibility.visual {
             ];
         }
 
-        private static getLegendText(settings: HistogramSettings): string {
+        private static getLegendText(settings: HistogramSettings, localizationManager: ILocalizationManager): string {
             return settings.general.frequency
-                ? Histogram.FrequencyText
-                : Histogram.DensityText;
+                ? localizationManager.getDisplayName("Visual_Frequency")
+                : localizationManager.getDisplayName("Visual_Density");
         }
 
         private bindSelectionHandler(columnsSelection: UpdateSelection<HistogramDataPoint>): void {

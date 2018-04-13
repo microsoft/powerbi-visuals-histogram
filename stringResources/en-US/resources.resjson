@@ -25,5 +25,8 @@
 	"Visual_TextSize": "Text Size",
 	"Visual_Values": "Values",
 	"Visual_Frequency": "Frequency",
-	"Visual_Fill": "Fill"
+	"Visual_Fill": "Fill",
+	"Visual_Frequency": "Frequency",
+	"Visual_Density": "Density",
+	"Visual_TooltipDisplayName": "Range"
 }
