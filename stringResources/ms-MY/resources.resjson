@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Kekerapan",
 	"Visual_Fill": "Isi",
 	"Visual_XAxis_Start": "Mula",
-	"Visual_XAxis_End": "Tamat"
+	"Visual_XAxis_End": "Tamat",
+	"Visual_Density": "Kepadatan",
+	"Visual_TooltipDisplayName": "Julat"
 }

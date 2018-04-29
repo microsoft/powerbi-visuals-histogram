@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Dažnis",
 	"Visual_Fill": "Užpildyti",
 	"Visual_XAxis_Start": "Paleisti",
-	"Visual_XAxis_End": "Pabaiga"
+	"Visual_XAxis_End": "Pabaiga",
+	"Visual_Density": "Sodrumas",
+	"Visual_TooltipDisplayName": "Diapazonas"
 }

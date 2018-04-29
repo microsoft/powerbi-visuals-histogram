@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Frekuensi",
 	"Visual_Fill": "Isi",
 	"Visual_XAxis_Start": "Mulai",
-	"Visual_XAxis_End": "Ujung"
+	"Visual_XAxis_End": "Ujung",
+	"Visual_Density": "Kepadatan",
+	"Visual_TooltipDisplayName": "Rentang"
 }

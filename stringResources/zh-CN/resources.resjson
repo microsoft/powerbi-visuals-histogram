@@ -25,5 +25,7 @@
 	"Visual_Frequency": "频率",
 	"Visual_Fill": "填充",
 	"Visual_XAxis_Start": "开始",
-	"Visual_XAxis_End": "结束"
+	"Visual_XAxis_End": "结束",
+	"Visual_Density": "密度",
+	"Visual_TooltipDisplayName": "范围"
 }

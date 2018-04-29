@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Честота",
 	"Visual_Fill": "Запълни",
 	"Visual_XAxis_Start": "Старт",
-	"Visual_XAxis_End": "Край"
+	"Visual_XAxis_End": "Край",
+	"Visual_Density": "Плътност",
+	"Visual_TooltipDisplayName": "Диапазон"
 }

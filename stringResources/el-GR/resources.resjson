@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Συχνότητα",
 	"Visual_Fill": "Συμπλήρωση",
 	"Visual_XAxis_Start": "Έναρξη",
-	"Visual_XAxis_End": "Τέλος"
+	"Visual_XAxis_End": "Τέλος",
+	"Visual_Density": "Πυκνότητα",
+	"Visual_TooltipDisplayName": "Περιοχή"
 }

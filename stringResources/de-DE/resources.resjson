@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Häufigkeit",
 	"Visual_Fill": "Ausfüllen",
 	"Visual_XAxis_Start": "Start",
-	"Visual_XAxis_End": "Ende"
+	"Visual_XAxis_End": "Ende",
+	"Visual_Density": "Dichte",
+	"Visual_TooltipDisplayName": "Bereich"
 }

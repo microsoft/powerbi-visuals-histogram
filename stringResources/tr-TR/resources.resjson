@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Sıklık",
 	"Visual_Fill": "Doldur",
 	"Visual_XAxis_Start": "Başlat",
-	"Visual_XAxis_End": "Son"
+	"Visual_XAxis_End": "Son",
+	"Visual_Density": "Yoğunluk",
+	"Visual_TooltipDisplayName": "Aralık"
 }

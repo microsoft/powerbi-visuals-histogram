@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Жиілік",
 	"Visual_Fill": "Толтыру",
 	"Visual_XAxis_Start": "Бастау",
-	"Visual_XAxis_End": "Аяқтау"
+	"Visual_XAxis_End": "Аяқтау",
+	"Visual_Density": "Тығыздық",
+	"Visual_TooltipDisplayName": "Ауқым"
 }

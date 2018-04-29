@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Frequência",
 	"Visual_Fill": "Preencher",
 	"Visual_XAxis_Start": "Iniciar",
-	"Visual_XAxis_End": "Encerrar"
+	"Visual_XAxis_End": "Encerrar",
+	"Visual_Density": "Densidade",
+	"Visual_TooltipDisplayName": "Intervalo"
 }

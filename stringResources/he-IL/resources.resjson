@@ -25,5 +25,7 @@
 	"Visual_Frequency": "תדירות",
 	"Visual_Fill": "מילוי",
 	"Visual_XAxis_Start": "הפעל",
-	"Visual_XAxis_End": "סיום"
+	"Visual_XAxis_End": "סיום",
+	"Visual_Density": "צפיפות",
+	"Visual_TooltipDisplayName": "טווח"
 }

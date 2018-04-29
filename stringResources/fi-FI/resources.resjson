@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Tiheys",
 	"Visual_Fill": "Täyttö",
 	"Visual_XAxis_Start": "Alku",
-	"Visual_XAxis_End": "Loppu"
+	"Visual_XAxis_End": "Loppu",
+	"Visual_Density": "Tiheys",
+	"Visual_TooltipDisplayName": "Alue"
 }

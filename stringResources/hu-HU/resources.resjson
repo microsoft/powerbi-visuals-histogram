@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Gyakoriság",
 	"Visual_Fill": "Kitöltés",
 	"Visual_XAxis_Start": "Indítás",
-	"Visual_XAxis_End": "Befejezés"
+	"Visual_XAxis_End": "Befejezés",
+	"Visual_Density": "Sűrűség",
+	"Visual_TooltipDisplayName": "Tartomány"
 }

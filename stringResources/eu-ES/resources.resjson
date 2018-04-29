@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Maiztasuna",
 	"Visual_Fill": "Bete",
 	"Visual_XAxis_Start": "Hasi",
-	"Visual_XAxis_End": "Amaiera"
+	"Visual_XAxis_End": "Amaiera",
+	"Visual_Density": "Dentsitatea",
+	"Visual_TooltipDisplayName": "Barrutia"
 }

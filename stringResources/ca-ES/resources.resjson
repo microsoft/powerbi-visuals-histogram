@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Freqüència",
 	"Visual_Fill": "Emplena",
 	"Visual_XAxis_Start": "Inicia",
-	"Visual_XAxis_End": "Final"
+	"Visual_XAxis_End": "Final",
+	"Visual_Density": "Densitat",
+	"Visual_TooltipDisplayName": "Interval"
 }

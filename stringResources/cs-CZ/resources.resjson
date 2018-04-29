@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Frekvence",
 	"Visual_Fill": "Vyplnit",
 	"Visual_XAxis_Start": "Spustit",
-	"Visual_XAxis_End": "Konec"
+	"Visual_XAxis_End": "Konec",
+	"Visual_Density": "Hustota",
+	"Visual_TooltipDisplayName": "Rozsah"
 }

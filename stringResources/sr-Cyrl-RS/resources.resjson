@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Учесталост",
 	"Visual_Fill": "Попуни",
 	"Visual_XAxis_Start": "Покрени",
-	"Visual_XAxis_End": "Крај"
+	"Visual_XAxis_End": "Крај",
+	"Visual_Density": "Густина",
+	"Visual_TooltipDisplayName": "Опсег"
 }

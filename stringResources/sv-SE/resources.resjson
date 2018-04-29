@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Frekvens",
 	"Visual_Fill": "Fyll",
 	"Visual_XAxis_Start": "Starta",
-	"Visual_XAxis_End": "Slut"
+	"Visual_XAxis_End": "Slut",
+	"Visual_Density": "Densitet",
+	"Visual_TooltipDisplayName": "Intervall"
 }

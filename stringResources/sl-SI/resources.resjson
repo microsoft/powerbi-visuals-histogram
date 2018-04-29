@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Frekvenca",
 	"Visual_Fill": "Zapolni",
 	"Visual_XAxis_Start": "Zaženi",
-	"Visual_XAxis_End": "Konec"
+	"Visual_XAxis_End": "Konec",
+	"Visual_Density": "Gostota",
+	"Visual_TooltipDisplayName": "Obseg"
 }

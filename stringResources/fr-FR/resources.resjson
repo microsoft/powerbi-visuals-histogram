@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Fréquence",
 	"Visual_Fill": "Remplir",
 	"Visual_XAxis_Start": "Début",
-	"Visual_XAxis_End": "Fin"
+	"Visual_XAxis_End": "Fin",
+	"Visual_Density": "Densité",
+	"Visual_TooltipDisplayName": "Plage"
 }

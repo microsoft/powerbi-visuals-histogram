@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Sagedus",
 	"Visual_Fill": "Täida",
 	"Visual_XAxis_Start": "Käivita",
-	"Visual_XAxis_End": "Lõpp"
+	"Visual_XAxis_End": "Lõpp",
+	"Visual_Density": "Tihedus",
+	"Visual_TooltipDisplayName": "Vahemik"
 }

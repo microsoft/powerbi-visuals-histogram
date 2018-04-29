@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Częstotliwość",
 	"Visual_Fill": "Wypełnienie",
 	"Visual_XAxis_Start": "Uruchom",
-	"Visual_XAxis_End": "Zakończ"
+	"Visual_XAxis_End": "Zakończ",
+	"Visual_Density": "Gęstość",
+	"Visual_TooltipDisplayName": "Zakres"
 }

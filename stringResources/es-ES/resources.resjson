@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Frecuencia",
 	"Visual_Fill": "Rellenar",
 	"Visual_XAxis_Start": "Iniciar",
-	"Visual_XAxis_End": "Finalizar"
+	"Visual_XAxis_End": "Finalizar",
+	"Visual_Density": "Densidad",
+	"Visual_TooltipDisplayName": "Rango"
 }

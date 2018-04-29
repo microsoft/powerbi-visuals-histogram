@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Učestalost",
 	"Visual_Fill": "Popuni",
 	"Visual_XAxis_Start": "Pokreni",
-	"Visual_XAxis_End": "Kraj"
+	"Visual_XAxis_End": "Kraj",
+	"Visual_Density": "Gustina",
+	"Visual_TooltipDisplayName": "Opseg"
 }

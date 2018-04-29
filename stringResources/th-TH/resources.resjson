@@ -25,5 +25,7 @@
 	"Visual_Frequency": "ความถี่",
 	"Visual_Fill": "เติม",
 	"Visual_XAxis_Start": "เริ่ม",
-	"Visual_XAxis_End": "สิ้นสุด"
+	"Visual_XAxis_End": "สิ้นสุด",
+	"Visual_Density": "ความหนาแน่น",
+	"Visual_TooltipDisplayName": "ระยะ"
 }

@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Biežums",
 	"Visual_Fill": "Aizpildīt",
 	"Visual_XAxis_Start": "Sākt",
-	"Visual_XAxis_End": "Beigas"
+	"Visual_XAxis_End": "Beigas",
+	"Visual_Density": "Blīvums",
+	"Visual_TooltipDisplayName": "Diapazons"
 }

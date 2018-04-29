@@ -25,5 +25,7 @@
 	"Visual_Frequency": "التردد",
 	"Visual_Fill": "تعبئة",
 	"Visual_XAxis_Start": "ابدأ",
-	"Visual_XAxis_End": "النهاية"
+	"Visual_XAxis_End": "النهاية",
+	"Visual_Density": "الكثافة",
+	"Visual_TooltipDisplayName": "النطاق"
 }

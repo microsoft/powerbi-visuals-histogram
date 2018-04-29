@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Frequenza",
 	"Visual_Fill": "Riempimento",
 	"Visual_XAxis_Start": "Inizio",
-	"Visual_XAxis_End": "Fine"
+	"Visual_XAxis_End": "Fine",
+	"Visual_Density": "Densità",
+	"Visual_TooltipDisplayName": "Intervallo"
 }

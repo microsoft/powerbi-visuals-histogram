@@ -25,5 +25,7 @@
 	"Visual_Frequency": "Tần suất",
 	"Visual_Fill": "Điền",
 	"Visual_XAxis_Start": "Bắt đầu",
-	"Visual_XAxis_End": "Kết thúc"
+	"Visual_XAxis_End": "Kết thúc",
+	"Visual_Density": "Mật độ",
+	"Visual_TooltipDisplayName": "Phạm vi"
 }

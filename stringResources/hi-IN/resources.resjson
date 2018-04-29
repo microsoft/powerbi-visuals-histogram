@@ -25,5 +25,7 @@
 	"Visual_Frequency": "आवृत्ति",
 	"Visual_Fill": "भरण",
 	"Visual_XAxis_Start": "प्रारंभ करें",
-	"Visual_XAxis_End": "समाप्त"
+	"Visual_XAxis_End": "समाप्त",
+	"Visual_Density": "डेंसिटी",
+	"Visual_TooltipDisplayName": "श्रेणी"
 }
