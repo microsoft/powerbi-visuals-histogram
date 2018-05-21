@@ -184,6 +184,60 @@ module powerbi.extensibility.visual.test {
                 expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
             });
 
+            it("Y-axis start < 0 validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: -52,
+                        end: 78
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+            });
+
+            it("Y-axis end < 0 validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: 0,
+                        end: -78
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+                expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(0);
+            });
+
+            it("Y-axis start is undefined validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: undefined,
+                        end: 78
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+            });
+
+            it("Y-axis end is undefined validation", () => {
+                dataView.metadata.objects = {
+                    yAxis: {
+                        start: 0,
+                        end: undefined
+                    }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+                expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(0);
+            });
+
             it("X-axis default ticks", () => {
                 dataViewBuilder.valuesCategory = [
                     9, 10, 11, 12, 13, 14
@@ -733,19 +787,60 @@ module powerbi.extensibility.visual.test {
             }
         });
 
+        describe("getCorrectYAxisValue", () => {
+            it("the method should return a value that equals MaxXAxisEndValue", () => {
+                checkCorrectYAxisValue(Number.MAX_VALUE, VisualClass.MaxXAxisEndValue);
+            });
+
+            it("the method should return a value that equals MinXAxisStartValue", () => {
+                checkCorrectYAxisValue(-Number.MAX_VALUE, 0);
+            });
+
+            it("the method should return the same value", () => {
+                const value: number = 42;
+
+                checkCorrectYAxisValue(value, value);
+            });
+
+            it("the method should return a 0 if value is undefined ", () => {
+                checkCorrectYAxisValue(undefined, 0);
+            });
+
+            it("the method should return a 0 if value is NaN ", () => {
+                checkCorrectYAxisValue(parseInt("someString"), 0);
+            });
+
+            function checkCorrectYAxisValue(
+                actualValue: number,
+                expectedValue: number): void {
+
+                const value: number = VisualClass.getCorrectYAxisValue(actualValue);
+
+                expect(value).toBe(expectedValue);
+            }
+        });
+
         describe("getCorrectXAxisValue", () => {
             it("the method should return a value that equals MaxXAxisEndValue", () => {
                 checkCorrectXAxisValue(Number.MAX_VALUE, VisualClass.MaxXAxisEndValue);
             });
 
             it("the method should return a value that equals MinXAxisStartValue", () => {
-                checkCorrectXAxisValue(-Number.MIN_VALUE, VisualClass.MinXAxisStartValue);
+                checkCorrectXAxisValue(-Number.MAX_VALUE, VisualClass.MinXAxisStartValue);
             });
 
             it("the method should return the same value", () => {
                 const value: number = 42;
 
                 checkCorrectXAxisValue(value, value);
+            });
+
+            it("the method should return a 0 if value is undefined ", () => {
+                checkCorrectXAxisValue(undefined, 0);
+            });
+
+            it("the method should return a 0 if value is NaN ", () => {
+                checkCorrectXAxisValue(parseInt("someString"), 0);
             });
 
             function checkCorrectXAxisValue(
@@ -814,38 +909,28 @@ module powerbi.extensibility.visual.test {
             });
         });
 
-        describe("HistogramBehavior", () => {
-            describe("areDataPointsSelected", () => {
-                it("method should return false when dataPoint aren't the same", () => {
-                    let areDataPointsSelected: boolean,
-                        firstDataPoint: SelectableDataPoint[] = [createSelectableDataPoint()],
-                        secondDataPoint: SelectableDataPoint[] = [
-                            createSelectableDataPoint(true, null)
-                        ];
+        describe("Capabilities tests", () => {
+            it("all items having displayName should have displayNameKey property", () => {
+                jasmine.getJSONFixtures().fixturesPath = "base";
 
-                    areDataPointsSelected = HistogramBehavior.areDataPointsSelected(
-                        firstDataPoint, secondDataPoint);
+                let jsonData = getJSONFixture("capabilities.json");
 
-                    expect(areDataPointsSelected).toBeFalsy();
-                });
+                let objectsChecker: Function = (obj) => {
+                    for (let property in obj) {
+                        let value: any = obj[property];
 
-                it("method should return true when dataPoint are the same", () => {
-                    let areDataPointsSelected: boolean,
-                        selectableDataPoint: SelectableDataPoint[] = [createSelectableDataPoint()];
+                        if (value.displayName) {
+                            expect(value.displayNameKey).toBeDefined();
+                        }
 
-                    areDataPointsSelected = HistogramBehavior.areDataPointsSelected(
-                        selectableDataPoint, selectableDataPoint);
+                        if (typeof value === "object") {
+                            objectsChecker(value);
+                        }
+                    }
+                };
 
-                    expect(areDataPointsSelected).toBeTruthy();
-                });
+                objectsChecker(jsonData);
             });
-
-            function createSelectableDataPoint(
-                selected: boolean = false,
-                identity: ISelectionId = createSelectionId()): SelectableDataPoint {
-
-                return { selected, identity };
-            }
         });
     });
 }
