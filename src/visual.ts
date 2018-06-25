@@ -402,11 +402,11 @@ module powerbi.extensibility.visual {
             // min-max for X axis
             xAxisSettings = settings.xAxis;
             let maxXvalue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > borderValues.minX)
-            ? xAxisSettings.end
-            : borderValues.maxX;
+                ? xAxisSettings.end
+                : borderValues.maxX;
             let minXValue: number = (xAxisSettings.start !== null) && xAxisSettings.start < maxXvalue
-            ? xAxisSettings.start
-            : borderValues.minX;
+                ? xAxisSettings.start
+                : borderValues.minX;
             settings.xAxis.start = Histogram.getCorrectXAxisValue(minXValue);
             settings.xAxis.end = Histogram.getCorrectXAxisValue(maxXvalue);
 
@@ -743,7 +743,7 @@ module powerbi.extensibility.visual {
 
         public update(options: VisualUpdateOptions): void {
             let borderValues: HistogramBorderValues,
-            xAxisSettings: HistogramXAxisSettings;
+                xAxisSettings: HistogramXAxisSettings;
 
             if (!options
                 || !options.dataViews
@@ -1446,12 +1446,12 @@ module powerbi.extensibility.visual {
             return parseFloat(formattedPoint);
         }
 
-        private calculateXAxes(
+        public calculateXAxes(
             source: DataViewMetadataColumn,
             textProperties: TextProperties,
             widthOfLabel: number,
-            scrollbarVisible: boolean): IAxisProperties {
-
+            scrollbarVisible: boolean
+        ): IAxisProperties {
             let axes: IAxisProperties,
                 width: number = this.viewportIn.width,
                 xAxisSettings: HistogramXAxisSettings = this.dataView.settings.xAxis,
@@ -1469,38 +1469,41 @@ module powerbi.extensibility.visual {
             if ((borderValues.maxX !== xAxisSettings.end || borderValues.minX !== xAxisSettings.start) && xPoints.length > 1) {
                 interval = this.dataView.dataPoints[0].dx;
 
-                // If start point is greater than min border, it is necessary to remove non-using data points
-                if (xAxisSettings.start > borderValues.minX) {
-                    closerLimit = this.findBorderMinCloserToXAxisStart(borderValues.minX, xAxisSettings.start, interval);
-                    xPoints = xPoints.filter(dpv => this.formatXlabelsForFiltering(dpv) >= closerLimit);
-                    this.dataView.xCorrectedMin = xPoints && xPoints.length > 0 ? xPoints[0] : null;
-                }
-                else {
-                    // Add points before
-                    tmpArr = [];
-                    tmpStart = borderValues.minX;
-                    while (xAxisSettings.start < tmpStart) {
-                        tmpStart = tmpStart - interval;
-                        tmpArr.push(tmpStart);
-                        this.dataView.xCorrectedMin = tmpStart;
+                // The interval must be greater than zero to avoid infinity loops
+                if (this.isIntervalValid(interval)) {
+                    // If start point is greater than min border, it is necessary to remove non-using data points
+                    if (xAxisSettings.start > borderValues.minX) {
+                        closerLimit = this.findBorderMinCloserToXAxisStart(borderValues.minX, xAxisSettings.start, interval);
+                        xPoints = xPoints.filter(dpv => this.formatXlabelsForFiltering(dpv) >= closerLimit);
+                        this.dataView.xCorrectedMin = xPoints && xPoints.length > 0 ? xPoints[0] : null;
                     }
-                    tmpArr.reverse();
-                    xPoints = tmpArr.concat(xPoints);
-                }
+                    else {
+                        // Add points before
+                        tmpArr = [];
+                        tmpStart = borderValues.minX;
+                        while (xAxisSettings.start < tmpStart) {
+                            tmpStart = tmpStart - interval;
+                            tmpArr.push(tmpStart);
+                            this.dataView.xCorrectedMin = tmpStart;
+                        }
+                        tmpArr.reverse();
+                        xPoints = tmpArr.concat(xPoints);
+                    }
 
-                // If end point is lesser than max border, it is necessary to remove non-using data points
-                if (xAxisSettings.end < borderValues.maxX) {
-                    closerLimit = this.findBorderMaxCloserToXAxisEnd(borderValues.maxX, xAxisSettings.end, interval);
-                    xPoints = xPoints.filter(dpv => this.formatXlabelsForFiltering(dpv) <= closerLimit);
-                    this.dataView.xCorrectedMax = xPoints && xPoints.length > 0 ? xPoints[xPoints.length - 1] : null;
-                }
-                else {
-                    // Add points after
-                    tmpEnd = borderValues.maxX;
-                    while (xAxisSettings.end > tmpEnd) {
-                        tmpEnd = tmpEnd + interval;
-                        xPoints.push(tmpEnd);
-                        this.dataView.xCorrectedMax = tmpEnd;
+                    // If end point is lesser than max border, it is necessary to remove non-using data points
+                    if (xAxisSettings.end < borderValues.maxX) {
+                        closerLimit = this.findBorderMaxCloserToXAxisEnd(borderValues.maxX, xAxisSettings.end, interval);
+                        xPoints = xPoints.filter(dpv => this.formatXlabelsForFiltering(dpv) <= closerLimit);
+                        this.dataView.xCorrectedMax = xPoints && xPoints.length > 0 ? xPoints[xPoints.length - 1] : null;
+                    }
+                    else {
+                        // Add points after
+                        tmpEnd = borderValues.maxX;
+                        while (xAxisSettings.end > tmpEnd) {
+                            tmpEnd = tmpEnd + interval;
+                            xPoints.push(tmpEnd);
+                            this.dataView.xCorrectedMax = tmpEnd;
+                        }
                     }
                 }
             }
@@ -1510,21 +1513,28 @@ module powerbi.extensibility.visual {
                 axisScale.linear,
                 source,
                 Histogram.InnerPaddingRatio,
-                widthOfLabel);
+                widthOfLabel
+            );
 
             axes.willLabelsFit = willLabelsFit(
                 axes,
                 width,
                 textMeasurementService.measureSvgTextWidth,
-                textProperties);
+                textProperties
+            );
 
             // If labels do not fit and we are not scrolling, try word breaking
             axes.willLabelsWordBreak = (!axes.willLabelsFit && !scrollbarVisible) && willLabelsWordBreak(
                 axes, Histogram.Margin, width, textMeasurementService.measureSvgTextWidth,
                 textMeasurementService.estimateSvgTextHeight, textMeasurementService.getTailoredTextOrDefault,
-                textProperties);
+                textProperties
+            );
 
             return axes;
+        }
+
+        public isIntervalValid(interval: number): boolean {
+            return interval > 0;
         }
 
         private calculateXAxesProperties(
