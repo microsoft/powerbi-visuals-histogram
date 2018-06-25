@@ -38,6 +38,10 @@ module powerbi.extensibility.visual.test {
             super(width, height, "Histogram1445664487616");
         }
 
+        public get instance(): VisualClass {
+            return this.visual;
+        }
+
         protected build(options: VisualConstructorOptions): VisualClass {
             return new VisualClass(options);
         }

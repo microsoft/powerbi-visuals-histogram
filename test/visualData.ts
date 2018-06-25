@@ -38,10 +38,16 @@ module powerbi.extensibility.visual.test {
         public static ColumnCategory: string = "Age";
         public static ColumnValues: string = "Value";
 
-        public valuesCategory: number[] = getRandomNumbers(20, 10, 60).sort();
-        public valuesValue: number[] = getRandomNumbers(this.valuesCategory.length, 1, 10);
+        public categoryColumnValues: number[] = getRandomNumbers(20, 10, 60).sort();
+        public valuesColumnValues: number[] = getRandomNumbers(this.categoryColumnValues.length, 1, 10);
 
-        public getDataView(columnNames?: string[]): DataView {
+        public getDataView(
+            columnNames?: string[],
+            numberOfRecords: number = Number.MAX_VALUE,
+        ): DataView {
+            const categoryColumnValues: number[] = this.categoryColumnValues.slice(0, numberOfRecords);
+            const valuesColumnValues: number[] = this.valuesColumnValues.slice(0, numberOfRecords);
+
             return this.createCategoricalDataViewBuilder([
                 {
                     source: {
@@ -49,7 +55,7 @@ module powerbi.extensibility.visual.test {
                         isMeasure: true,
                         type: ValueType.fromDescriptor({ numeric: true }),
                     },
-                    values: this.valuesCategory
+                    values: categoryColumnValues
                 }
             ], [
                     {
@@ -58,7 +64,7 @@ module powerbi.extensibility.visual.test {
                             isMeasure: true,
                             type: ValueType.fromDescriptor({ numeric: true }),
                         },
-                        values: this.valuesValue
+                        values: valuesColumnValues
                     }
                 ], columnNames).build();
         }
