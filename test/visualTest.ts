@@ -35,34 +35,29 @@ module powerbi.extensibility.visual.test {
     // powerbi.extensibility.utils.svg
     import parseTranslateTransform = powerbi.extensibility.utils.svg.parseTranslateTransform;
 
-    // powerbi.extensibility.utils.interactivity
-    import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
-
     // powerbi.extensibility.utils.test
-    import createSelectionId = powerbi.extensibility.utils.test.mocks.createSelectionId;
     import assertColorsMatch = powerbi.extensibility.utils.test.helpers.color.assertColorsMatch;
 
     // Histogram1445664487616
     import VisualClass = powerbi.extensibility.visual.Histogram1445664487616.Histogram;
     import histogramUtils = powerbi.extensibility.visual.Histogram1445664487616.histogramUtils;
     import StateOfDataPoint = powerbi.extensibility.visual.Histogram1445664487616.StateOfDataPoint;
-    import HistogramBehavior = powerbi.extensibility.visual.Histogram1445664487616.HistogramBehavior;
     import HistogramAxisStyle = powerbi.extensibility.visual.Histogram1445664487616.HistogramAxisStyle;
     import HistogramDataPoint = powerbi.extensibility.visual.Histogram1445664487616.HistogramDataPoint;
 
     describe("HistogramChart", () => {
-        let visualBuilder: HistogramChartBuilder,
-            dataViewBuilder: HistogramData,
-            dataView: DataView;
-
-        beforeEach(() => {
-            visualBuilder = new HistogramChartBuilder(1000, 500);
-            dataViewBuilder = new HistogramData();
-
-            dataView = dataViewBuilder.getDataView();
-        });
-
         describe("DOM tests", () => {
+            let visualBuilder: HistogramChartBuilder,
+                dataViewBuilder: HistogramData,
+                dataView: DataView;
+
+            beforeEach(() => {
+                visualBuilder = new HistogramChartBuilder(1000, 500);
+                dataViewBuilder = new HistogramData();
+
+                dataView = dataViewBuilder.getDataView();
+            });
+
             it("svg element created", () => {
                 expect(visualBuilder.mainElement[0]).toBeInDOM();
             });
@@ -95,13 +90,13 @@ module powerbi.extensibility.visual.test {
             });
 
             it("data labels position validation", (done) => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     10, 11, 12, 15, 16, 20,
                     21, 25, 26, 27, 28, 29,
                     30, 31, 40, 50, 60, 70
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     7, 6, 10, 4, 3, 3,
                     3, 6, 10, 4, 1, 7,
                     9, 2, 9, 4, 5, 7
@@ -239,11 +234,11 @@ module powerbi.extensibility.visual.test {
             });
 
             it("X-axis default ticks", () => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     9, 10, 11, 12, 13, 14
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     772, 878, 398, 616, 170, 267,
                 ];
 
@@ -256,11 +251,11 @@ module powerbi.extensibility.visual.test {
             });
 
             it("X-axis start is lesser than min", () => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     9, 10, 11, 12, 13, 14
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     772, 878, 398, 616, 170, 267,
                 ];
 
@@ -279,11 +274,11 @@ module powerbi.extensibility.visual.test {
             });
 
             it("X-axis end is greater than max and bins=7", () => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     9, 10, 11, 12, 13, 14
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     772, 878, 398, 616, 170, 267,
                 ];
 
@@ -305,11 +300,11 @@ module powerbi.extensibility.visual.test {
             });
 
             it("X-axis start is greater than min and bins=7", () => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     9, 10, 11, 12, 13, 14
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     772, 878, 398, 616, 170, 267,
                 ];
 
@@ -331,11 +326,11 @@ module powerbi.extensibility.visual.test {
             });
 
             it("X-axis end is lesser than max and bins=12", () => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     9, 10, 11, 12, 13, 14
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     772, 878, 398, 616, 170, 267,
                 ];
 
@@ -357,11 +352,11 @@ module powerbi.extensibility.visual.test {
             });
 
             it("X-axis end is lesser than max and bins=6 and periodic number case", () => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     9, 10, 11, 12, 13, 14
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     772, 878, 398, 616, 170, 267,
                 ];
 
@@ -384,11 +379,11 @@ module powerbi.extensibility.visual.test {
             });
 
             it("X-axis start is greater than max", () => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     9, 10, 11, 12, 13, 14
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     772, 878, 398, 616, 170, 267,
                 ];
 
@@ -406,11 +401,11 @@ module powerbi.extensibility.visual.test {
             });
 
             it("X-axis end is lesser than min", () => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     9, 10, 11, 12, 13, 14
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     772, 878, 398, 616, 170, 267,
                 ];
 
@@ -428,11 +423,11 @@ module powerbi.extensibility.visual.test {
             });
 
             it("X-axis start and end is lesser than min", () => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     9, 10, 11, 12, 13, 14
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     772, 878, 398, 616, 170, 267,
                 ];
 
@@ -452,11 +447,11 @@ module powerbi.extensibility.visual.test {
             });
 
             it("X-axis start and end is greater than max", () => {
-                dataViewBuilder.valuesCategory = [
+                dataViewBuilder.categoryColumnValues = [
                     9, 10, 11, 12, 13, 14
                 ];
 
-                dataViewBuilder.valuesValue = [
+                dataViewBuilder.valuesColumnValues = [
                     772, 878, 398, 616, 170, 267,
                 ];
 
@@ -477,6 +472,17 @@ module powerbi.extensibility.visual.test {
         });
 
         describe("Format settings test", () => {
+            let visualBuilder: HistogramChartBuilder,
+                dataViewBuilder: HistogramData,
+                dataView: DataView;
+
+            beforeEach(() => {
+                visualBuilder = new HistogramChartBuilder(1000, 500);
+                dataViewBuilder = new HistogramData();
+
+                dataView = dataViewBuilder.getDataView();
+            });
+
             describe("General", () => {
                 it("frequency", () => {
                     dataView.metadata.objects = {
@@ -739,6 +745,52 @@ module powerbi.extensibility.visual.test {
                 expect(() => {
                     VisualClass.getLegend("Power BI", HistogramAxisStyle.showBoth, NaN);
                 }).not.toThrow();
+            });
+        });
+
+        describe("calculateXAxes", () => {
+            let visualBuilder: HistogramChartBuilder;
+            let dataViewBuilder: HistogramData;
+
+            beforeEach(() => {
+                visualBuilder = new HistogramChartBuilder(1000, 500);
+                dataViewBuilder = new HistogramData();
+            });
+
+            it("should not fall into infinity loop if there is just one data point", (done) => {
+                const dataView: DataView = dataViewBuilder.getDataView(undefined, 1);
+
+                dataView.metadata.objects = {
+                    xAxis: {
+                        start: 0,
+                    }
+                };
+
+                visualBuilder.updateRenderTimeout(dataView, () => {
+                    expect(dataView).toBeDefined();
+
+                    done();
+                });
+            });
+        });
+
+        describe("isIntervalValid", () => {
+            let visualBuilder: HistogramChartBuilder;
+
+            beforeEach(() => {
+                visualBuilder = new HistogramChartBuilder(1000, 500);
+            });
+
+            it("should return true if interval is greater than zero", () => {
+                expect(visualBuilder.instance.isIntervalValid(1)).toBeTruthy();
+            });
+
+            it("should return false if interval is less than zero", () => {
+                expect(visualBuilder.instance.isIntervalValid(-1)).toBeFalsy();
+            });
+
+            it("should return false if interval is zero", () => {
+                expect(visualBuilder.instance.isIntervalValid(0)).toBeFalsy();
             });
         });
 

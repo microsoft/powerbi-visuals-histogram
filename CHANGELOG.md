@@ -1,3 +1,6 @@
+## 1.3.1
+* Fixes infinity loops that crashed browser and Power BI Desktop if there's just one data point in a data-set
+
 ## 1.3.0
 * Added localization for all supported languages
 
