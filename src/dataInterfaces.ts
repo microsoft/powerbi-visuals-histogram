@@ -60,7 +60,7 @@ module powerbi.extensibility.visual {
         maxY: number;
     }
 
-    export interface HistogramDataView {
+    export interface HistogramData {
         dataPoints: HistogramDataPoint[];
 
         borderValues: HistogramBorderValues;

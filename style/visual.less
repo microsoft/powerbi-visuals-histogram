@@ -32,20 +32,18 @@
 @import (less) "node_modules/powerbi-visuals-utils-chartutils/lib/index.css";
 
 .histogram {
-    @histogramAxesColor: #777777;
-
     font-family: helvetica, arial, sans-serif;
 
     .axis, .legends {
         path, line {
             fill: none;
-            stroke: @histogramAxesColor;
             shape-rendering: crispEdges;
         }
 
         text {
-            fill: @histogramAxesColor;
             font-size: 11px;
+            stroke: transparent;
+            stroke-width: 0;
         }
     }
 
@@ -53,6 +51,12 @@
         text {
             font-size: 12px;
             text-anchor: middle;
+            stroke: transparent;
+            stroke-width: 0;
         }
+    }
+
+    .column {
+        fill: transparent;
     }
 }

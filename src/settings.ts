@@ -64,6 +64,7 @@ module powerbi.extensibility.visual {
     export class HistogramAxisSettings {
         public show: boolean = true;
         public axisColor: string = "#777";
+        public strokeColor: string = "#777";
         public title: boolean = true;
         public displayUnits: number = 0;
         public precision: number = 2;

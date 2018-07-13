@@ -40,7 +40,7 @@ module powerbi.extensibility.visual {
         export const DimmedOpacity: number = 0.4;
         export const DefaultOpacity: number = 1.0;
 
-        export function getFillOpacity(
+        export function getOpacity(
             selected: boolean,
             highlight: boolean,
             hasSelection: boolean,
@@ -70,7 +70,7 @@ module powerbi.extensibility.visual {
             };
         }
 
-        export function updateFillOpacity(
+        export function updateOpacity(
             columns: Selection<HistogramDataPoint>,
             interactivityService?: IInteractivityService,
             hasSelection: boolean = false): void {
@@ -81,10 +81,10 @@ module powerbi.extensibility.visual {
                 hasHighlights = interactivityService.hasSelection();
             }
 
-            columns.style("fill-opacity", (dataPoint: HistogramDataPoint) => {
+            columns.style("opacity", (dataPoint: HistogramDataPoint) => {
                 const selectedDataPoint: StateOfDataPoint = histogramUtils.getStateOfDataPoint(dataPoint);
 
-                return histogramUtils.getFillOpacity(
+                return histogramUtils.getOpacity(
                     selectedDataPoint.selected,
                     selectedDataPoint.highlight,
                     !selectedDataPoint.highlight && hasSelection,
