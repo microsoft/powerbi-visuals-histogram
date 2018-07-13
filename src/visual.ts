@@ -1118,6 +1118,8 @@ module powerbi.extensibility.visual {
         private renderXAxis(): void {
             if (!this.data.settings.xAxis.show) {
                 this.clearElement(this.axisX);
+
+                return;
             }
 
             const xAxis: SVGAxis = this.xAxisProperties.axis
