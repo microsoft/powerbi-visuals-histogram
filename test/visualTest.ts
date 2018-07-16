@@ -29,6 +29,7 @@
 module powerbi.extensibility.visual.test {
     // powerbi.extensibility.visual.test
     import HistogramData = powerbi.extensibility.visual.test.HistogramData;
+    import areColorsEqual = powerbi.extensibility.visual.test.helpers.areColorsEqual;
     import HistogramChartBuilder = powerbi.extensibility.visual.test.HistogramChartBuilder;
     import getSolidColorStructuralObject = powerbi.extensibility.visual.test.helpers.getSolidColorStructuralObject;
 
@@ -505,14 +506,14 @@ module powerbi.extensibility.visual.test {
 
                     visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                    expect(visualBuilder.columnRects.length).toBe(bins);
+                    expect(visualBuilder.columns.length).toBe(bins);
 
                     bins = 6;
 
                     (dataView.metadata.objects as any).general.bins = bins;
                     visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                    expect(visualBuilder.columnRects.length).toBe(bins);
+                    expect(visualBuilder.columns.length).toBe(bins);
                 });
             });
 
@@ -528,7 +529,7 @@ module powerbi.extensibility.visual.test {
 
                     visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                    visualBuilder.columnRects
+                    visualBuilder.columns
                         .toArray()
                         .forEach((element: Element) => {
                             assertColorsMatch($(element).css("fill"), color);
@@ -663,7 +664,7 @@ module powerbi.extensibility.visual.test {
                     visualBuilder.updateFlushAllD3Transitions(dataView);
 
                     expect(visualBuilder.labelTexts).toBeInDOM();
-                    expect(visualBuilder.columnRects.length).toBe(visualBuilder.labelTexts.length);
+                    expect(visualBuilder.columns.length).toBe(visualBuilder.labelTexts.length);
 
                     (dataView.metadata.objects as any).labels.show = false;
                     visualBuilder.updateFlushAllD3Transitions(dataView);
@@ -910,7 +911,7 @@ module powerbi.extensibility.visual.test {
                 it("method should return DimmedOpacity when hasSelection is true, selected is false", () => {
                     let fillOpacity: number;
 
-                    fillOpacity = histogramUtils.getFillOpacity(false, false, true, false);
+                    fillOpacity = histogramUtils.getOpacity(false, false, true, false);
 
                     expect(fillOpacity).toBe(histogramUtils.DimmedOpacity);
                 });
@@ -918,7 +919,7 @@ module powerbi.extensibility.visual.test {
                 it("method should return DefaultOpacity when hasSelection is true, selected is true", () => {
                     let fillOpacity: number;
 
-                    fillOpacity = histogramUtils.getFillOpacity(true, false, true, false);
+                    fillOpacity = histogramUtils.getOpacity(true, false, true, false);
 
                     expect(fillOpacity).toBe(histogramUtils.DefaultOpacity);
                 });
@@ -962,7 +963,7 @@ module powerbi.extensibility.visual.test {
         });
 
         describe("Capabilities tests", () => {
-            it("all items having displayName should have displayNameKey property", () => {
+            it("all items that have displayName should have displayNameKey property", () => {
                 jasmine.getJSONFixtures().fixturesPath = "base";
 
                 let jsonData = getJSONFixture("capabilities.json");
@@ -982,6 +983,67 @@ module powerbi.extensibility.visual.test {
                 };
 
                 objectsChecker(jsonData);
+            });
+        });
+
+        describe("Accessibility", () => {
+            let visualBuilder: HistogramChartBuilder;
+            let dataViewBuilder: HistogramData;
+            let dataView: DataView;
+
+            beforeEach(() => {
+                visualBuilder = new HistogramChartBuilder(1000, 500);
+                dataViewBuilder = new HistogramData();
+
+                dataView = dataViewBuilder.getDataView();
+            });
+
+            describe("High contrast mode", () => {
+                const backgroundColor: string = "#000000";
+                const foregroundColor: string = "#ffff00";
+
+                beforeEach(() => {
+                    visualBuilder.visualHost.colorPalette.isHighContrast = true;
+
+                    visualBuilder.visualHost.colorPalette.background = { value: backgroundColor };
+                    visualBuilder.visualHost.colorPalette.foreground = { value: foregroundColor };
+                });
+
+                it("should not use fill style", (done) => {
+                    visualBuilder.updateRenderTimeout(dataView, () => {
+                        const layers: JQuery[] = visualBuilder.columns.toArray().map($);
+
+                        expect(isColorAppliedToElements(layers, null, "fill"));
+
+                        done();
+                    });
+                });
+
+                it("should use stroke style", (done) => {
+                    visualBuilder.updateRenderTimeout(dataView, () => {
+                        const layers: JQuery[] = visualBuilder.columns.toArray().map($);
+
+                        expect(isColorAppliedToElements(layers, foregroundColor, "stroke"));
+
+                        done();
+                    });
+                });
+
+                function isColorAppliedToElements(
+                    elements: JQuery[],
+                    color?: string,
+                    colorStyleName: string = "fill"
+                ): boolean {
+                    return elements.some((element: JQuery) => {
+                        const currentColor: string = element.css(colorStyleName);
+
+                        if (!currentColor || !color) {
+                            return currentColor === color;
+                        }
+
+                        return areColorsEqual(currentColor, color);
+                    });
+                }
             });
         });
     });

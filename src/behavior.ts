@@ -45,7 +45,6 @@ module powerbi.extensibility.visual {
 
     export class HistogramBehavior implements IInteractiveBehavior {
         private columns: Selection<HistogramDataPoint>;
-        private selectedDataPoints: SelectableDataPoint[];
         private clearCatcher: Selection<any>;
         private interactivityService: IInteractivityService;
 
@@ -72,7 +71,7 @@ module powerbi.extensibility.visual {
         }
 
         public renderSelection(hasSelection: boolean): void {
-            histogramUtils.updateFillOpacity(
+            histogramUtils.updateOpacity(
                 this.columns,
                 this.interactivityService,
                 hasSelection

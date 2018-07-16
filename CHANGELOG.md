@@ -1,3 +1,7 @@
+## 1.4.0
+* High contrast mode
+* API 1.13.0
+
 ## 1.3.1
 * Fixes infinity loops that crashed browser and Power BI Desktop if there's just one data point in a data-set
 

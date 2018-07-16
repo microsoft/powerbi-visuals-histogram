@@ -64,7 +64,7 @@ module powerbi.extensibility.visual.test {
                 .children("text.data-labels");
         }
 
-        public get columnRects() {
+        public get columns() {
             return this.mainElement
                 .children("g")
                 .children("g.columns")
