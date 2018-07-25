@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Start",
 	"Visual_XAxis_End": "Sfârșit",
 	"Visual_Density": "Densitate",
-	"Visual_TooltipDisplayName": "Interval"
+	"Visual_TooltipDisplayName": "Interval",
+	"Histogram_Short_Description": "Vizualizează distribuția datelor într-un interval continuu sau într-o anumită perioadă de timp",
+	"Histogram_Long_Description": "O histogramă afișează reprezentarea istoricului distribuției datelor numerice. Este o estimare a distribuției probabilității unei variabile continue (variabilă cantitativă).\nDatele sunt grupate în clase, mai exact, se împarte întregul interval de valori într-o serie de intervale - și apoi se contorizează numărul de valori care se încadrează în fiecare interval.\nParticularizați numărul de clase, dacă se utilizează frecvența sau densitatea și culorile datelor.\nAcesta este un element vizual open source. Obțineți codul de la GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

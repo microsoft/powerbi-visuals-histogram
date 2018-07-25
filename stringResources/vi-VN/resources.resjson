@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Bắt đầu",
 	"Visual_XAxis_End": "Kết thúc",
 	"Visual_Density": "Mật độ",
-	"Visual_TooltipDisplayName": "Phạm vi"
+	"Visual_TooltipDisplayName": "Phạm vi",
+	"Histogram_Short_Description": "Minh họa quá trình phân phối dữ liệu qua các khoảng liên tục hoặc khoảng thời gian xác định",
+	"Histogram_Long_Description": "Biểu đồ cột thể hiện dạng thức minh họa việc phân bổ dữ liệu dạng số cũ. Đây là một hình thức ước tính việc phân bổ các biến liên tục kiểu xác suất (biến định lượng).\nDữ liệu được nhóm thành dạng giá trị nhị phân, nghĩa là phân chia toàn bộ phạm vi giá trị thành chuỗi gồm các khoảng—sau đó sẽ tính số giá trị rơi vào từng khoảng.\nTùy chỉnh số lượng các giá trị nhị phân, để xem sử dụng tần suất hay cường độ cũng như các màu cho dữ liệu.\nĐây là hình ảnh nguồn mở. Tải mã từ GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "开始",
 	"Visual_XAxis_End": "结束",
 	"Visual_Density": "密度",
-	"Visual_TooltipDisplayName": "范围"
+	"Visual_TooltipDisplayName": "范围",
+	"Histogram_Short_Description": "使连续间隔或特定时间段内的数据分布可视化",
+	"Histogram_Long_Description": "直方图显示数值数据分布的历史记录表示形式。它是对连续变量(定量变量)的概率分布的估计。\n将数据分组为组距，即将值的整个范围划分为一系列间隔，然后计算每个间隔中有多少个值。\n自定义组距的数量(无论是使用频率还是密度)和数据颜色。\n这是一个开放源代码视觉对象。从 GitHub 获取代码: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

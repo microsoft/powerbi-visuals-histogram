@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Sākt",
 	"Visual_XAxis_End": "Beigas",
 	"Visual_Density": "Blīvums",
-	"Visual_TooltipDisplayName": "Diapazons"
+	"Visual_TooltipDisplayName": "Diapazons",
+	"Histogram_Short_Description": "Vizualizē datu izplatību nepārtrauktā intervālā vai noteiktā laika periodā.",
+	"Histogram_Long_Description": "Histogramma parāda skaitlisko datu izplatības vēsturisko attēlojumu. Tas ir nepārtraukta mainīgā (kvantitatīva mainīgā) iespējamības izplatības novērtējums.\nDati tiek grupēti nodalījumos, t.i., viss vērtību diapazons tiek sadalīts pa intervālu sērijām, un pēc tam tiek aprēķināts, cik vērtību ir katrā intervālā.\nPielāgojiet nodalījumu skaitu, to, vai tiks izmantots biežums vai blīvums, kā arī datu krāsas.\nŠie ir atvērtā pirmkoda vizuālie dati. Iegūstiet kodu no GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Start",
 	"Visual_XAxis_End": "Slut",
 	"Visual_Density": "Tæthed",
-	"Visual_TooltipDisplayName": "Område"
+	"Visual_TooltipDisplayName": "Område",
+	"Histogram_Short_Description": "Visualiserer distribution af data over et fortløbende interval eller en bestemt tidsperiode",
+	"Histogram_Long_Description": "Et histogram viser oversigt over gengivelsen af distributionen for numeriske data. Det er et estimat på sandsynlighedsfordelingen af en løbende variabel (kvantitativ variabel).\nDataen er grupperet i placeringer, det vil sige, at hele intervallet af værdier er inddelt i en serie af intervaller – og tæller derefter, hvor mange værdier, i hvert interval.\nDu kan tilpasse antallet af placeringer, om du vil bruge frekvens eller tæthed, samt dataenes farver.\nDette er en open source illustration. Koden kan hentes fra GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "開始",
 	"Visual_XAxis_End": "結束",
 	"Visual_Density": "密度",
-	"Visual_TooltipDisplayName": "範圍"
+	"Visual_TooltipDisplayName": "範圍",
+	"Histogram_Short_Description": "將一段連續間隔或某個期間的資料分佈視覺化",
+	"Histogram_Long_Description": "長條圖可顯示數值資料分佈的歷程表示。這是連續變項 (量化變項) 機率分佈的估計值。\n資料會分成間隔，也就是把整個範圍的值分割到一系列的間隔中，然後計算有幾個值落入各個間隔。\n您可自訂間隔數目、要使用頻率或密度，及資料色彩。\n這是開放原始碼視覺效果。從 GitHub 取得程式碼: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

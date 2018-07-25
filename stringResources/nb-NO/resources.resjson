@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Start",
 	"Visual_XAxis_End": "Slutt",
 	"Visual_Density": "Intensitet",
-	"Visual_TooltipDisplayName": "Område"
+	"Visual_TooltipDisplayName": "Område",
+	"Histogram_Short_Description": "Visualiserer fordelingen av data over et kontinuerlig intervall eller en bestemt tidsperiode",
+	"Histogram_Long_Description": "Et histogram viser en historisk representasjon av fordelingen mellom numeriske data. Det er et estimat av sannsynlighetsfordelingen til en kontinuerlig variabel (kvantitativ variabel).\nDataene grupperes til hyller, det vil si at hele verdiområdet grupperes i en rekke intervaller – og deretter telles antall verdier i hvert intervall.\nTilpass antall hyller, om det skal brukes frekvens eller tetthet samt datafargene.\nDette er et visualobjekt med åpen kildekode. Hent koden fra GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Mula",
 	"Visual_XAxis_End": "Tamat",
 	"Visual_Density": "Kepadatan",
-	"Visual_TooltipDisplayName": "Julat"
+	"Visual_TooltipDisplayName": "Julat",
+	"Histogram_Short_Description": "Visualisasi pengedaran data sepanjang selang berterusan atau tempoh masa tertentu",
+	"Histogram_Long_Description": "Histogram menunjukkan perwakilan sejarah pengedaran data berangka. Ia adalah anggaran taburan kebarangkalian pembolehubah berterusan (pembolehubah kuantitatif).\nData tersebut dikumpulkan ke dalam tong, iaitu, membahagikan keseluruhan julat nilai ke dalam siri selang-dan kemudian hitung berapa banyak nilai yang jatuh ke dalam setiap selang.\nKesesuaikan bilangan tong, sama ada menggunakan kekerapan atau ketumpatan, dan warna data.\nnIni adalah visual sumber terbuka. Dapatkan kod dari GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

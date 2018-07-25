@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Pokreni",
 	"Visual_XAxis_End": "Kraj",
 	"Visual_Density": "Gustina",
-	"Visual_TooltipDisplayName": "Opseg"
+	"Visual_TooltipDisplayName": "Opseg",
+	"Histogram_Short_Description": "Vizuelizuje distribuciju podataka u neprekidnom intervalu ili određenom vremenskom periodu",
+	"Histogram_Long_Description": "Histogram prikazuje istorijsko predstavljanje distribucije numeričkih podataka. On predstavlja procenu distribucije verovatnoće neprekidne promenljive (kvantitativna promenljiva).\nPodaci su grupisani u grupe, tj. oni dele ceo opseg vrednosti u grupu intervala – a zatim prebrojavaju koliko vrednosti spada u svaki interval.\nPrilagodite broj grupa, da li treba koristiti učestalost ili gustinu, kao i boje podataka.\nOvo je open source vizuelni element. Preuzmite kôd iz usluge GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

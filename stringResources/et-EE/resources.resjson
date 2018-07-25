@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Käivita",
 	"Visual_XAxis_End": "Lõpp",
 	"Visual_Density": "Tihedus",
-	"Visual_TooltipDisplayName": "Vahemik"
+	"Visual_TooltipDisplayName": "Vahemik",
+	"Histogram_Short_Description": "Visualiseerib andmete jaotuse pideva intervalli või teatud ajaperioodi jooksul",
+	"Histogram_Long_Description": "Histogramm kuvab arvandmete jaotuse ajalooliselt. See on pideva arvtunnuse (kvantitatiivse muutuja) tõenäosusjaotuse hinnang.\nAndmed on jaotatud salvedeks, st kogu väärtuste vahemik jaotatakse intervallide seeriaks, misjärel saab loendada, mitu väärtust igasse intervalli jääb.\nSaate kohandada salvede arvu ja andmete värve ning valida, kas kasutada sagedust või tihedust.\nSee on avatud lähtekoodiga visuaal. Hankige kood GitHubist: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "開始",
 	"Visual_XAxis_End": "終了",
 	"Visual_Density": "密度",
-	"Visual_TooltipDisplayName": "範囲"
+	"Visual_TooltipDisplayName": "範囲",
+	"Histogram_Short_Description": "連続した間隔または特定の期間についてデータの分布を視覚化します",
+	"Histogram_Long_Description": "ヒストグラムは、数値データの分布の履歴を表したものです。継続的な変数 (定量的変数) の確立分布の見積もりです。\nデータがビンにグループ化されます。つまり、値の範囲全体がいくつかの間隔に分割されます。各間隔に分類された値の数がカウントされます。\nビンの数、頻度、密度、データの色を使用するかどうかなどをカスタマイズします。\nこれは、オープン ソースの視覚エフェクトです。GitHub からコードを取得します。https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

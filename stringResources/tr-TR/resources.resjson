@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Başlat",
 	"Visual_XAxis_End": "Son",
 	"Visual_Density": "Yoğunluk",
-	"Visual_TooltipDisplayName": "Aralık"
+	"Visual_TooltipDisplayName": "Aralık",
+	"Histogram_Short_Description": "Verilerin sürekli bir aralık veya belirli bir zaman dilimi içindeki dağıtımını görselleştirir",
+	"Histogram_Long_Description": "Bir Histogram sayısal verilerin dağıtımının tarihsel temsilini gösterir. Sürekli bir değişkenin (niceliksel değişken) olasılık dağıtımının bir tahminidir.\nVeriler bölmelerde gruplanır, yani tüm değer aralığını bir dizi aralığa böler; sonra her aralığa düşen değerleri sayar.\nBölme sayısını, sıklık mı yoğunluk mu kullanılacağını ve veri renklerini özelleştirin.\nBu, açık kaynaklı bir görseldir. Kodu GitHub'dan alabilirsiniz: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

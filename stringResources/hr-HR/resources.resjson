@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Početak",
 	"Visual_XAxis_End": "Kraj",
 	"Visual_Density": "Gustoća",
-	"Visual_TooltipDisplayName": "Raspon"
+	"Visual_TooltipDisplayName": "Raspon",
+	"Histogram_Short_Description": "Vizualizira distribuciju podataka u kontinuiranom intervalu ili određenom vremenskom razdoblju",
+	"Histogram_Long_Description": "Histogram pokazuje prikaz povijesti distribucije numeričkih podatak. To je procjena distribucije vjerojatnosti kontinuirane varijable (kvantitativne varijable).\nPodaci se grupiraju u grupe, odnosno cijeli se raspon vrijednosti dijeli na serije intervala – a zatim se broji koliko vrijednosti pripada u koji interval.\nPrilagodite broj grupa, postavku koja određuje hoće li se koristiti učestalost ili gustoća te boje podatak.\nTo je vizual otvorenog koda. Kod preuzmite sa servisa GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

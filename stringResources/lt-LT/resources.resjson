@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Paleisti",
 	"Visual_XAxis_End": "Pabaiga",
 	"Visual_Density": "Sodrumas",
-	"Visual_TooltipDisplayName": "Diapazonas"
+	"Visual_TooltipDisplayName": "Diapazonas",
+	"Histogram_Short_Description": "Per nepertraukiamą intervalą ar tam tikrą laikotarpį vizualizuojamas duomenų pasiskirstymas",
+	"Histogram_Long_Description": "Histograma vaizduoja skaitinių duomenų pasiskirstymo istoriją. Tai yra apytikris nepertraukiamo kintamojo (kiekybinio kintamojo) tikimybės pasiskirstymas.\nDuomenys sugrupuojami į intervalus, t. y., visas reikšmių diapazonas padalijamas į keletą intervalų, o tada suskaičiuojama, kiek reikšmių patenka į kiekvieną intervalą.\nGalite tinkinti intervalų skaičių, nurodyti, ar naudoti dažnį, ar tankį, ir tinkinti duomenų spalvas.\nTai yra atvirojo kodo vaizdinis elementas. Šį kodą galite gauti iš „GitHub“: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

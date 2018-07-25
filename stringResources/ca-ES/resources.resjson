@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Inicia",
 	"Visual_XAxis_End": "Final",
 	"Visual_Density": "Densitat",
-	"Visual_TooltipDisplayName": "Interval"
+	"Visual_TooltipDisplayName": "Interval",
+	"Histogram_Short_Description": "Visualitzeu la distribució de les dades al llarg d'un interval continu o d'un cert període de temps.",
+	"Histogram_Long_Description": "Un Histograma mostra la representació de l'historial de la distribució de dades numèriques. És un valor aproximat de la distribució de probabilitat d'una variable contínua (variable quantitativa).\nLes dades s'agrupen en intervals, és a dir, es divideix tot el rang de valors en sèries d'intervals i, seguidament, es compta el nombre de valors que cauen en cada interval.\nPodeu personalitzar el nombre d'intervals, bé per fer servir la freqüència o la densitat, i els colors de les dades.\nAquest element visual d'origen és de codi obert. Podeu obtenir el codi al GitHub, a https://github.com/Microsoft/PowerBI-visuals-histogram."
 }

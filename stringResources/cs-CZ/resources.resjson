@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Spustit",
 	"Visual_XAxis_End": "Konec",
 	"Visual_Density": "Hustota",
-	"Visual_TooltipDisplayName": "Rozsah"
+	"Visual_TooltipDisplayName": "Rozsah",
+	"Histogram_Short_Description": "Vizualizuje rozdělení dat během souvislého intervalu nebo určitého časového období",
+	"Histogram_Long_Description": "Histogram zobrazuje reprezentaci historie distribuce číselných dat. Jedná se o odhad distribuce pravděpodobnosti průběžné proměnné (kvantitativní proměnné).\nData jsou seskupena do intervalů, což znamená, že se celý rozsah hodnot rozdělí na řadu intervalů a poté se spočítá, kolik hodnot do každého intervalu spadá.\nMůžete přizpůsobit počet intervalů a barvy dat a rozhodnout, zda se použije frekvence, nebo hustota.\nTento vizuál je typu open source. Kód můžete získat z Githubu: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

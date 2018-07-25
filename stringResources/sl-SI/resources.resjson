@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Zaženi",
 	"Visual_XAxis_End": "Konec",
 	"Visual_Density": "Gostota",
-	"Visual_TooltipDisplayName": "Obseg"
+	"Visual_TooltipDisplayName": "Obseg",
+	"Histogram_Short_Description": "Ponazoritev porazdelitve podatkov v neprekinjenem intervalu ali določenem časovnem obdobju",
+	"Histogram_Long_Description": "Histogram prikaže predstavitev zgodovine porazdelitve številskih podatkov. Je ocena verjetnostne porazdelitve zvezne spremenljivke (kvantitativna spremenljivka).\nPodatki so združeni v vedra tako, da razdelijo celoten obseg vrednosti v nize intervalov in nato preštejejo število vrednosti v posameznih intervalih.\nPrilagodite lahko število veder, tako da uporabljajo pogostost ali gostoto, in barve podatkov.\nTo je odprtokodna ponazoritev. Kodo lahko pridobite na spletnem mestu storitve GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

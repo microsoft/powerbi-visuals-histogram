@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Alku",
 	"Visual_XAxis_End": "Loppu",
 	"Visual_Density": "Tiheys",
-	"Visual_TooltipDisplayName": "Alue"
+	"Visual_TooltipDisplayName": "Alue",
+	"Histogram_Short_Description": "Visualisoi tietojen jakaantumisen jatkuvalle välille tai tietylle ajanjaksolle",
+	"Histogram_Long_Description": "Histogrammi näyttää historiallisen esityksen numeeristen tietojen jakaumasta. Se on arvio jatkuvan muuttujan (määrällisen muuttujan) todennäköisyysjakaumasta.\nTiedot on ryhmitelty lokeroihin, mikä tarkoittaa sitä, että koko arvojen alue jaetaan sarjaan välejä, minkä jälkeen lasketaan, montako arvoa kullekin välille kuuluu.\nMukauta lokeroiden määrää, sitä, käytetäänkö taajuutta vai tiheyttä, ja tietojen värejä.\nTämä on avoimen lähteen visualisointi. Hanki koodi GitHubista: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

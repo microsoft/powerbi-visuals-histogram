@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Uruchom",
 	"Visual_XAxis_End": "Zakończ",
 	"Visual_Density": "Gęstość",
-	"Visual_TooltipDisplayName": "Zakres"
+	"Visual_TooltipDisplayName": "Zakres",
+	"Histogram_Short_Description": "Wizualizuje rozkład danych w ramach ciągłego interwału lub wybranego okresu",
+	"Histogram_Long_Description": "Histogram przedstawia reprezentację historii rozkładu danych liczbowych. Jest to oszacowanie rozkładu prawdopodobieństwa zmiennej ciągłej (zmiennej ilościowej).\nDane są pogrupowane w przedziałach, co oznacza, że cały zakres wartości jest dzielony na serię interwałów — a następnie są liczone wartości należące do każdego interwału.\nMożna dostosować liczbę przedziałów, wybrać opcję użycia częstotliwości lub gęstości i zmienić kolory danych.\nJest to wizualizacja typu open source. Pobierz kod z usługi GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

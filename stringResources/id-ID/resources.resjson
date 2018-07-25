@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Mulai",
 	"Visual_XAxis_End": "Ujung",
 	"Visual_Density": "Kepadatan",
-	"Visual_TooltipDisplayName": "Rentang"
+	"Visual_TooltipDisplayName": "Rentang",
+	"Histogram_Short_Description": "Memvisualisasikan distribusi data dalam interval berkelanjutan atau periode waktu tertentu",
+	"Histogram_Long_Description": "Histogram menunjukkan representasi riwayat distribusi data numerik. Ini adalah perkiraan distribusi probabilitas dari variabel kontinu (variabel kuantitatif).\nData dikelompokkan ke dalam bin yang membagi seluruh rentang nilai menjadi serangkaian interval—kemudian menghitung jumlah nilai yang jatuh ke dalam setiap interval.\nSesuaikan jumlah bin, apakah menggunakan frekuensi atau densitas, dan warna data.\nIni adalah visual sumber terbuka. Dapatkan kodenya dari GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

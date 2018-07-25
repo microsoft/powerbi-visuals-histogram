@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Début",
 	"Visual_XAxis_End": "Fin",
 	"Visual_Density": "Densité",
-	"Visual_TooltipDisplayName": "Plage"
+	"Visual_TooltipDisplayName": "Plage",
+	"Histogram_Short_Description": "Visualiser la distribution des données dans un intervalle continu ou sur une période donnée",
+	"Histogram_Long_Description": "Un histogramme montre la représentation historique de la distribution de données numériques. Il donne une estimation de la distribution des probabilités d'une variable continue (variable quantitative).\nLes données sont regroupées dans des compartiments : autrement dit, la gamme entière de valeurs est divisée en intervalles, et les valeurs qui se retrouvent dans chaque intervalle sont comptabilisées.\nVous pouvez personnaliser le nombre de compartiments, les couleurs des données et le type de données à utiliser (fréquence ou densité).\nCe visuel est open source. Obtenez le code sur GitHub ici : https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

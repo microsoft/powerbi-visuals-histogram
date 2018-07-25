@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Starten",
 	"Visual_XAxis_End": "Einde",
 	"Visual_Density": "Dichtheid",
-	"Visual_TooltipDisplayName": "Bereik"
+	"Visual_TooltipDisplayName": "Bereik",
+	"Histogram_Short_Description": "Hiermee wordt de verdeling van gegevens over een ononderbroken interval of een bepaalde periode weergegeven",
+	"Histogram_Long_Description": "Een histogram is een historische weergave van de verdeling van numerieke gegevens. Het is een schatting van de mogelijke verdeling van een continue variabele (kwantitatieve variabele).\nDe gegevens zijn gegroepeerd in vakken, dat wil zeggen dat het gehele bereik van waarden wordt verdeeld in een reeks intervallen. Vervolgens wordt berekend hoeveel waarden elk interval bevat.\nU kunt het aantal vakken aanpassen, bepalen of frequentie of dichtheid moet worden gebruikt en de gegevenskleuren wijzigen.\nDit is een open source visual. U kunt de code op GitHub ophalen: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

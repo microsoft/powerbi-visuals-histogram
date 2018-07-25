@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Starta",
 	"Visual_XAxis_End": "Slut",
 	"Visual_Density": "Densitet",
-	"Visual_TooltipDisplayName": "Intervall"
+	"Visual_TooltipDisplayName": "Intervall",
+	"Histogram_Short_Description": "Visualiserar distributionen av data över ett kontinuerligt intervall eller en viss tidsperiod",
+	"Histogram_Long_Description": "Ett Histogram visar historiska representationer av distributionen för numeriska data. Det är en uppskattning av sannolikhetsfördelningen för en kontinuerlig variabel (kvantitativ variabel).\nData grupperas i bins, det vill säga man fördelar hela omfånget med värden i en serie intervall och räknar hur många värden som hamnar inom varje intervall.\nAnpassa antalet bins, om du vill använda frekvens eller densitet och datans färger.\nDet här är ett visuellt objekt med öppen källkod. Hämta koden från GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

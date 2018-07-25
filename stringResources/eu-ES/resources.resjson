@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Hasi",
 	"Visual_XAxis_End": "Amaiera",
 	"Visual_Density": "Dentsitatea",
-	"Visual_TooltipDisplayName": "Barrutia"
+	"Visual_TooltipDisplayName": "Barrutia",
+	"Histogram_Short_Description": "Datuen banaketa bistaratzen du, tarte jarraitu batean edo denboraldi jakin batean zehar",
+	"Histogram_Long_Description": "Histogramek zenbakizko datuen banaketaren adierazpen historikoa adierazten dute. Aldagai jarraitu (aldagai kuantitatibo) baten probabilitate-banaketaren kalkulua da.\nTartetan banatzen dira datuak, hau da, balioen barruti osoa bitarte multzo batzuetan banatzen da eta, ondoren, bitarte bakoitzean dagoen balio kopuru zenbatzen da.\nPertsonalizatu tarte kopurua, maiztasuna edo dentsitatea erabiltzeko aukera, eta datuen koloreak.\nKode irekikoa da elementu bisual hau. Eskuratu kodea GitHub-en: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

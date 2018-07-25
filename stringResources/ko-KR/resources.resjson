@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "시작",
 	"Visual_XAxis_End": "끝",
 	"Visual_Density": "밀도",
-	"Visual_TooltipDisplayName": "범위"
+	"Visual_TooltipDisplayName": "범위",
+	"Histogram_Short_Description": "연속된 간격 또는 특정 시간 동안의 데이터 분포를 시각화합니다.",
+	"Histogram_Long_Description": "히스토그램은 숫자 데이터의 분포를 기록으로 나타내며, 연속 변수(계량 변수)의 확률 분포 추정치입니다.\n데이터는 전체 값 범위를 여러 구간으로 나누는 저장소로 그룹화되며, 그런 다음 각 구간에 속하는 값의 수를 계산하게 됩니다.\n저장소의 수, 빈도 또는 밀도의 사용 여부, 데이터 색상은 사용자 지정합니다.\n이는 오픈 소스 시각적 개체입니다. GitHub에서 코드를 받아 보세요. https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Inizio",
 	"Visual_XAxis_End": "Fine",
 	"Visual_Density": "Densità",
-	"Visual_TooltipDisplayName": "Intervallo"
+	"Visual_TooltipDisplayName": "Intervallo",
+	"Histogram_Short_Description": "Visualizza la distribuzione dei dati in un intervallo di tempo continuo o in un periodo di tempo determinato",
+	"Histogram_Long_Description": "Un istogramma mostra la rappresentazione cronologica della distribuzione di dati numerici. Si tratta di una stima della distribuzione della probabilità di una variabile continua (variabile quantitativa).\nI dati vengono raggruppati in intervalli, ovvero l'intero intervallo di valori viene diviso in una serie di intervalli. Viene quindi contato quanti valori rientrano in ciascun intervallo.\nÈ possibile personalizzare il numero di intervalli, scegliere se usare la frequenza o la densità e specificare i colori per i dati.\nOggetto visivo open source. Il codice sorgente è disponibile su GitHub all'indirizzo https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

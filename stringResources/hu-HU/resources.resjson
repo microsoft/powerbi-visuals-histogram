@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Indítás",
 	"Visual_XAxis_End": "Befejezés",
 	"Visual_Density": "Sűrűség",
-	"Visual_TooltipDisplayName": "Tartomány"
+	"Visual_TooltipDisplayName": "Tartomány",
+	"Histogram_Short_Description": "Az adatok eloszlását jeleníti meg folyamatosan vagy egy adott időtartamra vonatkozóan",
+	"Histogram_Long_Description": "A hisztogram numerikus adatok időbeli eloszlását jeleníti meg. Ez egy folyamatos változó (mennyiségi változó) valószínűségi eloszlásának becsült értéke.\nAz adatok rekeszekbe vannak csoportosítva, azaz a teljes értéktartomány intervallumokra van osztva, majd mindegyik ilyen intervallum esetében megszámolja a rendszer, hogy hány érték tartozik bele.\nTestre szabható a rekeszek száma, az, hogy használni kívánja-e a gyakoriságot vagy a sűrűséget, valamint az adatok színe.\nEz egy nyílt forráskódú vizualizáció. A kód letölthető a GitHubról: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }

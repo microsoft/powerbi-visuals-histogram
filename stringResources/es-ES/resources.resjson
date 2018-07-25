@@ -27,5 +27,7 @@
 	"Visual_XAxis_Start": "Iniciar",
 	"Visual_XAxis_End": "Finalizar",
 	"Visual_Density": "Densidad",
-	"Visual_TooltipDisplayName": "Rango"
+	"Visual_TooltipDisplayName": "Rango",
+	"Histogram_Short_Description": "Permite visualizar la distribución de los datos en un intervalo continuo o en un período de tiempo específico.",
+	"Histogram_Long_Description": "Histograma donde se muestra la representación histórica de la distribución de datos numéricos. Es un cálculo de la distribución de probabilidad de una variable continua (variable cuantitativa).\nLos datos se agrupan en rangos (es decir, se divide todo el rango de valores en una serie de intervalos y, después, se cuenta el número de valores que hay en cada intervalo).\nPersonalice el número de rangos, si se usa la frecuencia o la densidad, y los colores de datos.\nEs un objeto visual de código abierto. Descargue el código desde GitHub: https://github.com/Microsoft/PowerBI-visuals-histogram"
 }
