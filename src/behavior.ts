@@ -24,58 +24,60 @@
  *  THE SOFTWARE.
  */
 
-module powerbi.extensibility.visual {
-    // d3
-    import Selection = d3.Selection;
+import "@babel/polyfill";
+// d3
+import * as d3 from "d3";
+type Selection<T> = d3.Selection<any, T, any, any>;
 
-    // powerbi.visuals
-    import ISelectionId = powerbi.visuals.ISelectionId;
+import powerbi from "powerbi-visuals-api";
+import ISelectionId = powerbi.visuals.ISelectionId;
 
-    // powerbi.extensibility.utils.interactivity
-    import ISelectionHandler = powerbi.extensibility.utils.interactivity.ISelectionHandler;
-    import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
-    import IInteractiveBehavior = powerbi.extensibility.utils.interactivity.IInteractiveBehavior;
-    import IInteractivityService = powerbi.extensibility.utils.interactivity.IInteractivityService;
+import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
+import ISelectionHandler = interactivityService.ISelectionHandler;
+import IInteractiveBehavior = interactivityService.IInteractiveBehavior;
+import IInteractivityService = interactivityService.IInteractivityService;
 
-    export interface HistogramBehaviorOptions {
-        columns: Selection<HistogramDataPoint>;
-        clearCatcher: Selection<any>;
-        interactivityService: IInteractivityService;
+import { HistogramDataPoint } from "./dataInterfaces";
+import { updateOpacity } from "./utils";
+
+export interface HistogramBehaviorOptions {
+    columns: Selection<HistogramDataPoint>;
+    clearCatcher: Selection<any>;
+    interactivityService: IInteractivityService;
+}
+
+export class HistogramBehavior implements IInteractiveBehavior {
+    private columns: Selection<HistogramDataPoint>;
+    private clearCatcher: Selection<any>;
+    private interactivityService: IInteractivityService;
+
+    public static create(): IInteractiveBehavior {
+        return new HistogramBehavior();
     }
 
-    export class HistogramBehavior implements IInteractiveBehavior {
-        private columns: Selection<HistogramDataPoint>;
-        private clearCatcher: Selection<any>;
-        private interactivityService: IInteractivityService;
+    public bindEvents(
+        behaviorOptions: HistogramBehaviorOptions,
+        selectionHandler: ISelectionHandler
+    ): void {
 
-        public static create(): IInteractiveBehavior {
-            return new HistogramBehavior();
-        }
+        this.columns = behaviorOptions.columns;
+        this.interactivityService = behaviorOptions.interactivityService;
+        this.clearCatcher = behaviorOptions.clearCatcher;
 
-        public bindEvents(
-            behaviorOptions: HistogramBehaviorOptions,
-            selectionHandler: ISelectionHandler
-        ): void {
+        this.columns.on("click", (dataPoint: HistogramDataPoint) => {
+            const isCtrlPressed: boolean = d3.event && (d3.event as MouseEvent).ctrlKey;
 
-            this.columns = behaviorOptions.columns;
-            this.interactivityService = behaviorOptions.interactivityService;
-            this.clearCatcher = behaviorOptions.clearCatcher;
+            selectionHandler.handleSelection(dataPoint.subDataPoints, isCtrlPressed);
+        });
 
-            this.columns.on("click", (dataPoint: HistogramDataPoint) => {
-                const isCtrlPressed: boolean = d3.event && (d3.event as MouseEvent).ctrlKey;
+        this.clearCatcher.on("click", selectionHandler.handleClearSelection.bind(selectionHandler));
+    }
 
-                selectionHandler.handleSelection(dataPoint.subDataPoints, isCtrlPressed);
-            });
-
-            this.clearCatcher.on("click", selectionHandler.handleClearSelection.bind(selectionHandler));
-        }
-
-        public renderSelection(hasSelection: boolean): void {
-            histogramUtils.updateOpacity(
-                this.columns,
-                this.interactivityService,
-                hasSelection
-            );
-        }
+    public renderSelection(hasSelection: boolean): void {
+        updateOpacity(
+            this.columns,
+            this.interactivityService,
+            hasSelection
+        );
     }
 }
