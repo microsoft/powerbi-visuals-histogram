@@ -28,9 +28,8 @@ import powerbi from "powerbi-visuals-api";
 import { isEmpty } from "lodash";
 // d3
 import * as d3 from "d3";
-import { Axis as SVGAxis } from "d3-axis"; // import SVGAxis = d3.svg.Axis;
+import { Axis as SVGAxis } from "d3-axis";
 import { scaleOrdinal, scaleLinear } from "d3";
-// import SVGAxis = 
 import { ScaleLogarithmic as LogScale, ScaleLinear as LinearScale, ScaleOrdinal as OrdinalScale, scaleLog, scaleBand, ScaleBand, ScaleOrdinal } from "d3-scale";
 
 // powerbi
@@ -189,17 +188,8 @@ export module HistogramAxisHelper {
         // tickSize(pixelSpan) is used to create gridLines
         let axis = (isVertical 
             ? d3.axisLeft(scale)
-            : d3.axisBottom(scale) //.tickFormat(function(d){ return d.x; })
+            : d3.axisBottom(scale)
         );
-        // TODO 
-        // let axis: SVGAxis = d3.svg.axis()
-            // .scale(scale)
-            // tickSize(DefaultInnerTickSize, DefaultOuterTickSize)
-            // .orient(isVertical
-            //     ? OrientationLeft
-            //     : OrientationBottom)
-            // .ticks(bestTickCount)
-            // .tickValues(tickValues);
 
         let formattedTickValues: any[] = [];
         if (metaDataColumn) {
@@ -362,7 +352,7 @@ export module HistogramAxisHelper {
      * Format the linear tick labels or the category labels.
      */
     function formatAxisTickValues(
-        axis: SVGAxis<any>, //TODO TEST
+        axis: SVGAxis<any>,
         tickValues: any[],
         formatter: IValueFormatter,
         dataType: ValueType,
@@ -694,9 +684,9 @@ export module HistogramAxisHelper {
             return x === dataDomain[0];
         }) ? scaleOrdinal()//scaleBand()
                 .range([0, pixelSpan])
-                .domain(dataDomain) :
+                .domain(dataDomain)
             /* Avoid using rangeRoundBands here as it is adding some extra padding to the axis*/
-            scaleOrdinal()
+            : scaleOrdinal()
                 .range([0, pixelSpan])
                 //.paddingInner(innerPaddingRatio) //TODO TEST
                 //.paddingOuter(outerPaddingRatio) //TODO TEST

@@ -29,11 +29,13 @@ import * as d3 from "d3";
 type Selection<T> = d3.Selection<any, T, any, any>;
 
 import { ScaleLinear as LinearScale, scaleLinear } from "d3-scale";
-import { Axis as SVGAxis, Axis, AxisDomain } from "d3-axis"; //TODO TEST
-// import HistogramLayout = d3.layout.Histogram; //TODO TEST
 
 import HistogramLayout = d3.HistogramGeneratorNumber;
-import LayoutBin = d3.Bin; //layout.histogram.Bin; //TODO TEST
+
+//import LayoutBin = d3.Bin; //layout.histogram.Bin;
+interface LayoutBin<Value> extends d3.Bin<any, number>{
+    dpY?: Value
+}
 
 // powerbi
 import powerbi from "powerbi-visuals-api";
@@ -43,6 +45,8 @@ import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
 import DataViewCategoryColumn = powerbi.DataViewCategoryColumn;
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
+
+import "../style/visual.less";
 
 // powerbi.extensibility
 import IVisual = powerbi.extensibility.IVisual;
@@ -73,7 +77,7 @@ import valueFormatter = vf.valueFormatter;
 import TextProperties = tms.TextProperties;
 import IValueFormatter = vf.IValueFormatter;
 import textMeasurementService = tms.textMeasurementService;
-import ValueFormatter  = vf.valueFormatter; //TODO TEST
+import ValueFormatter  = vf.valueFormatter;
 
 // powerbi-visuals-utils-colorutils
 import { ColorHelper } from "powerbi-visuals-utils-colorutils";
@@ -322,15 +326,11 @@ export class Histogram implements IVisual {
 
         if (!dataView
             || !dataView.categorical
-            // || !dataView.categorical.values
-            // || !(dataView.categorical.values.length > 0)
             || !dataView.categorical.categories
             || !dataView.categorical.categories[0]
             || !dataView.categorical.categories[0].values
             || !(dataView.categorical.categories[0].values.length > 0)
         ) {
-            console.warn('DBG 2!!!');
-
             return null;
         }
 
@@ -339,7 +339,7 @@ export class Histogram implements IVisual {
             histogramLayout: HistogramLayout<any, number>, //test
             values: HistogramValue[],
             numericalValues: number[] = [],
-            bins: LayoutBin<number, any>[], //TODO TEST
+            bins: LayoutBin<number>[],
             dataPoints: HistogramDataPoint[],
             valueFormatter: IValueFormatter,
             frequencies: number[] = [],
@@ -360,7 +360,6 @@ export class Histogram implements IVisual {
             || !Histogram.areValuesNumbers(categoryColumn)
             || sourceValues.length < Histogram.MinAmountOfValues
         ) {
-            console.warn('DBG 3!!!');
             return null;
         }
 
@@ -383,17 +382,16 @@ export class Histogram implements IVisual {
             numericalValues.push(value.value);
             sumFrequency += value.frequency;
         });
-
         histogramLayout = d3.histogram();
-
+        
         if (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins) {
             histogramLayout = histogramLayout.thresholds(settings.general.bins);
         }
-
-        //bins = histogramLayout.frequency(settings.general.frequency)(numericalValues);//
+        
+        //bins = histogramLayout.frequency(settings.general.frequency)(numericalValues);//TODO TEST
         bins =  d3.histogram()(numericalValues); 
 
-        bins.forEach((bin: LayoutBin<any, number>, index: number) => { //TODO TEST LayoutBin<number>
+        bins.forEach((bin: LayoutBin<number>, index: number) => {
             let filteredValues: HistogramValue[],
                 frequency: number;
 
@@ -405,11 +403,13 @@ export class Histogram implements IVisual {
                 return previousValue + currentValue.frequency;
             }, 0);
 
-            bin.length = settings.general.frequency
+            bin.dpY = settings.general.frequency
                 ? frequency
                 : frequency / sumFrequency;
-        });
-
+            });
+        
+        console.warn('DBG Converter frequency', settings.general.frequency, frequencies, sumFrequency)
+        console.warn('DBG Converter: bins', values, '>', numericalValues, '>', bins);
         borderValues = Histogram.getBorderValues(bins);
 
         // min-max for Y axis
@@ -484,7 +484,7 @@ export class Histogram implements IVisual {
         };
     }
 
-    public static getBorderValues(bins: LayoutBin<any, number>[]): HistogramBorderValues {
+    public static getBorderValues(bins: LayoutBin<number>[]): HistogramBorderValues {
         const borderValues: HistogramBorderValues = {
             minX: Number.MAX_VALUE,
             maxX: -Number.MAX_VALUE,
@@ -492,7 +492,7 @@ export class Histogram implements IVisual {
             maxY: -Number.MAX_VALUE
         };
 
-        bins.forEach((dataPoint: LayoutBin<any, number>) => {
+        bins.forEach((dataPoint: LayoutBin<number>) => {
             let minX: number = Number.MAX_VALUE,
                 maxX: number = -Number.MAX_VALUE;
 
@@ -514,18 +514,19 @@ export class Histogram implements IVisual {
                 borderValues.maxX = maxX;
             }
 
-            if (dataPoint.length < borderValues.minY) {
-                borderValues.minY = dataPoint.length;
+            if (dataPoint.dpY < borderValues.minY) {
+                borderValues.minY = dataPoint.dpY;
             }
 
-            if (dataPoint.length > borderValues.maxY) {
-                borderValues.maxY = dataPoint.length;
+            if (dataPoint.dpY > borderValues.maxY) {
+                borderValues.maxY = dataPoint.dpY;
             }
         });
 
         return borderValues;
     }
 
+    //helper
     public static getCorrectXAxisValue(value: number): number {
         if (value === undefined || isNaN(value)) {
             return 0;
@@ -536,6 +537,7 @@ export class Histogram implements IVisual {
             Histogram.MinXAxisStartValue);
     }
 
+    //helper
     public static getCorrectYAxisValue(value: number): number {
         if (value === undefined || isNaN(value)) {
             return 0;
@@ -546,6 +548,7 @@ export class Histogram implements IVisual {
             0);
     }
 
+    //helper
     public static areValuesNumbers(categoryColumn: DataViewCategoryColumn): boolean {
         return categoryColumn
             && categoryColumn.source
@@ -593,7 +596,7 @@ export class Histogram implements IVisual {
 
         return values;
     }
-
+    //getter 
     private static getCategoryColumnQuery(categoryColumn: DataViewCategoryColumn): string {
         return categoryColumn && categoryColumn.source
             ? categoryColumn.source.queryName
@@ -602,7 +605,7 @@ export class Histogram implements IVisual {
 
     private static getDataPoints(
         values: HistogramValue[],
-        bins: LayoutBin<any, number>[], //TODO TEST
+        bins: LayoutBin<number>[],
         settings: HistogramSettings,
         yValueFormatter: IValueFormatter,
         xValueFormatter: IValueFormatter,
@@ -612,10 +615,10 @@ export class Histogram implements IVisual {
         let fontSizeInPx: string = PixelConverter.fromPoint(settings.labels.fontSize);
 
         return bins.map((bin: any, index: number): HistogramDataPoint => {
-            bin.range = Histogram.getRange(bin.x, bin.dx);
+            bin.range = [bin.x0, bin.x1];
 
             bin.tooltipInfo = Histogram.getTooltipData(
-                bin.y,
+                bin.dpY,
                 bin.range,
                 settings,
                 index === 0,
@@ -629,10 +632,6 @@ export class Histogram implements IVisual {
 
             return bin;
         });
-    }
-
-    private static getRange(x: number, dx: number): number[] {
-        return [x, x + dx];
     }
 
     private static getTooltipData(
@@ -676,7 +675,7 @@ export class Histogram implements IVisual {
 
     private static isValueContainedInRange(
         value: HistogramValue, 
-        bin: LayoutBin<any, number>, 
+        bin: LayoutBin<number>, 
         index: number
     ): boolean {
         return ((index === 0 && value.value >= bin.x1) || (value.value > bin.x1))
@@ -768,10 +767,10 @@ export class Histogram implements IVisual {
         if (!data
             || !data.dataPoints
             || data.dataPoints.length === Histogram.MinAmountOfDataPoints) {
-
+            console.warn('return false!', data.dataPoints);
             return false;
         }
-
+        console.log('isDataValid', data.dataPoints);
         return !data.dataPoints.some((dataPoint: HistogramDataPoint) => {
             return dataPoint.range.some((rangeValue: number) => {
                 return isNaN(rangeValue)
@@ -782,54 +781,57 @@ export class Histogram implements IVisual {
     }
 
     public update(options: VisualUpdateOptions): void {
-        let borderValues: HistogramBorderValues,
-            xAxisSettings: HistogramXAxisSettings;
-
+        
         if (!options
             || !options.dataViews
             || !options.dataViews[0]) {
-            return;
-        }
-        try {
-            this.events.renderingStarted(options);
-
-            let dataView: DataView = options.dataViews[0],
-                maxWidthOfVerticalAxisLabel: number;
-
-            this.setSize(options.viewport);
-
-            this.data = Histogram.converter(
-                dataView,
-                this.visualHost,
-                this.localizationManager,
-                this.colorHelper,
-            );
-
-            console.warn('Histogram data', this.data);
-
-            borderValues = this.data.borderValues;
-            xAxisSettings = this.data.settings.xAxis;
-
-            if (!this.isDataValid(this.data)) {
-                this.clear();
-
                 return;
             }
+            try {
+                this.events.renderingStarted(options);
+                
+                let dataView: DataView = options.dataViews[0],
+                maxWidthOfVerticalAxisLabel: number;
+                
+                this.setSize(options.viewport);
+                
+                this.data = Histogram.converter(
+                    dataView,
+                    this.visualHost,
+                    this.localizationManager,
+                    this.colorHelper,
+                    );
+                    
+            
+                if (!this.isDataValid(this.data)) {
+                    this.clear();
+                    console.warn('DBG Warn!');
+                    return;
+                }
 
-            this.updateViewportIn();
+                this.updateViewportIn();
 
-            maxWidthOfVerticalAxisLabel = this.updateAxes(dataView);
+                this.createScales();
 
-            this.columnsAndAxesTransform(maxWidthOfVerticalAxisLabel);
+                maxWidthOfVerticalAxisLabel = this.updateAxes(dataView);
 
-            this.createScales();
+                this.columnsAndAxesTransform(maxWidthOfVerticalAxisLabel);
 
-            this.applySelectionStateToData();
+                this.applySelectionStateToData();
 
-            this.render();
+            // this.render();
+                const columnsSelection: Selection<any> = this.renderColumns();
+                console.log('DBG columnsSelection', columnsSelection);
+                this.bindTooltipToSelection(columnsSelection);
 
-            this.events.renderingFinished(options);
-        } 
+                this.bindSelectionHandler(columnsSelection);
+
+                this.renderLegend();
+
+                this.renderLabels();
+
+                this.events.renderingFinished(options);
+        }
         catch (e) {
             console.error(e);
             this.events.renderingFailed(options);
@@ -837,6 +839,7 @@ export class Histogram implements IVisual {
     }
 
     private updateAxes(dataView: DataView): number {
+
         let maxWidthOfVerticalAxisLabel: number,
             maxWidthOfHorizontalAxisLabel: number,
             maxHeightOfVerticalAxisLabel: number;
@@ -861,7 +864,7 @@ export class Histogram implements IVisual {
 
         this.yAxisProperties = this.calculateYAxes(ySource, maxHeightOfVerticalAxisLabel);
 
-        this.renderYAxis();
+        this.renderYAxis(); 
 
         this.yTitleMargin = this.shouldShowYOnRight()
             ? this.viewport.width
@@ -1076,56 +1079,50 @@ export class Histogram implements IVisual {
         );
     }
 
-    private render(): void {
-        const columnsSelection: Selection<any> = this.renderColumns();
-
-        this.bindTooltipToSelection(columnsSelection);
-
-        this.bindSelectionHandler(columnsSelection);
-
-        this.renderLegend();
-
-        this.renderLabels();
-    }
-
     private renderColumns(): Selection<HistogramDataPoint> {
         const data: HistogramDataPoint[] = this.data.dataPoints;
 
         const xScale: LinearScale<any, any> = this.data.xScale;
         const yScale: LinearScale<any, any> = this.data.yScale;
 
-        const updateColumnsSelection: Selection<any> = this.columnsSelection.data(data);
+        const columnsSelection: Selection<any> = this.columnsSelection.data(data);
 
-        updateColumnsSelection
+        let updateColumnsSelection = columnsSelection
             .enter()
             .append("svg:rect")
             .classed(Histogram.Column.className, true);
 
+            
         const strokeWidth: number = this.getStrokeWidth();
-
+            
         this.columnWidth = this.getColumnWidth(strokeWidth);
-
-        updateColumnsSelection
-            .attr("x", (dataPoint: HistogramDataPoint) => { console.log('dataPoint', dataPoint); return xScale(dataPoint.length); }) //TODO REVIEW
-            .attr("y", (dataPoint: HistogramDataPoint) => { return yScale(dataPoint.length); })
+            
+        columnsSelection
+            .merge(updateColumnsSelection)
+            .attr("x", (dataPoint: HistogramDataPoint) => { return xScale(dataPoint.x0); })
+            .attr("y", (dataPoint: HistogramDataPoint) => { 
+                console.log('DBG Y dataPoint', dataPoint); 
+                return yScale(dataPoint["dpY"]); 
+            })
             .attr("width", this.columnWidth)
             .attr("height", (dataPoint: HistogramDataPoint) => { return this.getColumnHeight(dataPoint, yScale); })
             
             .style("fill", this.colorHelper.isHighContrast ? null : this.data.settings.dataPoint.fill)
             .style("stroke", this.colorHelper.isHighContrast ? this.data.settings.dataPoint.fill : null)
             .style("stroke-width", PixelConverter.toString(strokeWidth));
-
+            
         updateOpacity(
-            updateColumnsSelection,
+            columnsSelection.merge(updateColumnsSelection),
             this.interactivityService,
             false
         );
 
-        updateColumnsSelection
+        columnsSelection
             .exit()
             .remove();
+        console.log("updateColumnSelection", columnsSelection);
 
-        return updateColumnsSelection;
+        return columnsSelection.merge(updateColumnsSelection);
     }
 
     private getStrokeWidth(): number {
@@ -1138,20 +1135,21 @@ export class Histogram implements IVisual {
         });
     }
 
-    private getColumnHeight(column: LayoutBin<any, number>, y: LinearScale<any, any>): number {
-        const height: number = this.viewportIn.height - y(column.length);
+    private getColumnHeight(column: LayoutBin<number>, y: LinearScale<any, any>): number {
+        const height: number = this.viewportIn.height - y(column.dpY);
 
         return Math.max(height, Histogram.MinColumnHeight);
     }
 
     private renderXAxis(): void {
+        console.log('DBG renderXAxis');
         if (!this.data.settings.xAxis.show) {
             this.clearElement(this.axisX);
 
             return;
         }
-        
-        const xAxis = d3.axisBottom(this.data.xScale) //this.xAxisProperties.axis
+
+        const xAxis = d3.axisBottom(this.data.xScale)
             .tickFormat(((value: number, index: number) => {
                 const tickValues: any[] = this.xAxisProperties.axis.tickValues();
                 const amountOfLabels: number = (tickValues && tickValues.length) || Histogram.MinLabelNumber;
@@ -1159,6 +1157,7 @@ export class Histogram implements IVisual {
                 return this.formatLabelOfXAxis(value, index, amountOfLabels);
             }) as any) // We cast this function to any, because the type definition doesn't contain the second argument
 
+        console.log('DBG xAxis', xAxis, 'scale', this.data.xScale);
         this.axisX.call(xAxis);
 
         this.updateFillColorOfAxis(this.axisX, this.data.settings.xAxis);
@@ -1181,7 +1180,7 @@ export class Histogram implements IVisual {
 
         return formattedLabel;
     }
-
+    //helper
     private static getTailoredTextOrDefault(text: string, maxWidth: number): string {
         const textProperties = Histogram.getTextProperties(text);
 
@@ -1202,10 +1201,8 @@ export class Histogram implements IVisual {
 
             return;
         }
-        // var xAxis = d3.axisBottom(xRange).tickFormat(function(d){ return d.x;});
-        // var yAxis = d3.axisLeft(yRange);
-        const yAxis = d3.axisLeft(this.data.yScale) //TODO TEST SVGAxis
-            // .orient(this.data.settings.yAxis.position.toString().toLowerCase())
+
+        const yAxis = d3.axisLeft(this.data.yScale) 
             .tickFormat((item: number) => {
                 return this.data.yLabelFormatter.format(item);
             });
@@ -1234,7 +1231,7 @@ export class Histogram implements IVisual {
 
         return {
             labelText: (dataPoint: HistogramDataPoint) => {
-                return dataLabelFormatter.format(dataPoint.length).toString();
+                return dataLabelFormatter.format(dataPoint["dpY"]).toString();
             },
             labelLayout: {
                 x: (dataPoint: HistogramDataPoint) => {
@@ -1252,7 +1249,7 @@ export class Histogram implements IVisual {
                         dy: number,
                         delta: number;
 
-                    y = yScale(dataPoint.y);
+                    y = yScale(dataPoint["dpY"]);
                     dy = dataPoint.size.height;
                     delta = y - dy;
 

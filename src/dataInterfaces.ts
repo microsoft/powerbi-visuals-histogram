@@ -47,16 +47,11 @@ import { HistogramAxisHelper } from "./axisHelper";
 export interface HistogramSubDataPoint extends SelectableDataPoint {
     highlight?: boolean;
 }
-//TODO TMP
-interface TMP {
-    x: number,
-    y: number,
-}
-export interface HistogramDataPoint extends
-    HistogramBin<any, number>,//HistogramBin<any, number>, //TODO TEST
-    TMP,
-    TooltipEnabledDataPoint {
 
+export interface HistogramDataPoint extends
+    HistogramBin<any, number>,
+    TooltipEnabledDataPoint {
+    dpY: number,
     range: number[];
     subDataPoints: HistogramSubDataPoint[];
     size?: ISize;

@@ -1,4 +1,5 @@
 {
+    "supportsHighlight": true,
     "dataRoles": [
         {
             "name": "Values",
