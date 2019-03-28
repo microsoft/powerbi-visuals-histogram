@@ -25,13 +25,13 @@
  */
 
 "use strict";
+const { Config, ConfigOptions } = require("karma");
 
 const path = require("path");
 const webpackConfig = require("./test.webpack.config.js");
 const tsconfig = require("./test.tsconfig.json");
 
 const recursivePathToTests = "test/**/*.ts";
-const srcRecursivePath = ".tmp/drop/visual.js";
 const srcCssRecursivePath = ".tmp/drop/visual.css";
 const srcOriginalRecursivePath = "src/**/*.ts";
 const testRecursivePath = "test/visualTest.ts";
@@ -53,7 +53,8 @@ module.exports = (config) => {
         singleRun: true,
         files: [
             srcCssRecursivePath,
-            srcRecursivePath,
+            testRecursivePath,
+            "node_modules/jquery/dist/jquery.min.js",
             "node_modules/jasmine-jquery/lib/jasmine-jquery.js",
             {
                 pattern: "./capabilities.json",
@@ -61,7 +62,6 @@ module.exports = (config) => {
                 served: true,
                 included: false
             },
-            recursivePathToTests,
             {
                 pattern: srcOriginalRecursivePath,
                 included: false,
@@ -69,8 +69,6 @@ module.exports = (config) => {
             }
         ],
         preprocessors: {
-            [recursivePathToTests]: ["typescript"],
-            // [srcRecursivePath]: ["sourcemap", "coverage"],
             [testRecursivePath]: ["webpack"]
         },
         typescriptPreprocessor: {

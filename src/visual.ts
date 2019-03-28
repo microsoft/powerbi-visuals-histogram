@@ -377,6 +377,8 @@ export class Histogram implements IVisual {
             categoryColumn,
             sourceValues,
             frequencies);
+        
+        console.log("DBG forEach 1");
 
         values.forEach((value: HistogramValue) => {
             numericalValues.push(value.value);
@@ -1211,7 +1213,7 @@ export class Histogram implements IVisual {
 
         this.updateFillColorOfAxis(this.axisY, this.data.settings.yAxis);
     }
-
+    //helper
     private updateFillColorOfAxis(axisSelection: Selection<any>, settings: HistogramAxisSettings): void {
         axisSelection
             .style("fill", settings.axisColor)

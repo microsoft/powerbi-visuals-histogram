@@ -31,16 +31,14 @@ import DataView = powerbi.DataView;
 import DataViewCategoryColumn = powerbi.DataViewCategoryColumn;
 
 import { HistogramData } from "./visualData";
-import { areColorsEqual, getSolidColorStructuralObject } from "./helpers/helpers";
+import { areColorsEqual, getSolidColorStructuralObject } from "./helpers";
 import { HistogramChartBuilder } from "./visualBuilder";
-// powerbi.extensibility.utils.svg
+
 import { manipulation } from "powerbi-visuals-utils-svgutils";
 import parseTranslateTransform = manipulation.parseTranslateTransform;
 
-// powerbi.extensibility.utils.test
 import { assertColorsMatch } from "powerbi-visuals-utils-testutils";
 
-// Histogram1445664487616
 import { Histogram as VisualClass } from "../src/visual";
 import { HistogramDataPoint } from "../src/dataInterfaces";
 import { HistogramAxisStyle } from "../src/settings"; 
@@ -117,7 +115,7 @@ describe("HistogramChart", () => {
                 const labels: Element[] = visualBuilder.labelTexts.get();
 
                 labels.forEach((label: Element) => {
-                    let jqueryLabel: JQuery = $(label),
+                    let jqueryLabel = $(label), //DBG : JQuery<any>
                         x: number,
                         y: number,
                         dx: number,
@@ -158,7 +156,7 @@ describe("HistogramChart", () => {
             visualBuilder.updateRenderTimeout(dataView, () => {
                 const labels: JQuery = visualBuilder.xAxis.find(".tick text");
 
-                expectTextContainsThreeDots(labels.get(0).textContent);
+                expectTextContainsThreeDots(labels.get(0).textContent );
                 expectTextContainsThreeDots(labels.get(labels.length - 1).textContent);
 
                 done();
@@ -533,7 +531,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.columns
                     .toArray()
-                    .forEach((element: Element) => {
+                    .forEach((element) => { //TODO TYPE
                         assertColorsMatch($(element).css("fill"), color);
                     });
             });
@@ -569,7 +567,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.xAxisTicks
                     .toArray()
-                    .forEach((element: Element) => {
+                    .forEach((element) => {//TODO TYPE
                         expect(last($(element).text())).toEqual("K");
                     });
             });
@@ -616,7 +614,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.yAxisTicks
                     .toArray()
-                    .forEach((element: Element) => {
+                    .forEach((element) => {//TODO TYPE
                         expect(last($(element).text())).toEqual("K");
                     });
             });
@@ -683,7 +681,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.labelTexts
                     .toArray()
-                    .forEach((element: Element) => {
+                    .forEach((element) => {//TODO TYPE
                         expect(last($(element).text())).toEqual("K");
                     });
 
@@ -694,7 +692,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.labelTexts
                     .toArray()
-                    .forEach((element: Element) => {
+                    .forEach((element) => {//TODO TYPE
                         expect(last($(element).text())).toEqual("M");
                     });
             });
@@ -708,7 +706,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.labelTexts
                     .toArray()
-                    .forEach((element: Element) => {
+                    .forEach((element) => {//TODO TYPE
                         expect($(element).text().split(".")[1].length).toEqual(precision);
                     });
             });
@@ -722,7 +720,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.labelTexts
                     .toArray()
-                    .forEach((element: Element) => {
+                    .forEach((element) => {//TODO TYPE
                         expect($(element).css("font-size")).toBe(expectedFontSize);
                     });
             });
@@ -1014,7 +1012,7 @@ describe("HistogramChart", () => {
 
             it("should not use fill style", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    const layers: JQuery[] = visualBuilder.columns.toArray().map($);
+                    const layers = visualBuilder.columns.toArray().map($); //DBG : JQuery<any>[]
 
                     expect(isColorAppliedToElements(layers, null, "fill"));
 
@@ -1024,7 +1022,7 @@ describe("HistogramChart", () => {
 
             it("should use stroke style", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    const layers: JQuery[] = visualBuilder.columns.toArray().map($);
+                    const layers = visualBuilder.columns.toArray().map($); //DBG : JQuery<any>[]
 
                     expect(isColorAppliedToElements(layers, foregroundColor, "stroke"));
 
