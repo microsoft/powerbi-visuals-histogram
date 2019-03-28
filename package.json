@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/Microsoft/PowerBI-visuals-histogram#readme",
   "dependencies": {
+    "ajv": "^6.10.0",
     "d3": "^5.4.0",
     "jquery": "3.1.1",
     "lodash": "4.17.5",
@@ -56,12 +57,15 @@
     "karma-jasmine": "1.1.2",
     "karma-remap-istanbul": "0.6.0",
     "karma-sourcemap-loader": "0.3.7",
-    "karma-typescript-preprocessor": "0.3.1",
+    "karma-typescript": "^4.0.0",
+    "karma-typescript-preprocessor": "^0.3.1",
+    "karma-webpack": "^3.0.5",
     "powerbi-visuals-api": "^2.3.2",
     "powerbi-visuals-tools": "^3.0.12",
-    "powerbi-visuals-utils-testutils": "1.2.1",
+    "powerbi-visuals-utils-testutils": "^2.1.7",
     "puppeteer": "^1.6.1",
     "tslint": "^5.4.3",
-    "tslint-microsoft-contrib": "^5.0.3"
+    "tslint-microsoft-contrib": "^5.0.3",
+    "webpack": "^4.29.6"
   }
 }

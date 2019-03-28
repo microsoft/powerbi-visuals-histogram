@@ -23,50 +23,48 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
  */
+import powerbi from "powerbi-visuals-api";
+import DataView = powerbi.DataView;
 
-/// <reference path="_references.ts"/>
+import { getRandomNumbers, testDataViewBuilder } from "powerbi-visuals-utils-testutils";
+import TestDataViewBuilder = testDataViewBuilder.TestDataViewBuilder;
 
-module powerbi.extensibility.visual.test {
-    // powerbi.extensibility.utils.test
-    import getRandomNumbers = powerbi.extensibility.utils.test.helpers.getRandomNumbers;
-    import TestDataViewBuilder = powerbi.extensibility.utils.test.dataViewBuilder.TestDataViewBuilder;
+import { valueType as vt } from "powerbi-visuals-utils-typeutils";
+import ValueType = vt.ValueType;
 
-    // powerbi.extensibility.utils.type
-    import ValueType = powerbi.extensibility.utils.type.ValueType;
+export class HistogramData extends TestDataViewBuilder {
+    public static ColumnCategory: string = "Age";
+    public static ColumnValues: string = "Value";
 
-    export class HistogramData extends TestDataViewBuilder {
-        public static ColumnCategory: string = "Age";
-        public static ColumnValues: string = "Value";
+    public categoryColumnValues: number[] = getRandomNumbers(20, 10, 60).sort();
+    public valuesColumnValues: number[] = getRandomNumbers(this.categoryColumnValues.length, 1, 10);
 
-        public categoryColumnValues: number[] = getRandomNumbers(20, 10, 60).sort();
-        public valuesColumnValues: number[] = getRandomNumbers(this.categoryColumnValues.length, 1, 10);
+    public getDataView(
+        columnNames?: string[],
+        numberOfRecords: number = Number.MAX_VALUE,
+    ): DataView {
+        const categoryColumnValues: number[] = this.categoryColumnValues.slice(0, numberOfRecords);
+        const valuesColumnValues: number[] = this.valuesColumnValues.slice(0, numberOfRecords);
 
-        public getDataView(
-            columnNames?: string[],
-            numberOfRecords: number = Number.MAX_VALUE,
-        ): DataView {
-            const categoryColumnValues: number[] = this.categoryColumnValues.slice(0, numberOfRecords);
-            const valuesColumnValues: number[] = this.valuesColumnValues.slice(0, numberOfRecords);
-
-            return this.createCategoricalDataViewBuilder([
+        return this.createCategoricalDataViewBuilder([
+            {
+                source: {
+                    displayName: HistogramData.ColumnCategory,
+                    isMeasure: true,
+                    type: ValueType.fromDescriptor({ numeric: true }),
+                },
+                values: categoryColumnValues
+            }
+        ], [
                 {
                     source: {
-                        displayName: HistogramData.ColumnCategory,
+                        displayName: HistogramData.ColumnValues,
                         isMeasure: true,
                         type: ValueType.fromDescriptor({ numeric: true }),
                     },
-                    values: categoryColumnValues
+                    values: valuesColumnValues
                 }
-            ], [
-                    {
-                        source: {
-                            displayName: HistogramData.ColumnValues,
-                            isMeasure: true,
-                            type: ValueType.fromDescriptor({ numeric: true }),
-                        },
-                        values: valuesColumnValues
-                    }
-                ], columnNames).build();
-        }
+            ], columnNames).build();
     }
 }
+
