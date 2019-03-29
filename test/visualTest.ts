@@ -46,7 +46,6 @@ import * as histogramUtils from "../src/utils";
 import StateOfDataPoint = histogramUtils.StateOfDataPoint;
 
 describe("HistogramChart", () => {
-    console.warn('DBG HELLO ARE YOU HERE?');
     describe("DOM tests", () => {
         let visualBuilder: HistogramChartBuilder,
             dataViewBuilder: HistogramData,

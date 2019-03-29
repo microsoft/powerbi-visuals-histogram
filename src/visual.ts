@@ -34,7 +34,7 @@ import HistogramLayout = d3.HistogramGeneratorNumber;
 
 //import LayoutBin = d3.Bin; //layout.histogram.Bin;
 interface LayoutBin<Value> extends d3.Bin<any, number>{
-    dpY?: Value
+    y?: Value
 }
 
 // powerbi
@@ -152,9 +152,11 @@ export class Histogram implements IVisual {
 
     private static LabelGraphicsContext: ClassAndSelector = createClassAndSelector("labelGraphicsContext");
 
+    //UPD CONST
     private static MinPrecision: number = 0;
     private static MaxPrecision: number = 17; // max number of decimals in float
 
+    //UPD CONST
     public static MinXAxisStartValue: number = -(1e+25);
     public static MaxXAxisEndValue: number = 1e+25;
 
@@ -162,30 +164,40 @@ export class Histogram implements IVisual {
     private static YAxisMargin: number = 20;
     private static MinYTitleMargin: number = 0;
 
+    //UPD CONST
     private static MinViewportSize: number = 100;
     private static MinViewportInSize: number = 0;
-
+    
+    //UPD CONST
     private static MinAmountOfValues: number = 1;
     private static MinAmountOfDataPoints: number = 0;
 
+    //UPD CONST
     private static AdditionalWidthOfLabel: number = 3;
     private static AdditionalHeightOfLabel: number = 3;
 
+    //UPD CONST
     private static LegendSizeWhenTitleIsActive: number = 50;
     private static LegendSizeWhenTitleIsNotActive: number = 25;
 
+    //UPD CONST
     private static InnerPaddingRatio: number = 1;
 
+    //UPD CONST
     private static DataLabelXOffset: number = 2;
     private static DataLabelYOffset: number = 1.8;
 
+    //UPD CONST
     private static ColumnPadding: number = 2.5;
     private static ColumnAndLabelOffset: number = 1.5;
 
+    //UPD CONST
     private static MinColumnHeight: number = 1;
-
+    
+    //UPD CONST
     private static SeparatorNumbers: string = ", ";
-
+    
+    //UPD CONST
     private static MaxWidthOfTheLatestLabel: number = 40;
 
     private static DefaultSumFrequency: number = 0;
@@ -205,16 +217,19 @@ export class Histogram implements IVisual {
 
     private static MiddleFactor: number = 2;
 
+    //UPD helper
     private static ExcludeBrackets: Brackets = {
         left: "(",
         right: ")"
     };
 
+    //UPD helper
     private static IncludeBrackets: Brackets = {
         left: "[",
         right: "]"
     };
 
+    //UPD property
     private static Margin: IMargin = {
         top: 10,
         right: 10,
@@ -222,6 +237,7 @@ export class Histogram implements IVisual {
         left: 10
     };
 
+    //UPD property
     private static DefaultTextProperties: TextProperties = {
         fontFamily: "helvetica, arial, sans-serif",
         fontSize: PixelConverter.toString(11) // Note: This value and font-size in histogram.less should be the same.
@@ -377,8 +393,6 @@ export class Histogram implements IVisual {
             categoryColumn,
             sourceValues,
             frequencies);
-        
-        console.log("DBG forEach 1");
 
         values.forEach((value: HistogramValue) => {
             numericalValues.push(value.value);
@@ -405,13 +419,13 @@ export class Histogram implements IVisual {
                 return previousValue + currentValue.frequency;
             }, 0);
 
-            bin.dpY = settings.general.frequency
+            bin.y = settings.general.frequency
                 ? frequency
                 : frequency / sumFrequency;
             });
         
-        console.warn('DBG Converter frequency', settings.general.frequency, frequencies, sumFrequency)
-        console.warn('DBG Converter: bins', values, '>', numericalValues, '>', bins);
+        //TMP console.warn('DBG Converter frequency', settings.general.frequency, frequencies, sumFrequency)
+        //TMP console.warn('DBG Converter: bins', values, '>', numericalValues, '>', bins);
         borderValues = Histogram.getBorderValues(bins);
 
         // min-max for Y axis
@@ -438,7 +452,8 @@ export class Histogram implements IVisual {
         let minXValue: number = (xAxisSettings.start !== null) && xAxisSettings.start < maxXvalue
             ? xAxisSettings.start
             : borderValues.minX;
-
+        
+        //UPD mutability!
         settings.xAxis.start = Histogram.getCorrectXAxisValue(minXValue);
         settings.xAxis.end = Histogram.getCorrectXAxisValue(maxXvalue);
 
@@ -486,6 +501,7 @@ export class Histogram implements IVisual {
         };
     }
 
+    //UPD UNIQUE TESTED helper used by CONVERTER
     public static getBorderValues(bins: LayoutBin<number>[]): HistogramBorderValues {
         const borderValues: HistogramBorderValues = {
             minX: Number.MAX_VALUE,
@@ -516,19 +532,19 @@ export class Histogram implements IVisual {
                 borderValues.maxX = maxX;
             }
 
-            if (dataPoint.dpY < borderValues.minY) {
-                borderValues.minY = dataPoint.dpY;
+            if (dataPoint.y < borderValues.minY) {
+                borderValues.minY = dataPoint.y;
             }
 
-            if (dataPoint.dpY > borderValues.maxY) {
-                borderValues.maxY = dataPoint.dpY;
+            if (dataPoint.y > borderValues.maxY) {
+                borderValues.maxY = dataPoint.y;
             }
         });
 
         return borderValues;
     }
 
-    //helper
+    //UPD TESTED helper used by CONVERTER
     public static getCorrectXAxisValue(value: number): number {
         if (value === undefined || isNaN(value)) {
             return 0;
@@ -539,7 +555,7 @@ export class Histogram implements IVisual {
             Histogram.MinXAxisStartValue);
     }
 
-    //helper
+    //UPD TESTED helper used by CONVERTER
     public static getCorrectYAxisValue(value: number): number {
         if (value === undefined || isNaN(value)) {
             return 0;
@@ -550,13 +566,14 @@ export class Histogram implements IVisual {
             0);
     }
 
-    //helper
+    //UPD UNIQUE TESTED helper-getter used by CONVERTER
     public static areValuesNumbers(categoryColumn: DataViewCategoryColumn): boolean {
         return categoryColumn
             && categoryColumn.source
             && (categoryColumn.source.type.numeric || categoryColumn.source.type.integer);
     }
 
+    //UPD UNIQUE helper used by CONVERTER
     private static getValuesByFrequencies(
         visualHost: IVisualHost,
         categoryColumn: DataViewCategoryColumn,
@@ -598,13 +615,15 @@ export class Histogram implements IVisual {
 
         return values;
     }
-    //getter 
+
+    //UPD UNIQUE getter used by getValuesByFrequencies
     private static getCategoryColumnQuery(categoryColumn: DataViewCategoryColumn): string {
         return categoryColumn && categoryColumn.source
             ? categoryColumn.source.queryName
             : undefined;
     }
 
+    //UPD UNIQUE helper used by getValuesByFrequencies
     private static getDataPoints(
         values: HistogramValue[],
         bins: LayoutBin<number>[],
@@ -620,7 +639,7 @@ export class Histogram implements IVisual {
             bin.range = [bin.x0, bin.x1];
 
             bin.tooltipInfo = Histogram.getTooltipData(
-                bin.dpY,
+                bin.y,
                 bin.range,
                 settings,
                 index === 0,
@@ -635,7 +654,8 @@ export class Histogram implements IVisual {
             return bin;
         });
     }
-
+    
+    //UPD UNIQUE helper used by getDataPoints / getValuesByFrequencies / 
     private static getTooltipData(
         value: number,
         range: number[],
@@ -656,6 +676,24 @@ export class Histogram implements IVisual {
         ];
     }
 
+    //UPD UNIQUE helper used by getTooltipData
+    private static rangeToString(
+        range: number[],
+        includeLeftBorder: boolean,
+        valueFormatter: IValueFormatter
+    ): string {
+        const rightBracket: string = Histogram.IncludeBrackets.right;
+        const leftBorder: string = valueFormatter.format(range[0]);
+        const rightBorder: string = valueFormatter.format(range[1]);
+
+        const leftBracket = includeLeftBorder
+            ? Histogram.IncludeBrackets.left
+            : Histogram.ExcludeBrackets.left;
+
+        return `${leftBracket}${leftBorder}${Histogram.SeparatorNumbers}${rightBorder}${rightBracket}`;
+    }
+
+    //UPD UNIQUE helper used by getDataPoints / getValuesByFrequencies / converter
     private static getSubDataPoints(
         values: HistogramValue[],
         bin: HistogramDataPoint,
@@ -674,7 +712,7 @@ export class Histogram implements IVisual {
 
         return dataPoints;
     }
-
+    //UPD immutable helper used by CONVERTER and getSubDataPoints / getDataPoints / getValuesByFrequencies / CONVERTER
     private static isValueContainedInRange(
         value: HistogramValue, 
         bin: LayoutBin<number>, 
@@ -684,15 +722,7 @@ export class Histogram implements IVisual {
             && value.value <= bin.x1 + (bin.x1-bin.x0);
     }
 
-    private static getDisplayName(dataView: DataView): string {
-        return (dataView
-            && dataView.metadata
-            && dataView.metadata.columns
-            && dataView.metadata.columns[0]
-            && dataView.metadata.columns[0].displayName
-        ) || null;
-    }
-
+    //UPD UNIQUE helper used by CONVERTER
     private static parseSettings(
         dataView: DataView,
         colorHelper: ColorHelper,
@@ -736,6 +766,16 @@ export class Histogram implements IVisual {
         return settings;
     }
 
+    //UPD UNIQUE immutable helper-getter used by parseSettings / CONVERTER
+    private static getDisplayName(dataView: DataView): string {
+        return (dataView
+            && dataView.metadata
+            && dataView.metadata.columns
+            && dataView.metadata.columns[0]
+            && dataView.metadata.columns[0].displayName
+        ) || null;
+    }
+
     private static getPrecision(precision: number): number {
         return Math.min(
             Math.max(precision, Histogram.MinPrecision),
@@ -772,7 +812,7 @@ export class Histogram implements IVisual {
             console.warn('return false!', data.dataPoints);
             return false;
         }
-        console.log('isDataValid', data.dataPoints);
+
         return !data.dataPoints.some((dataPoint: HistogramDataPoint) => {
             return dataPoint.range.some((rangeValue: number) => {
                 return isNaN(rangeValue)
@@ -807,7 +847,6 @@ export class Histogram implements IVisual {
             
                 if (!this.isDataValid(this.data)) {
                     this.clear();
-                    console.warn('DBG Warn!');
                     return;
                 }
 
@@ -823,7 +862,7 @@ export class Histogram implements IVisual {
 
             // this.render();
                 const columnsSelection: Selection<any> = this.renderColumns();
-                console.log('DBG columnsSelection', columnsSelection);
+                //TMP console.log('DBG columnsSelection', columnsSelection);
                 this.bindTooltipToSelection(columnsSelection);
 
                 this.bindSelectionHandler(columnsSelection);
@@ -857,7 +896,8 @@ export class Histogram implements IVisual {
         maxHeightOfVerticalAxisLabel = Histogram.getHeightOfLabel(
             this.data.borderValues.maxX,
             this.data.xLabelFormatter);
-
+        
+        //UPD getter
         let ySource = dataView.categorical.values &&
             dataView.categorical.values[0] &&
             dataView.categorical.values[0].values
@@ -869,9 +909,7 @@ export class Histogram implements IVisual {
         this.renderYAxis(); 
 
         this.yTitleMargin = this.shouldShowYOnRight()
-            ? this.viewport.width
-            - Histogram.YTitleMargin
-            + this.data.yLegendSize
+            ? this.viewport.width - Histogram.YTitleMargin + this.data.yLegendSize
             : Histogram.MinYTitleMargin;
 
         this.updateViewportIn(maxWidthOfVerticalAxisLabel);
@@ -885,6 +923,35 @@ export class Histogram implements IVisual {
         this.renderXAxis();
 
         return maxWidthOfVerticalAxisLabel;
+    }
+
+    private calculateYAxes(
+        metaDataColumn: DataViewMetadataColumn,
+        minOrdinalRectThickness: number
+    ): IAxisProperties {
+        let yAxisSettings: HistogramYAxisSettings = this.data.settings.yAxis,
+            innerPaddingRatio: number = Histogram.InnerPaddingRatio,
+            formatString: string = (this.data.settings.general.frequency)
+                ? valueFormatter.getFormatStringByColumn(metaDataColumn)
+                : undefined;
+
+        return HistogramAxisHelper.createAxis({
+            pixelSpan: this.viewportIn.height,
+            dataDomain: [yAxisSettings.start, yAxisSettings.end],
+            metaDataColumn,
+            formatString: formatString,
+            outerPadding: this.outerPadding,
+            isScalar: true,
+            isVertical: true,
+            useTickIntervalForDisplayUnits: true,
+            isCategoryAxis: false,
+            getValueFn: (index: number) => index,
+            scaleType: axisScale.linear,
+            innerPaddingRatio: innerPaddingRatio,
+            minOrdinalRectThickness: minOrdinalRectThickness,
+            tickLabelPadding: undefined,
+            is100Pct: true
+        });
     }
 
     private applySelectionStateToData(): void {
@@ -1103,8 +1170,8 @@ export class Histogram implements IVisual {
             .merge(updateColumnsSelection)
             .attr("x", (dataPoint: HistogramDataPoint) => { return xScale(dataPoint.x0); })
             .attr("y", (dataPoint: HistogramDataPoint) => { 
-                console.log('DBG Y dataPoint', dataPoint); 
-                return yScale(dataPoint["dpY"]); 
+                //TMP console.log('DBG Y dataPoint', dataPoint); 
+                return yScale(dataPoint["y"]); 
             })
             .attr("width", this.columnWidth)
             .attr("height", (dataPoint: HistogramDataPoint) => { return this.getColumnHeight(dataPoint, yScale); })
@@ -1122,7 +1189,6 @@ export class Histogram implements IVisual {
         columnsSelection
             .exit()
             .remove();
-        console.log("updateColumnSelection", columnsSelection);
 
         return columnsSelection.merge(updateColumnsSelection);
     }
@@ -1138,13 +1204,12 @@ export class Histogram implements IVisual {
     }
 
     private getColumnHeight(column: LayoutBin<number>, y: LinearScale<any, any>): number {
-        const height: number = this.viewportIn.height - y(column.dpY);
+        const height: number = this.viewportIn.height - y(column.y);
 
         return Math.max(height, Histogram.MinColumnHeight);
     }
 
     private renderXAxis(): void {
-        console.log('DBG renderXAxis');
         if (!this.data.settings.xAxis.show) {
             this.clearElement(this.axisX);
 
@@ -1159,7 +1224,7 @@ export class Histogram implements IVisual {
                 return this.formatLabelOfXAxis(value, index, amountOfLabels);
             }) as any) // We cast this function to any, because the type definition doesn't contain the second argument
 
-        console.log('DBG xAxis', xAxis, 'scale', this.data.xScale);
+        //TMP console.log('DBG xAxis', xAxis, 'scale', this.data.xScale);
         this.axisX.call(xAxis);
 
         this.updateFillColorOfAxis(this.axisX, this.data.settings.xAxis);
@@ -1182,16 +1247,18 @@ export class Histogram implements IVisual {
 
         return formattedLabel;
     }
-    //helper
+
+    //UPD helper
     private static getTailoredTextOrDefault(text: string, maxWidth: number): string {
         const textProperties = Histogram.getTextProperties(text);
 
         return textMeasurementService.getTailoredTextOrDefault(textProperties, maxWidth);
     }
 
+    //UPD helper
     private static getTextProperties(text: string): TextProperties {
         return {
-            text: text,
+            text,
             fontFamily: Histogram.DefaultTextProperties.fontFamily,
             fontSize: Histogram.DefaultTextProperties.fontSize
         };
@@ -1213,7 +1280,8 @@ export class Histogram implements IVisual {
 
         this.updateFillColorOfAxis(this.axisY, this.data.settings.yAxis);
     }
-    //helper
+
+    //UPD helper
     private updateFillColorOfAxis(axisSelection: Selection<any>, settings: HistogramAxisSettings): void {
         axisSelection
             .style("fill", settings.axisColor)
@@ -1233,7 +1301,7 @@ export class Histogram implements IVisual {
 
         return {
             labelText: (dataPoint: HistogramDataPoint) => {
-                return dataLabelFormatter.format(dataPoint["dpY"]).toString();
+                return dataLabelFormatter.format(dataPoint["y"]).toString();
             },
             labelLayout: {
                 x: (dataPoint: HistogramDataPoint) => {
@@ -1251,7 +1319,7 @@ export class Histogram implements IVisual {
                         dy: number,
                         delta: number;
 
-                    y = yScale(dataPoint["dpY"]);
+                    y = yScale(dataPoint["y"]);
                     dy = dataPoint.size.height;
                     delta = y - dy;
 
@@ -1269,6 +1337,7 @@ export class Histogram implements IVisual {
         };
     }
 
+    //UPD branch of UPDATE 
     private renderLabels(): void {
         let labelSettings: HistogramLabelSettings = this.data.settings.labels,
             dataPointsArray: HistogramDataPoint[] = this.data.dataPoints,
@@ -1300,34 +1369,7 @@ export class Histogram implements IVisual {
         }
     }
 
-    private static rangesToArray(data: HistogramDataPoint[]): number[] {
-        return data.reduce((previousValue: number[], currentValue: HistogramDataPoint, index: number) => {
-            let range: number[];
-
-            range = (index === 0)
-                ? currentValue.range
-                : currentValue.range.slice(1);
-
-            return previousValue.concat(range);
-        }, []);
-    }
-
-    private static rangeToString(
-        range: number[],
-        includeLeftBorder: boolean,
-        valueFormatter: IValueFormatter
-    ): string {
-        const rightBracket: string = Histogram.IncludeBrackets.right;
-        const leftBorder: string = valueFormatter.format(range[0]);
-        const rightBorder: string = valueFormatter.format(range[1]);
-
-        const leftBracket = includeLeftBorder
-            ? Histogram.IncludeBrackets.left
-            : Histogram.ExcludeBrackets.left;
-
-        return `${leftBracket}${leftBorder}${Histogram.SeparatorNumbers}${rightBorder}${rightBracket}`;
-    }
-
+    //UPD branch of UPDATE
     private renderLegend(): void {
         const dataLegends: Legend[] = this.getDataLegends(this.data.settings);
 
@@ -1365,13 +1407,14 @@ export class Histogram implements IVisual {
             .filter((d, index: number) => index === 1)
             .style("display", Histogram.getDisplayForAxisTitle(this.data.settings.yAxis));
     }
-
+    //UPD helper used only by renderLegend
     private static getDisplayForAxisTitle(axisSettings: HistogramAxisSettings): string {
         return axisSettings && axisSettings.title
             ? null
             : "none";
     }
-
+    
+    //UPD helper used only by getDataLegends
     private getDataLegends(settings: HistogramSettings): Legend[] {
         let bottomLegendText: string = Histogram.getLegendText(settings, this.localizationManager);
 
@@ -1455,47 +1498,8 @@ export class Histogram implements IVisual {
         this.root = null;
     }
 
-    /// Using in case when xAxis end (set in options) is lesser than calculated border max.
-    /// This function detect the closest point to xAxis end (set in options).
-    /// Each iteration tries to shift border limit left corresponding to interval
-    /// and be closer to xAxis end at the same time.
-    private findBorderMaxCloserToXAxisEnd(
-        currentBorderMax: number,
-        xAxisEnd: number,
-        interval: number
-    ): number {
-        while (currentBorderMax > xAxisEnd && xAxisEnd <= currentBorderMax - interval) {
-            currentBorderMax -= interval;
-        }
-
-        return this.formatXlabelsForFiltering(currentBorderMax);
-    }
-
-    /// Using in case when xAxis start (set in options) is greater than calculated border min.
-    /// This function detect the closest point to xAxis start (set in options).
-    /// Each iteration tries to shift border limit right corresponding to interval
-    /// and be closer to xAxis start at the same time.
-    private findBorderMinCloserToXAxisStart(
-        currentBorderMin: number,
-        xAxisStart: number,
-        interval: number
-    ): number {
-        while (currentBorderMin < xAxisStart && xAxisStart >= currentBorderMin + interval) {
-            currentBorderMin += interval;
-        }
-
-        return this.formatXlabelsForFiltering(currentBorderMin);
-    }
-
-    private formatXlabelsForFiltering(
-        nonFormattedPoint: number
-    ): number {
-        let formattedPoint: string = this.data.xLabelFormatter.format(nonFormattedPoint);
-        return parseFloat(formattedPoint);
-    }
-
     public calculateXAxes(
-        source: DataViewMetadataColumn,
+        metaDataColumn: DataViewMetadataColumn,
         textProperties: TextProperties,
         widthOfLabel: number,
         scrollbarVisible: boolean
@@ -1556,13 +1560,24 @@ export class Histogram implements IVisual {
             }
         }
 
-        axes = this.calculateXAxesProperties(
-            xPoints,
-            axisScale.linear,
-            source,
-            Histogram.InnerPaddingRatio,
-            widthOfLabel
-        );
+        axes = HistogramAxisHelper.createAxis({
+            pixelSpan: this.viewportIn.width,
+            dataDomain: xPoints,
+            metaDataColumn,
+            formatString: valueFormatter.getFormatStringByColumn(metaDataColumn),
+            outerPadding: Histogram.DefaultOuterPadding,
+            isScalar: false,
+            isVertical: false,
+            useTickIntervalForDisplayUnits: true,
+            isCategoryAxis: true,
+            getValueFn: (index, valueType) => index,
+            scaleType: axisScale.linear,
+            innerPaddingRatio: Histogram.InnerPaddingRatio,
+            minOrdinalRectThickness: widthOfLabel,
+            tickLabelPadding: undefined
+        });
+
+        axes.axisLabel = this.data.settings.general.displayName;
 
         axes.willLabelsFit = willLabelsFit(
             axes,
@@ -1581,82 +1596,62 @@ export class Histogram implements IVisual {
         return axes;
     }
 
+    //UPD UNIQUE helper
     public isIntervalValid(interval: number): boolean {
         return interval > 0;
     }
 
-    private calculateXAxesProperties(
-        forcedXDomain: any[],
-        categoryAxisScaleType: string,
-        metaDataColumn: DataViewMetadataColumn,
-        innerPaddingRatio: number,
-        minOrdinalRectThickness: number): IAxisProperties {
-
-        let xAxisProperties = HistogramAxisHelper.createAxis({
-            pixelSpan: this.viewportIn.width,
-            dataDomain: forcedXDomain,
-            metaDataColumn: metaDataColumn,
-            formatString: valueFormatter.getFormatStringByColumn(metaDataColumn),
-            outerPadding: Histogram.DefaultOuterPadding,
-            isScalar: false,
-            isVertical: false,
-            useTickIntervalForDisplayUnits: true,
-            isCategoryAxis: true,
-            getValueFn: (index, valueType) => index,
-            scaleType: categoryAxisScaleType,
-            innerPaddingRatio: innerPaddingRatio,
-            minOrdinalRectThickness: minOrdinalRectThickness,
-            tickLabelPadding: undefined
-        });
-
-        xAxisProperties.axisLabel = this.data.settings.general.displayName;
-
-        return xAxisProperties;
-    }
-
-    private calculateYAxes(
-        source: DataViewMetadataColumn,
-        heightOfLabel: number): IAxisProperties {
-
-        let yAxisSettings: HistogramYAxisSettings = this.data.settings.yAxis;
-
-        return this.calculateYAxesProperties(
-            [yAxisSettings.start, yAxisSettings.end],
-            axisScale.linear,
-            source,
-            Histogram.InnerPaddingRatio,
-            heightOfLabel);
-    }
-
-    private calculateYAxesProperties(
-        forcedYDomain: any[],
-        categoryAxisScaleType: string,
-        metaDataColumn: DataViewMetadataColumn,
-        innerPaddingRatio: number,
-        minOrdinalRectThickness: number): IAxisProperties {
-
-        let formatString: string = undefined;
-
-        if (this.data.settings.general.frequency) {
-            formatString = valueFormatter.getFormatStringByColumn(metaDataColumn);
+    //UPD UNIQUE helper
+    /// Using in case when xAxis start (set in options) is greater than calculated border min.
+    /// This function detect the closest point to xAxis start (set in options).
+    /// Each iteration tries to shift border limit right corresponding to interval
+    /// and be closer to xAxis start at the same time.
+    private findBorderMinCloserToXAxisStart(
+        currentBorderMin: number,
+        xAxisStart: number,
+        interval: number
+    ): number {
+        while (currentBorderMin < xAxisStart && xAxisStart >= currentBorderMin + interval) {
+            currentBorderMin += interval;
         }
 
-        return HistogramAxisHelper.createAxis({
-            pixelSpan: this.viewportIn.height,
-            dataDomain: forcedYDomain,
-            metaDataColumn: metaDataColumn,
-            formatString: formatString,
-            outerPadding: this.outerPadding,
-            isScalar: true,
-            isVertical: true,
-            useTickIntervalForDisplayUnits: true,
-            isCategoryAxis: false,
-            getValueFn: (index: number) => index,
-            scaleType: categoryAxisScaleType,
-            innerPaddingRatio: innerPaddingRatio,
-            minOrdinalRectThickness: minOrdinalRectThickness,
-            tickLabelPadding: undefined,
-            is100Pct: true
-        });
+        return this.formatXlabelsForFiltering(currentBorderMin);
+    }
+
+    //UPD UNIQUE helper
+    /// Using in case when xAxis end (set in options) is lesser than calculated border max.
+    /// This function detect the closest point to xAxis end (set in options).
+    /// Each iteration tries to shift border limit left corresponding to interval
+    /// and be closer to xAxis end at the same time.
+    private findBorderMaxCloserToXAxisEnd(
+        currentBorderMax: number,
+        xAxisEnd: number,
+        interval: number
+    ): number {
+        while (currentBorderMax > xAxisEnd && xAxisEnd <= currentBorderMax - interval) {
+            currentBorderMax -= interval;
+        }
+
+        return this.formatXlabelsForFiltering(currentBorderMax);
+    }
+
+    //UPD UNIQUE helper
+    private static rangesToArray(data: HistogramDataPoint[]): number[] {
+        return data.reduce((previousValue: number[], currentValue: HistogramDataPoint, index: number) => {
+            let range: number[];
+
+            range = (index === 0)
+                ? currentValue.range
+                : currentValue.range.slice(1);
+
+            return previousValue.concat(range);
+        }, []);
+    }
+
+    private formatXlabelsForFiltering(
+        nonFormattedPoint: number
+    ): number {
+        let formattedPoint: string = this.data.xLabelFormatter.format(nonFormattedPoint);
+        return parseFloat(formattedPoint);
     }
 }
