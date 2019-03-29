@@ -62,7 +62,7 @@ import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructor
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
 
 // powerbi-visuals-utils-svgutils
-import { IMargin, shapesInterfaces, CssConstants, manipulation } from "powerbi-visuals-utils-svgutils";
+import { shapesInterfaces, CssConstants, manipulation } from "powerbi-visuals-utils-svgutils";
 import ISize = shapesInterfaces.ISize;
 import translate = manipulation.translate;
 import translateAndRotate = manipulation.translateAndRotate;
@@ -146,12 +146,6 @@ export class Histogram implements IVisual {
     private static Legend: ClassAndSelector = createClassAndSelector("legend");
 
     private static LabelGraphicsContext: ClassAndSelector = createClassAndSelector("labelGraphicsContext");
-
-    //UPD property
-    private static DefaultTextProperties: TextProperties = {
-        fontFamily: "helvetica, arial, sans-serif",
-        fontSize: PixelConverter.toString(11) // Note: This value and font-size in histogram.less should be the same.
-    };
 
     private events: IVisualEventService;
 
@@ -363,7 +357,7 @@ export class Histogram implements IVisual {
             ? xAxisSettings.start
             : borderValues.minX;
         
-        //UPD mutability!
+        //REVIEW mutability!
         settings.xAxis.start = Histogram.getCorrectXAxisValue(minXValue);
         settings.xAxis.end = Histogram.getCorrectXAxisValue(maxXvalue);
 
@@ -411,7 +405,14 @@ export class Histogram implements IVisual {
         };
     }
 
-    //UPD UNIQUE TESTED helper used by CONVERTER
+    //REVIEW used TWICE by converter
+    private static getLegendSize(axisSettings: HistogramAxisSettings): number {
+        return axisSettings.title
+            ? Default.LegendSizeWhenTitleIsActive
+            : Default.LegendSizeWhenTitleIsNotActive;
+    }
+
+    //REVIEW UNIQUE TESTED helper used by CONVERTER
     public static getBorderValues(bins: LayoutBin<number>[]): HistogramBorderValues {
         const borderValues: HistogramBorderValues = {
             minX: Number.MAX_VALUE,
@@ -454,7 +455,7 @@ export class Histogram implements IVisual {
         return borderValues;
     }
 
-    //UPD TESTED helper used by CONVERTER
+    //REVIEW TESTED helper used by CONVERTER
     public static getCorrectXAxisValue(value: number): number {
         if (value === undefined || isNaN(value)) {
             return 0;
@@ -465,7 +466,7 @@ export class Histogram implements IVisual {
             Default.MinXAxisStartValue);
     }
 
-    //UPD TESTED helper used by CONVERTER
+    //REVIEW TESTED helper used by CONVERTER
     public static getCorrectYAxisValue(value: number): number {
         if (value === undefined || isNaN(value)) {
             return 0;
@@ -476,14 +477,14 @@ export class Histogram implements IVisual {
             0);
     }
 
-    //UPD UNIQUE TESTED helper-getter used by CONVERTER
+    //REVIEW UNIQUE TESTED helper-getter used by CONVERTER
     public static areValuesNumbers(categoryColumn: DataViewCategoryColumn): boolean {
         return categoryColumn
             && categoryColumn.source
             && (categoryColumn.source.type.numeric || categoryColumn.source.type.integer);
     }
 
-    //UPD UNIQUE helper used by CONVERTER
+    //REVIEW UNIQUE helper used by CONVERTER
     private static getValuesByFrequencies(
         visualHost: IVisualHost,
         categoryColumn: DataViewCategoryColumn,
@@ -526,14 +527,14 @@ export class Histogram implements IVisual {
         return values;
     }
 
-    //UPD UNIQUE getter used by getValuesByFrequencies
+    //REVIEW UNIQUE getter used by getValuesByFrequencies / CONVERTER
     private static getCategoryColumnQuery(categoryColumn: DataViewCategoryColumn): string {
         return categoryColumn && categoryColumn.source
             ? categoryColumn.source.queryName
             : undefined;
     }
 
-    //UPD UNIQUE helper used by getValuesByFrequencies
+    //REVIEW UNIQUE helper used by getValuesByFrequencies / CONVERTER
     private static getDataPoints(
         values: HistogramValue[],
         bins: LayoutBin<number>[],
@@ -565,7 +566,7 @@ export class Histogram implements IVisual {
         });
     }
     
-    //UPD UNIQUE helper used by getDataPoints / getValuesByFrequencies / 
+    //REVIEW UNIQUE helper used by getDataPoints / getValuesByFrequencies / CONVERTER
     private static getTooltipData(
         value: number,
         range: number[],
@@ -586,24 +587,24 @@ export class Histogram implements IVisual {
         ];
     }
 
-    //UPD UNIQUE helper used by getTooltipData / 
+    //REVIEW UNIQUE helper used by getTooltipData / getValuesByFrequencies / CONVERTER
     private static rangeToString(
         range: number[],
         includeLeftBorder: boolean,
         valueFormatter: IValueFormatter
     ): string {
-        const rightBracket: string = Histogram.IncludeBrackets.right;
+        const rightBracket: string = Default.IncludeBrackets.right;
         const leftBorder: string = valueFormatter.format(range[0]);
         const rightBorder: string = valueFormatter.format(range[1]);
 
         const leftBracket = includeLeftBorder
-            ? Histogram.IncludeBrackets.left
-            : Histogram.ExcludeBrackets.left;
+            ? Default.IncludeBrackets.left
+            : Default.ExcludeBrackets.left;
 
         return `${leftBracket}${leftBorder}${Default.SeparatorNumbers}${rightBorder}${rightBracket}`;
     }
 
-    //UPD UNIQUE helper used by getDataPoints / getValuesByFrequencies / converter
+    //REVIEW UNIQUE helper used by getDataPoints / getValuesByFrequencies / CONVERTER
     private static getSubDataPoints(
         values: HistogramValue[],
         bin: HistogramDataPoint,
@@ -623,7 +624,7 @@ export class Histogram implements IVisual {
         return dataPoints;
     }
 
-    //UPD immutable helper used TWICE by CONVERTER and getSubDataPoints / getDataPoints / getValuesByFrequencies / CONVERTER
+    //REVIEW immutable helper used TWICE by CONVERTER and getSubDataPoints / getDataPoints / getValuesByFrequencies / CONVERTER
     private static isValueContainedInRange(
         value: HistogramValue, 
         bin: LayoutBin<number>, 
@@ -633,7 +634,7 @@ export class Histogram implements IVisual {
             && value.value <= bin.x1 + (bin.x1-bin.x0);
     }
 
-    //UPD UNIQUE helper used by CONVERTER
+    //REVIEW UNIQUE helper used by CONVERTER
     private static parseSettings(
         dataView: DataView,
         colorHelper: ColorHelper,
@@ -677,7 +678,7 @@ export class Histogram implements IVisual {
         return settings;
     }
 
-    //UPD UNIQUE immutable helper-getter used by parseSettings / CONVERTER
+    //REVIEW UNIQUE immutable helper-getter used by parseSettings / CONVERTER
     private static getDisplayName(dataView: DataView): string {
         return (dataView
             && dataView.metadata
@@ -693,6 +694,11 @@ export class Histogram implements IVisual {
             Default.MaxPrecision
         );
     }
+/*
+    ===============================================================================================
+    ============================ TOP LEVEL ========================================================
+    ===============================================================================================
+*/
 
     public static getLegend(title: string, style: HistogramAxisStyle, displayUnit: number): string {
         const formatter: IValueFormatter = ValueFormatter.create({ value: displayUnit, });
@@ -716,11 +722,6 @@ export class Histogram implements IVisual {
         return undefined;
     }
 
-/*
-    ===============================================================================================
-    ============================ TOP LEVEL ========================================================
-    ===============================================================================================
-*/
     public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
         const settings: HistogramSettings = this.data && this.data.settings
             ? this.data.settings
@@ -812,7 +813,7 @@ export class Histogram implements IVisual {
     =================================== UPDATE BRANCHES ===========================================
     ===============================================================================================
 */
-    //UPD UNIQUE branch of UPDATE
+    //REVIEW UNIQUE branch of UPDATE
     private updateAxes(dataView: DataView): number {
 
         let maxWidthOfVerticalAxisLabel: number,
@@ -831,7 +832,7 @@ export class Histogram implements IVisual {
             this.data.borderValues.maxX,
             this.data.xLabelFormatter);
         
-        //UPD getter
+        //REVIEW getter
         let ySource = dataView.categorical.values &&
             dataView.categorical.values[0] &&
             dataView.categorical.values[0].values
@@ -850,7 +851,7 @@ export class Histogram implements IVisual {
 
         this.xAxisProperties = this.calculateXAxes(
             dataView.categorical.categories[0].source,
-            Histogram.DefaultTextProperties,
+            Default.TextProperties,
             maxWidthOfHorizontalAxisLabel,
             false);
 
@@ -859,7 +860,7 @@ export class Histogram implements IVisual {
         return maxWidthOfVerticalAxisLabel;
     }
 
-    //UPD UNIQUE branch of UPDATE
+    //REVIEW UNIQUE branch of UPDATE
     private applySelectionStateToData(): void {
         if (this.interactivityService) {
             this.data.dataPoints.forEach((dataPoint: HistogramDataPoint) => {
@@ -868,7 +869,27 @@ export class Histogram implements IVisual {
         }
     }
 
-    //UPD UNIQUE branch of UPDATE
+    //REVIEW branch of UPDATE
+    private setSize(viewport: IViewport): void {
+        const height = viewport.height
+            - Default.SvgMargin.top
+            - Default.SvgMargin.bottom;
+
+        const width = viewport.width
+            - Default.SvgMargin.left
+            - Default.SvgMargin.right;
+
+        this.viewport = {
+            height: Math.max(height, Default.MinViewportSize),
+            width: Math.max(width, Default.MinViewportSize)
+        };
+
+        this.updateElements(
+            Math.max(viewport.height, Default.MinViewportSize),
+            Math.max(viewport.width, Default.MinViewportSize));
+    }
+
+    //REVIEW UNIQUE branch of UPDATE
     private createScales(): void {
         const yAxisSettings: HistogramYAxisSettings = this.data.settings.yAxis,
             xAxisSettings: HistogramXAxisSettings = this.data.settings.xAxis,
@@ -894,134 +915,8 @@ export class Histogram implements IVisual {
                 this.outerPadding
             ]);
     }
-    //UPD used TWICE in updateAxes / UPDATE & in UPDATE
-    private updateViewportIn(maxWidthOfVerticalAxisLabel: number = 0): void {
-        let width: number,
-            height: number;
-
-        width = this.viewport.width
-            - this.data.yLegendSize
-            - maxWidthOfVerticalAxisLabel;
-
-        height = this.viewport.height - this.data.xLegendSize;
-
-        this.viewportIn = {
-            height: Math.max(height, Default.MinViewportInSize),
-            width: Math.max(width, Default.MinViewportInSize)
-        };
-    }
-
-    private getColumnWidth(strokeWidth: number): number {
-        const countOfValues: number = this.data.dataPoints.length;
-        const borderValues: HistogramBorderValues = this.data.borderValues;
-
-        const firstDataPoint: number = this.data.xCorrectedMin
-            ? this.data.xCorrectedMin
-            : borderValues.minX;
-
-        const widthOfColumn = countOfValues
-            ? this.data.xScale(firstDataPoint + (this.data.dataPoints[0].x1 - this.data.dataPoints[0].x0)) - Default.ColumnPadding - strokeWidth
-            : Default.MinViewportInSize;
-
-        return Math.max(widthOfColumn, Default.MinViewportInSize);
-    }
-
-    private clear(): void {
-        [
-            this.axisX,
-            this.axisY,
-            this.legend,
-            this.columns,
-            this.labelGraphicsContext
-        ].forEach((selection: Selection<any>) => {
-            this.clearElement(selection);
-        });
-    }
-
-    private clearElement(selection: Selection<any>): void {
-        selection
-            .selectAll("*")
-            .remove();
-    }
-
-    private static getLegendSize(axisSettings: HistogramAxisSettings): number {
-        return axisSettings.title
-            ? Default.LegendSizeWhenTitleIsActive
-            : Default.LegendSizeWhenTitleIsNotActive;
-    }
-
-    private static getWidthOfLabel(
-        labelValue: number | string,
-        valueFormatter: IValueFormatter
-    ): number {
-        const textProperties: TextProperties =
-            Histogram.getTextPropertiesForMeasurement(labelValue, valueFormatter);
-
-        return textMeasurementService.measureSvgTextWidth(textProperties) + Default.AdditionalWidthOfLabel;
-    }
-
-    private static getHeightOfLabel(
-        labelValue: number | string,
-        valueFormatter: IValueFormatter
-    ): number {
-        const textProperties: TextProperties =
-            Histogram.getTextPropertiesForMeasurement(labelValue, valueFormatter);
-
-        return textMeasurementService.measureSvgTextHeight(textProperties) + Default.AdditionalHeightOfLabel;
-    }
-
-    private static getTextPropertiesForMeasurement(
-        labelValue: string | number,
-        valueFormatter?: IValueFormatter
-    ): TextProperties {
-
-        let labelText: string;
-
-        if (valueFormatter) {
-            labelText = valueFormatter.format(labelValue);
-        } else {
-            labelText = labelValue as string;
-        }
-
-        return Histogram.getTextProperties(labelText);
-    }
-
-    private setSize(viewport: IViewport): void {
-        const height = viewport.height
-            - Default.SvgMargin.top
-            - Default.SvgMargin.bottom;
-
-        const width = viewport.width
-            - Default.SvgMargin.left
-            - Default.SvgMargin.right;
-
-        this.viewport = {
-            height: Math.max(height, Default.MinViewportSize),
-            width: Math.max(width, Default.MinViewportSize)
-        };
-
-        this.updateElements(
-            Math.max(viewport.height, Default.MinViewportSize),
-            Math.max(viewport.width, Default.MinViewportSize));
-    }
-
-    private updateElements(height: number, width: number): void {
-        const transform: string = translate(
-            Default.SvgMargin.left,
-            Default.SvgMargin.top);
-
-        this.root
-            .attr("height", height)
-            .attr("width", width);
-
-        this.main.attr("transform", transform);
-        this.legend.attr("transform", transform);
-    }
-
-    public shouldShowYOnRight(): boolean {
-        return this.data.settings.yAxis.position === HistogramPositionType.Right;
-    }
-
+    
+    //REVIEW branch of UPDATE
     private columnsAndAxesTransform(labelWidth: number): void {
         const offsetToRight: number = this.shouldShowYOnRight()
             ? Default.SvgMargin.left
@@ -1055,6 +950,7 @@ export class Histogram implements IVisual {
         );
     }
 
+    //REVIEW branch of UPDATE
     private renderColumns(): Selection<HistogramDataPoint> {
         const data: HistogramDataPoint[] = this.data.dataPoints;
 
@@ -1100,6 +996,183 @@ export class Histogram implements IVisual {
         return columnsSelection.merge(updateColumnsSelection);
     }
 
+    //REVIEW branch of UPDATE 
+    private renderLabels(): void {
+        let labelSettings: HistogramLabelSettings = this.data.settings.labels,
+            dataPointsArray: HistogramDataPoint[] = this.data.dataPoints,
+            labels: Selection<HistogramDataPoint>;
+
+        if (!labelSettings.show) {
+            dataLabelUtils.cleanDataLabels(this.labelGraphicsContext);
+
+            return;
+        }
+
+        labels = dataLabelUtils.drawDefaultLabelsForDataPointChart(
+            dataPointsArray,
+            this.labelGraphicsContext,
+            this.getLabelLayout(),
+            this.viewportIn);
+
+        if (labels) {
+            labels.attr("transform", (dataPoint: HistogramDataPoint) => {
+                let size: ISize = dataPoint.size,
+                    dx: number,
+                    dy: number;
+
+                dx = size.width / Default.DataLabelXOffset;
+                dy = size.height / Default.DataLabelYOffset;
+
+                return translate(dx, dy);
+            });
+        }
+    }
+
+    //REVIEW UNIQUE branch of UPDATE
+    private bindSelectionHandler(columnsSelection: Selection<HistogramDataPoint>): void {
+        if (!this.interactivityService
+            || !this.data
+            || !this.data.dataPoints
+        ) {
+            return;
+        }
+
+        let subDataPoints: SelectableDataPoint[] = [];
+
+        this.data.dataPoints.forEach((dataPoint: HistogramDataPoint) => {
+            subDataPoints = subDataPoints.concat(dataPoint.subDataPoints);
+        });
+
+        const behaviorOptions: HistogramBehaviorOptions = {
+            columns: columnsSelection,
+            clearCatcher: this.clearCatcher,
+            interactivityService: this.interactivityService,
+        };
+
+        this.interactivityService.bind(
+            subDataPoints,
+            this.behavior,
+            behaviorOptions
+        );
+    }
+
+    //REVIEW branch of UPDATE
+    private renderLegend(): void {
+        const dataLegends: Legend[] = this.getDataLegends(this.data.settings);
+
+        const legendElements: Selection<Legend> = this.main
+            .select(Histogram.Legends.selectorName)
+            .selectAll(Histogram.Legend.selectorName);
+
+        const legendSelection: Selection<Legend> = legendElements.data(dataLegends);
+
+        legendSelection
+            .enter()
+            .append("svg:text");
+
+        legendSelection
+            .attr("x", Default.SvgLegendPosition)
+            .attr("y", Default.SvgLegendPosition)
+            .attr("dx", (legend: Legend) => legend.dx)
+            .attr("dy", (legend: Legend) => legend.dy)
+            .attr("transform", (legend: Legend) => legend.transform)
+            
+            .style("fill", (legend: Legend) => legend.color)
+            .text((item: Legend) => item.text)
+            .classed(Histogram.Legend.className, true);
+
+        legendSelection
+            .exit()
+            .remove();
+
+        const getDisplayForAxisTitle = (axisSettings: HistogramAxisSettings) : string => 
+            (axisSettings && axisSettings.title) 
+            ? null 
+            : "none";
+
+        this.legend
+            .select("text")
+            .style("display", getDisplayForAxisTitle(this.data.settings.xAxis));
+
+        this.legend
+            .selectAll("text")
+            .filter((d, index: number) => index === 1)
+            .style("display", getDisplayForAxisTitle(this.data.settings.yAxis));
+    }
+
+    //REVIEW branch of UPDATE
+    private clear(): void {
+        [
+            this.axisX,
+            this.axisY,
+            this.legend,
+            this.columns,
+            this.labelGraphicsContext
+        ].forEach((selection: Selection<any>) => {
+            this.clearElement(selection);
+        });
+    }
+    
+    //REVIEW used TWICE in updateAxes / UPDATE & in UPDATE
+    private updateViewportIn(maxWidthOfVerticalAxisLabel: number = 0): void {
+        let width: number,
+            height: number;
+
+        width = this.viewport.width
+            - this.data.yLegendSize
+            - maxWidthOfVerticalAxisLabel;
+
+        height = this.viewport.height - this.data.xLegendSize;
+
+        this.viewportIn = {
+            height: Math.max(height, Default.MinViewportInSize),
+            width: Math.max(width, Default.MinViewportInSize)
+        };
+    }
+
+/*
+    ===============================================================================================
+    ===================================== SECOND LEVEL ============================================
+    ===============================================================================================
+*/
+
+    //REVIEW used ONCE by renderColumns / UPDATE
+    private getColumnWidth(strokeWidth: number): number {
+        const countOfValues: number = this.data.dataPoints.length;
+        const borderValues: HistogramBorderValues = this.data.borderValues;
+
+        const firstDataPoint: number = this.data.xCorrectedMin
+            ? this.data.xCorrectedMin
+            : borderValues.minX;
+
+        const widthOfColumn = countOfValues
+            ? this.data.xScale(firstDataPoint + (this.data.dataPoints[0].x1 - this.data.dataPoints[0].x0)) - Default.ColumnPadding - strokeWidth
+            : Default.MinViewportInSize;
+
+        return Math.max(widthOfColumn, Default.MinViewportInSize);
+    }
+
+    //====================================================================================================== setSize
+    //REVIEW used ONCE by setSize / UPDATE
+    private updateElements(height: number, width: number): void {
+        const transform: string = translate(
+            Default.SvgMargin.left,
+            Default.SvgMargin.top);
+
+        this.root
+            .attr("height", height)
+            .attr("width", width);
+
+        this.main.attr("transform", transform);
+        this.legend.attr("transform", transform);
+    }
+
+    //REVIEW used at columnsANdAxesTransform and getDataLegends
+    public shouldShowYOnRight(): boolean {
+        return this.data.settings.yAxis.position === HistogramPositionType.Right;
+    }
+
+
     private getStrokeWidth(): number {
         return this.colorHelper.isHighContrast ? 2 : 0;
     }
@@ -1109,92 +1182,25 @@ export class Histogram implements IVisual {
             return eventArgs.data.tooltipInfo;
         });
     }
-
+    //REVIEW renderColumns / UPDATE
     private getColumnHeight(column: LayoutBin<number>, y: LinearScale<any, any>): number {
         const height: number = this.viewportIn.height - y(column.y);
 
         return Math.max(height, Default.MinColumnHeight);
     }
 
-    private renderXAxis(): void {
-        if (!this.data.settings.xAxis.show) {
-            this.clearElement(this.axisX);
-
-            return;
-        }
-
-        const xAxis = d3.axisBottom(this.data.xScale)
-            .tickFormat(((value: number, index: number) => {
-                const tickValues: any[] = this.xAxisProperties.axis.tickValues();
-                const amountOfLabels: number = (tickValues && tickValues.length) || Default.MinLabelNumber;
-
-                return this.formatLabelOfXAxis(value, index, amountOfLabels);
-            }) as any) // We cast this function to any, because the type definition doesn't contain the second argument
-
-        //TMP console.log('DBG xAxis', xAxis, 'scale', this.data.xScale);
-        this.axisX.call(xAxis);
-
-        this.updateFillColorOfAxis(this.axisX, this.data.settings.xAxis);
-    }
-
-    private formatLabelOfXAxis(labelValue: number | string, index: number, amountOfLabels: number): string {
-        const formattedLabel: string = this.data.xLabelFormatter.format(labelValue);
-
-        if (index === 0 || index === amountOfLabels - 1) {
-            const maxWidthOfTheLatestLabel: number = Math.min(
-                this.viewportIn.width,
-                Default.MaxWidthOfTheLatestLabel
-            );
-
-            return Histogram.getTailoredTextOrDefault(
-                formattedLabel,
-                maxWidthOfTheLatestLabel
-            );
-        }
-
-        return formattedLabel;
-    }
-
-    //UPD helper
-    private static getTailoredTextOrDefault(text: string, maxWidth: number): string {
-        const textProperties = Histogram.getTextProperties(text);
-
-        return textMeasurementService.getTailoredTextOrDefault(textProperties, maxWidth);
-    }
-
-    //UPD helper
+    //REVIEW helper getTextPropertiesForMeasurement / getHeightOfLabel & getWidthOfLabel / updateAxes / UPDATE
+    // / getTailored / renderLegend / UPDATE
     private static getTextProperties(text: string): TextProperties {
         return {
             text,
-            fontFamily: Histogram.DefaultTextProperties.fontFamily,
-            fontSize: Histogram.DefaultTextProperties.fontSize
+            fontFamily: Default.TextProperties.fontFamily,
+            fontSize: Default.TextProperties.fontSize
         };
     }
 
-    private renderYAxis(): void {
-        if (!this.data.settings.yAxis.show) {
-            this.clearElement(this.axisY);
-
-            return;
-        }
-
-        const yAxis = d3.axisLeft(this.data.yScale) 
-            .tickFormat((item: number) => {
-                return this.data.yLabelFormatter.format(item);
-            });
-
-        this.axisY.call(yAxis);
-
-        this.updateFillColorOfAxis(this.axisY, this.data.settings.yAxis);
-    }
-
-    //UPD helper
-    private updateFillColorOfAxis(axisSelection: Selection<any>, settings: HistogramAxisSettings): void {
-        axisSelection
-            .style("fill", settings.axisColor)
-            .style("stroke", settings.strokeColor);
-    }
-
+ //========================================================================================================= renderLabel
+    //REVIEW branch of renderLabel / UPDATE
     private getLabelLayout(): ILabelLayout {
         let labelSettings: HistogramLabelSettings = this.data.settings.labels,
             fontSizeInPx: string = PixelConverter.fromPoint(labelSettings.fontSize),
@@ -1244,84 +1250,8 @@ export class Histogram implements IVisual {
         };
     }
 
-    //UPD branch of UPDATE 
-    private renderLabels(): void {
-        let labelSettings: HistogramLabelSettings = this.data.settings.labels,
-            dataPointsArray: HistogramDataPoint[] = this.data.dataPoints,
-            labels: Selection<HistogramDataPoint>;
-
-        if (!labelSettings.show) {
-            dataLabelUtils.cleanDataLabels(this.labelGraphicsContext);
-
-            return;
-        }
-
-        labels = dataLabelUtils.drawDefaultLabelsForDataPointChart(
-            dataPointsArray,
-            this.labelGraphicsContext,
-            this.getLabelLayout(),
-            this.viewportIn);
-
-        if (labels) {
-            labels.attr("transform", (dataPoint: HistogramDataPoint) => {
-                let size: ISize = dataPoint.size,
-                    dx: number,
-                    dy: number;
-
-                dx = size.width / Default.DataLabelXOffset;
-                dy = size.height / Default.DataLabelYOffset;
-
-                return translate(dx, dy);
-            });
-        }
-    }
-
-    //UPD branch of UPDATE
-    private renderLegend(): void {
-        const dataLegends: Legend[] = this.getDataLegends(this.data.settings);
-
-        const legendElements: Selection<Legend> = this.main
-            .select(Histogram.Legends.selectorName)
-            .selectAll(Histogram.Legend.selectorName);
-
-        const legendSelection: Selection<Legend> = legendElements.data(dataLegends);
-
-        legendSelection
-            .enter()
-            .append("svg:text");
-
-        legendSelection
-            .attr("x", Default.SvgLegendPosition)
-            .attr("y", Default.SvgLegendPosition)
-            .attr("dx", (legend: Legend) => legend.dx)
-            .attr("dy", (legend: Legend) => legend.dy)
-            .attr("transform", (legend: Legend) => legend.transform)
-            
-            .style("fill", (legend: Legend) => legend.color)
-            .text((item: Legend) => item.text)
-            .classed(Histogram.Legend.className, true);
-
-        legendSelection
-            .exit()
-            .remove();
-
-        this.legend
-            .select("text")
-            .style("display", Histogram.getDisplayForAxisTitle(this.data.settings.xAxis));
-
-        this.legend
-            .selectAll("text")
-            .filter((d, index: number) => index === 1)
-            .style("display", Histogram.getDisplayForAxisTitle(this.data.settings.yAxis));
-    }
-    //UPD helper used only by renderLegend
-    private static getDisplayForAxisTitle(axisSettings: HistogramAxisSettings): string {
-        return axisSettings && axisSettings.title
-            ? null
-            : "none";
-    }
-    
-    //UPD helper used only by getDataLegends
+//========================================================================================================= UPDATE \ renderLegend
+    //REVIEW branch of renderLegend / UPDATE
     private getDataLegends(settings: HistogramSettings): Legend[] {
         let bottomLegendText: string = Histogram.getLegendText(settings, this.localizationManager);
 
@@ -1330,7 +1260,7 @@ export class Histogram implements IVisual {
             settings.yAxis.style,
             settings.yAxis.displayUnits
         );
-
+        
         return [
             {
                 transform: translate(
@@ -1360,40 +1290,51 @@ export class Histogram implements IVisual {
         ];
     }
 
-    private static getLegendText(settings: HistogramSettings, localizationManager: ILocalizationManager): string {
-        return settings.general.frequency
-            ? localizationManager.getDisplayName("Visual_Frequency")
-            : localizationManager.getDisplayName("Visual_Density");
+
+
+//========================================================================================================= UPDATE \ updateAxes \ labels
+    //REVIEW used TWICE by updateAxes / UPDATE
+    private static getWidthOfLabel(
+        labelValue: number | string,
+        valueFormatter: IValueFormatter
+    ): number {
+        const textProperties: TextProperties =
+            Histogram.getTextPropertiesForMeasurement(labelValue, valueFormatter);
+
+        return textMeasurementService.measureSvgTextWidth(textProperties) + Default.AdditionalWidthOfLabel;
     }
 
-    private bindSelectionHandler(columnsSelection: Selection<HistogramDataPoint>): void {
-        if (!this.interactivityService
-            || !this.data
-            || !this.data.dataPoints
-        ) {
-            return;
+    //REVIEW UNIQUE used by updateAxes / UPDATE
+    private static getHeightOfLabel(
+        labelValue: number | string,
+        valueFormatter: IValueFormatter
+    ): number {
+        const textProperties: TextProperties =
+            Histogram.getTextPropertiesForMeasurement(labelValue, valueFormatter);
+
+        return textMeasurementService.measureSvgTextHeight(textProperties) + Default.AdditionalHeightOfLabel;
+    }
+
+    //REVIEW used by getHeightOfLabel & getWidthOfLabel / updateAxes / UPDATE
+    private static getTextPropertiesForMeasurement(
+        labelValue: string | number,
+        valueFormatter?: IValueFormatter
+    ): TextProperties {
+
+        let labelText: string;
+
+        if (valueFormatter) {
+            labelText = valueFormatter.format(labelValue);
+        } else {
+            labelText = labelValue as string;
         }
 
-        let subDataPoints: SelectableDataPoint[] = [];
-
-        this.data.dataPoints.forEach((dataPoint: HistogramDataPoint) => {
-            subDataPoints = subDataPoints.concat(dataPoint.subDataPoints);
-        });
-
-        const behaviorOptions: HistogramBehaviorOptions = {
-            columns: columnsSelection,
-            clearCatcher: this.clearCatcher,
-            interactivityService: this.interactivityService,
-        };
-
-        this.interactivityService.bind(
-            subDataPoints,
-            this.behavior,
-            behaviorOptions
-        );
+        return { text: labelText, ...Default.TextProperties };
     }
-    
-    //UPD UNIQUE branch of updateAxes / UPDATE
+
+//========================================================================================================= UPDATE \ updateAxes \ Y Axis
+
+    //REVIEW UNIQUE branch of updateAxes / UPDATE
     private calculateYAxes(
         metaDataColumn: DataViewMetadataColumn,
         minOrdinalRectThickness: number
@@ -1421,8 +1362,72 @@ export class Histogram implements IVisual {
             is100Pct: true
         });
     }
+    
+    //REVIEW Branch of updateAxis / UPDATE
+    private renderYAxis(): void {
+        const yAxisSettings: HistogramYAxisSettings = this.data.settings.yAxis;
 
-    //UPD UNIQUE branch of updateAxes / UPDATE
+        if (!yAxisSettings.show) {
+            this.clearElement(this.axisY);
+            return;
+        }
+
+        const yAxis = d3.axisLeft(this.data.yScale) 
+            .tickFormat((item: number) => {
+                return this.data.yLabelFormatter.format(item);
+            });
+
+        this.axisY.call(yAxis);
+        this.axisY
+            .style("fill", yAxisSettings.axisColor)
+            .style("stroke", yAxisSettings.strokeColor);
+    }
+//========================================================================================================= UPDATE \ updateAxes \ X Axis
+
+    //REVIEW Branch of updateAxis / UPDATE
+    private renderXAxis(): void {
+        const xAxisSettings: HistogramXAxisSettings = this.data.settings.xAxis;
+        
+        if (!xAxisSettings.show) {
+            this.clearElement(this.axisX);
+            return;
+        }
+
+        const xAxis = d3.axisBottom(this.data.xScale)
+            .tickFormat(((value: number, index: number) => {
+                const tickValues: any[] = this.xAxisProperties.axis.tickValues();
+                const amountOfLabels: number = (tickValues && tickValues.length) || Default.MinLabelNumber;
+
+                return this.formatLabelOfXAxis(value, index, amountOfLabels);
+            }) as any) // We cast this function to any, because the type definition doesn't contain the second argument
+
+        this.axisX.call(xAxis);
+        
+        this.axisX
+        .style("fill", xAxisSettings.axisColor)
+        .style("stroke", xAxisSettings.strokeColor)
+    }
+    
+    //REVIEW branch of renderXAxis / updateAxis / UPDATE
+    private formatLabelOfXAxis(labelValue: number | string, index: number, amountOfLabels: number): string {
+        const formattedLabel: string = this.data.xLabelFormatter.format(labelValue);
+
+        if (index === 0 || index === amountOfLabels - 1) {
+            const maxWidthOfTheLatestLabel: number = Math.min(
+                this.viewportIn.width,
+                Default.MaxWidthOfTheLatestLabel
+            );
+
+            return Histogram.getTailoredTextOrDefault(
+                formattedLabel,
+                maxWidthOfTheLatestLabel
+            );
+        }
+
+        return formattedLabel;
+    }
+
+    //REVIEW UNIQUE branch of updateAxes / UPDATE
     public calculateXAxes(
         metaDataColumn: DataViewMetadataColumn,
         textProperties: TextProperties,
@@ -1431,16 +1436,7 @@ export class Histogram implements IVisual {
     ): IAxisProperties {
         let axes: IAxisProperties,
             width: number = this.viewportIn.width,
-            xAxisSettings: HistogramXAxisSettings = this.data.settings.xAxis,
-            xPoints: number[],
-            interval: number,
-            borderValues: HistogramBorderValues = this.data.borderValues,
-            tmpStart: number,
-            tmpEnd: number,
-            tmpArr: number[],
-            closerLimit: number;
-
-        xPoints = this.getDataDomain();
+            xPoints: number[] = this.getDataDomain();
 
         axes = HistogramAxisHelper.createAxis({
             pixelSpan: this.viewportIn.width,
@@ -1478,6 +1474,7 @@ export class Histogram implements IVisual {
         return axes;
     }
 
+    //REVIEW UNIQUE branch of calculateXAxes / updateAxes / UPDATE
     private getDataDomain(): number[] {
         const { start, end } = this.data.settings.xAxis,
             { minX, maxX } = this.data.borderValues,
@@ -1534,7 +1531,7 @@ export class Histogram implements IVisual {
         return xPoints;
     }
 
-    //UPD UNIQUE helper used by calculateXAxes
+    //REVIEW UNIQUE helper used by calculateXAxes / updateAxes / UPDATE
     private static rangesToArray = (data: HistogramDataPoint[]): number[] =>
         data.reduce(
             (previousValue: number[], currentValue: HistogramDataPoint, index: number) => 
@@ -1544,7 +1541,7 @@ export class Histogram implements IVisual {
             []
         );
 
-    //UPD UNIQUE helper used by calculateXAxes
+    //REVIEW UNIQUE helper used by calculateXAxes / updateAxes / UPDATE
     /// Using in case when xAxis start (set in options) is greater than calculated border min.
     /// This function detect the closest point to xAxis start (set in options).
     /// Each iteration tries to shift border limit right corresponding to interval
@@ -1561,7 +1558,7 @@ export class Histogram implements IVisual {
         return this.formatXLabelsForFiltering(currentBorderMin);
     }
 
-    //UPD UNIQUE helper used by calculateXAxes
+    //REVIEW UNIQUE helper used by calculateXAxes / updateAxes / UPDATE
     /// Using in case when xAxis end (set in options) is lesser than calculated border max.
     /// This function detect the closest point to xAxis end (set in options).
     /// Each iteration tries to shift border limit left corresponding to interval
@@ -1574,15 +1571,49 @@ export class Histogram implements IVisual {
         while (currentBorderMax > xAxisEnd && xAxisEnd <= currentBorderMax - interval) {
             currentBorderMax -= interval;
         }
-bp
         return this.formatXLabelsForFiltering(currentBorderMax);
     }
 
-    //UPD helper used in calculateXAxes & children
+/*
+    ==================================================================================================
+    UTILS
+    ==================================================================================================
+*/
+
+    //REVIEW used by UPDATE and renderXAxis & renderYAxis / updateAxis / UPDATE
+    private clearElement(selection: Selection<any>): void {
+        selection
+            .selectAll("*")
+            .remove();
+    }
+
+    //REVIEW helper used in calculateXAxes & children
     private formatXLabelsForFiltering(
         nonFormattedPoint: number
     ): number {
         let formattedPoint: string = this.data.xLabelFormatter.format(nonFormattedPoint);
         return parseFloat(formattedPoint);
     }
+
+    //REVIEW used by getTooltipData / getValuesByFrequencies / CONVERTER 
+    //REVIEW used by renderLegend / UPDATE
+    private static getLegendText = (
+        settings: HistogramSettings, 
+        localizationManager: ILocalizationManager
+    ): string => 
+        settings.general.frequency
+            ? localizationManager.getDisplayName("Visual_Frequency")
+            : localizationManager.getDisplayName("Visual_Density");
+    
+    //REVIEW helper used by getDataLegends / renderLegend / UPDATE 
+    //REVIEW helper used by formatLabelOfXAxis / renderXAxis / updateAxis / UPDATE
+    private static getTailoredTextOrDefault = (
+        text: string, 
+        maxWidth: number
+    ): string =>
+        textMeasurementService.getTailoredTextOrDefault(
+            { text, ...Default.TextProperties }, 
+            maxWidth
+        );
+
 }
