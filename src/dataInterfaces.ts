@@ -42,7 +42,6 @@ import { shapesInterfaces } from "powerbi-visuals-utils-svgutils";
 import ISize = shapesInterfaces.ISize;
 
 import { HistogramSettings } from "./settings";
-import { HistogramAxisHelper } from "./axisHelper";
 
 export interface HistogramSubDataPoint extends SelectableDataPoint {
     highlight?: boolean;

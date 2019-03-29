@@ -775,26 +775,6 @@ describe("HistogramChart", () => {
         });
     });
 
-    describe("isIntervalValid", () => {
-        let visualBuilder: HistogramChartBuilder;
-
-        beforeEach(() => {
-            visualBuilder = new HistogramChartBuilder(1000, 500);
-        });
-
-        it("should return true if interval is greater than zero", () => {
-            expect(visualBuilder.instance.isIntervalValid(1)).toBeTruthy();
-        });
-
-        it("should return false if interval is less than zero", () => {
-            expect(visualBuilder.instance.isIntervalValid(-1)).toBeFalsy();
-        });
-
-        it("should return false if interval is zero", () => {
-            expect(visualBuilder.instance.isIntervalValid(0)).toBeFalsy();
-        });
-    });
-
     describe("areValuesNumbers", () => {
         it("the method should return true when category is integer", () => {
             let areValuesNumbers: boolean,
