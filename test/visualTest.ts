@@ -43,6 +43,8 @@ import { Histogram as VisualClass } from "../src/visual";
 import { HistogramDataPoint } from "../src/dataInterfaces";
 import { HistogramAxisStyle } from "../src/settings"; 
 import * as histogramUtils from "../src/utils";
+import * as Default from "../src/constants";
+
 import StateOfDataPoint = histogramUtils.StateOfDataPoint;
 
 describe("HistogramChart", () => {
@@ -822,7 +824,7 @@ describe("HistogramChart", () => {
 
     describe("getCorrectYAxisValue", () => {
         it("the method should return a value that equals MaxXAxisEndValue", () => {
-            checkCorrectYAxisValue(Number.MAX_VALUE, VisualClass.MaxXAxisEndValue);
+            checkCorrectYAxisValue(Number.MAX_VALUE, Default.MaxXAxisEndValue);
         });
 
         it("the method should return a value that equals MinXAxisStartValue", () => {
@@ -855,11 +857,11 @@ describe("HistogramChart", () => {
 
     describe("getCorrectXAxisValue", () => {
         it("the method should return a value that equals MaxXAxisEndValue", () => {
-            checkCorrectXAxisValue(Number.MAX_VALUE, VisualClass.MaxXAxisEndValue);
+            checkCorrectXAxisValue(Number.MAX_VALUE, Default.MaxXAxisEndValue);
         });
 
         it("the method should return a value that equals MinXAxisStartValue", () => {
-            checkCorrectXAxisValue(-Number.MAX_VALUE, VisualClass.MinXAxisStartValue);
+            checkCorrectXAxisValue(-Number.MAX_VALUE, Default.MinXAxisStartValue);
         });
 
         it("the method should return the same value", () => {
