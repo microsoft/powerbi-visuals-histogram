@@ -32,10 +32,9 @@ import { ScaleLinear as LinearScale, scaleLinear } from "d3-scale";
 
 import HistogramLayout = d3.HistogramGeneratorNumber;
 
-//import LayoutBin = d3.Bin; //layout.histogram.Bin;
-interface LayoutBin<Value> extends d3.Bin<any, number>{
-    y?: Value
-}
+interface LayoutBin extends d3.Bin<number, number>{
+    y?: number
+};
 
 // powerbi
 import powerbi from "powerbi-visuals-api";
@@ -249,7 +248,7 @@ export class Histogram implements IVisual {
         dataView: DataView,
         visualHost: IVisualHost,
         localizationManager: ILocalizationManager,
-        colorHelper: ColorHelper,
+        colorHelper: ColorHelper
     ): HistogramData {
 
         if (!dataView
@@ -267,7 +266,7 @@ export class Histogram implements IVisual {
             histogramLayout: HistogramLayout<any, number>, //test
             values: HistogramValue[],
             numericalValues: number[] = [],
-            bins: LayoutBin<number>[],
+            bins: LayoutBin[],
             dataPoints: HistogramDataPoint[],
             valueFormatter: IValueFormatter,
             frequencies: number[] = [],
@@ -306,17 +305,20 @@ export class Histogram implements IVisual {
             numericalValues.push(value.value);
             sumFrequency += value.frequency;
         });
-
-        histogramLayout = d3.histogram();
         
+        const [min, max] = d3.extent(numericalValues);
+        
+        histogramLayout = d3.histogram();
+
         if (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins) {
-            histogramLayout = histogramLayout.thresholds(settings.general.bins);
+            histogramLayout = histogramLayout.thresholds(
+                d3.range(min, max, ((max - min) / settings.general.bins ))
+            );
         }
         
-        //bins = histogramLayout.frequency(settings.general.frequency)(numericalValues);//TODO TEST
-        bins =  d3.histogram()(numericalValues); 
+        bins = histogramLayout(numericalValues);
 
-        bins.forEach((bin: LayoutBin<number>, index: number) => {
+        bins.forEach((bin: LayoutBin, index: number) => {
             let filteredValues: HistogramValue[],
                 frequency: number;
 
@@ -333,38 +335,36 @@ export class Histogram implements IVisual {
                 : frequency / sumFrequency;
             });
         
-        //TMP console.warn('DBG Converter frequency', settings.general.frequency, frequencies, sumFrequency)
-        //TMP console.warn('DBG Converter: bins', values, '>', numericalValues, '>', bins);
         borderValues = Histogram.getBorderValues(bins);
-
+        
         // min-max for Y axis
         yAxisSettings = settings.yAxis;
 
-        let maxYvalue: number = (yAxisSettings.end !== null) && (yAxisSettings.end > yAxisSettings.start)
+        let maxYValue: number = (yAxisSettings.end !== null) && (yAxisSettings.end > yAxisSettings.start)
             ? yAxisSettings.end
             : borderValues.maxY;
 
-        let minYValue: number = yAxisSettings.start < maxYvalue
+        let minYValue: number = yAxisSettings.start < maxYValue
             ? yAxisSettings.start
             : 0;
 
         settings.yAxis.start = Histogram.getCorrectYAxisValue(minYValue);
-        settings.yAxis.end = Histogram.getCorrectYAxisValue(maxYvalue);
+        settings.yAxis.end = Histogram.getCorrectYAxisValue(maxYValue);
 
         // min-max for X axis
         xAxisSettings = settings.xAxis;
 
-        let maxXvalue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > borderValues.minX)
+        let maxXValue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > borderValues.minX)
             ? xAxisSettings.end
             : borderValues.maxX;
 
-        let minXValue: number = (xAxisSettings.start !== null) && xAxisSettings.start < maxXvalue
+        let minXValue: number = (xAxisSettings.start !== null) && xAxisSettings.start < maxXValue
             ? xAxisSettings.start
             : borderValues.minX;
         
         //REVIEW mutability!
         settings.xAxis.start = Histogram.getCorrectXAxisValue(minXValue);
-        settings.xAxis.end = Histogram.getCorrectXAxisValue(maxXvalue);
+        settings.xAxis.end = Histogram.getCorrectXAxisValue(maxXValue);
 
         if (values.length >= Default.MinAmountOfValues) {
             valueFormatter = ValueFormatter.create({
@@ -417,7 +417,7 @@ export class Histogram implements IVisual {
         : Default.LegendSizeWhenTitleIsNotActive;
 
     //REVIEW UNIQUE TESTED helper used by CONVERTER
-    public static getBorderValues(bins: LayoutBin<number>[]): HistogramBorderValues {
+    public static getBorderValues(bins: LayoutBin[]): HistogramBorderValues {
         const borderValues: HistogramBorderValues = {
             minX: Number.MAX_VALUE,
             maxX: -Number.MAX_VALUE,
@@ -425,7 +425,7 @@ export class Histogram implements IVisual {
             maxY: -Number.MAX_VALUE
         };
 
-        bins.forEach((dataPoint: LayoutBin<number>) => {
+        bins.forEach((dataPoint: LayoutBin) => {
             let minX: number = Number.MAX_VALUE,
                 maxX: number = -Number.MAX_VALUE;
 
@@ -541,7 +541,7 @@ export class Histogram implements IVisual {
     //REVIEW UNIQUE helper used by getValuesByFrequencies / CONVERTER
     private static getDataPoints(
         values: HistogramValue[],
-        bins: LayoutBin<number>[],
+        bins: LayoutBin[],
         settings: HistogramSettings,
         yValueFormatter: IValueFormatter,
         xValueFormatter: IValueFormatter,
@@ -631,7 +631,7 @@ export class Histogram implements IVisual {
     //REVIEW immutable helper used TWICE by CONVERTER and getSubDataPoints / getDataPoints / getValuesByFrequencies / CONVERTER
     private static isValueContainedInRange(
         value: HistogramValue, 
-        bin: LayoutBin<number>, 
+        bin: LayoutBin, 
         index: number
     ): boolean {
         return ((index === 0 && value.value >= bin.x1) || (value.value > bin.x1))
@@ -757,20 +757,20 @@ export class Histogram implements IVisual {
             this.events.renderingStarted(options);
 
             const dataView: DataView = options.dataViews[0];
-
+            
+            this.updateViewport(options.viewport);
+            
             this.data = Histogram.converter(
                 dataView,
                 this.visualHost,
                 this.localizationManager,
-                this.colorHelper,
+                this.colorHelper
             );
 
             if (!this.isDataValid(this.data)) {
                 this.clear();
                 return;
             }
-
-            this.updateViewport(options.viewport);
 
             this.updateElements(
                 Math.max(this.viewport.height, Default.MinViewportSize),
@@ -812,16 +812,13 @@ export class Histogram implements IVisual {
 
             const columnsSelection: Selection<any> = this.renderColumns();
 
-            // private bindTooltipToSelection(selection: Selection<any>): void {
-            //this.bindTooltipToSelection(columnsSelection);
             this.tooltipServiceWrapper.addTooltip(
                 columnsSelection, 
                 (eventArgs: TooltipEventArgs<HistogramDataPoint>) => eventArgs.data.tooltipInfo
             );
 
             this.bindSelectionHandler(columnsSelection);
-            
-            
+
             const dataLegends: Legend[] = Histogram.getDataLegends(
                 this.data.settings,
                 this.viewport,
@@ -1007,7 +1004,7 @@ export class Histogram implements IVisual {
 
         this.columnWidth = this.getColumnWidth(this.strokeWidth);
 
-        const getColumnHeight = (column: LayoutBin<number>): number => 
+        const getColumnHeight = (column: LayoutBin): number => 
             Math.max(
                 this.viewportIn.height - yScale(column.y), 
                 Default.MinColumnHeight
@@ -1095,7 +1092,7 @@ export class Histogram implements IVisual {
             .style("display", getDisplayForAxisTitle(this.data.settings.yAxis));
     }
 
-    //REVIEW branch of renderLegend / UPDATE
+    //REVIEW branch of UPDATE
     private static getDataLegends(
         settings: HistogramSettings,
         viewport: IViewport,
@@ -1111,8 +1108,6 @@ export class Histogram implements IVisual {
             yTitleMargin = Histogram.shouldShowYOnRight(settings)
                 ? viewport.width - Default.YTitleMargin + Histogram.getLegendSize(settings.yAxis) //REVIEW this.data.yLegendSize
                 : Default.MinYTitleMargin;;
-
-        console.log('DBG yLegendText, xLegendText', yLegendText, xLegendText);
 
         return [
             {
@@ -1339,6 +1334,8 @@ export class Histogram implements IVisual {
         this.axisX.call(xAxis);
         
         this.axisX
+
+
             .style("fill", xAxisSettings.axisColor)
             .style("stroke", xAxisSettings.strokeColor)
     }
@@ -1428,7 +1425,7 @@ export class Histogram implements IVisual {
         if ((maxX !== end || minX !== start) && xPoints.length > 1) {
 
             // The interval must be greater than zero to avoid infinity loops
-            if (interval > 0) {
+            if (Histogram.isIntervalValid(interval)) {
                 // If start point is greater than min border, it is necessary to remove non-using data points
                 if (start > minX) {
                     closerLimit = this.findBorderMinCloserToXAxisStart(minX, start, interval);
@@ -1529,7 +1526,12 @@ private clear(): void {
     ==================================================================================================
     UTILS
     ==================================================================================================
-*/
+*/  
+
+    public static isIntervalValid(interval :number): boolean {
+        return interval > 0;
+    }
+
     //REVIEW used at columnsANdAxesTransform and getDataLegends
     public static shouldShowYOnRight = (settings: HistogramSettings): boolean =>
         settings.yAxis.position === HistogramPositionType.Right;
