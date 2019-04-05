@@ -24,8 +24,6 @@
  *  THE SOFTWARE.
  */
 
-
-// powerbi.extensibility.utils.dataview
 import { dataViewObjectsParser } from "powerbi-visuals-utils-dataviewutils";
 import DataViewObjectsParser = dataViewObjectsParser.DataViewObjectsParser;
 

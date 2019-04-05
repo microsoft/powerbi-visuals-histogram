@@ -734,7 +734,6 @@ export class Histogram implements IVisual {
         if (!data
             || !data.dataPoints
             || data.dataPoints.length === Default.MinAmountOfDataPoints) {
-            console.warn('return false!', data.dataPoints);
             return false;
         }
 
@@ -1013,7 +1012,7 @@ export class Histogram implements IVisual {
         columnsSelection
             .merge(updateColumnsSelection)
             .attr("x", (dataPoint: HistogramDataPoint) => xScale(dataPoint.x0))
-            .attr("y", (dataPoint: HistogramDataPoint) => yScale(dataPoint["y"])) //TMP console.log('DBG Y dataPoint', dataPoint); 
+            .attr("y", (dataPoint: HistogramDataPoint) => yScale(dataPoint.y))
             .attr("width", this.columnWidth)
             .attr("height", (dataPoint: HistogramDataPoint) => getColumnHeight(dataPoint))
             
@@ -1144,7 +1143,6 @@ export class Histogram implements IVisual {
         let labelSettings: HistogramLabelSettings = this.data.settings.labels,
             dataPointsArray: HistogramDataPoint[] = this.data.dataPoints,
             labels: Selection<HistogramDataPoint>;
-
         if (!labelSettings.show) {
             dataLabelUtils.cleanDataLabels(this.labelGraphicsContext);
             return;
@@ -1155,6 +1153,8 @@ export class Histogram implements IVisual {
             this.labelGraphicsContext,
             this.getLabelLayout(),
             this.viewportIn);
+        
+        // console.log('DBG LABELS', labels)
 
         if (labels) {
             labels.attr("transform", (dataPoint: HistogramDataPoint) => {
@@ -1162,9 +1162,9 @@ export class Histogram implements IVisual {
                     dx: number,
                     dy: number;
 
-                dx = size.width / Default.DataLabelXOffset;
+                dx = - 2*size.width - size.width / Default.DataLabelXOffset ;
                 dy = size.height / Default.DataLabelYOffset;
-
+                // console.log('DBG dx', dx, size.width, - size.width - size.width / Default.DataLabelXOffset);
                 return translate(dx, dy);
             });
         }
@@ -1184,7 +1184,7 @@ export class Histogram implements IVisual {
 
         return {
             labelText: (dataPoint: HistogramDataPoint) => {
-                return dataLabelFormatter.format(dataPoint["y"]).toString();
+                return dataLabelFormatter.format(dataPoint.y).toString();
             },
             labelLayout: {
                 x: (dataPoint: HistogramDataPoint) => {
@@ -1202,7 +1202,7 @@ export class Histogram implements IVisual {
                         dy: number,
                         delta: number;
 
-                    y = yScale(dataPoint["y"]);
+                    y = yScale(dataPoint.y);
                     dy = dataPoint.size.height;
                     delta = y - dy;
 
@@ -1322,20 +1322,16 @@ export class Histogram implements IVisual {
             this.clearElement(this.axisX);
             return;
         }
+        const amountOfLabels = this.xAxisProperties.values.length || Default.MinLabelNumber;
 
         const xAxis = d3.axisBottom(this.data.xScale)
+            .ticks(amountOfLabels)
             .tickFormat(((value: number, index: number) => {
-                const tickValues: any[] = this.xAxisProperties.axis.tickValues();
-                const amountOfLabels: number = (tickValues && tickValues.length) || Default.MinLabelNumber;
-
                 return this.formatLabelOfXAxis(value, index, amountOfLabels);
             }) as any) // We cast this function to any, because the type definition doesn't contain the second argument
 
         this.axisX.call(xAxis);
-        
         this.axisX
-
-
             .style("fill", xAxisSettings.axisColor)
             .style("stroke", xAxisSettings.strokeColor)
     }
@@ -1347,18 +1343,19 @@ export class Histogram implements IVisual {
         amountOfLabels: number
     ): string {
         const formattedLabel: string = this.data.xLabelFormatter.format(labelValue);
+        // if (index === 0 || index === amountOfLabels - 1) {
+        //     const maxWidthOfTheLatestLabel: number = Math.min(
+        //         this.viewportIn.width,
+        //         Default.MaxWidthOfTheLatestLabel
+        //     );
 
-        if (index === 0 || index === amountOfLabels - 1) {
-            const maxWidthOfTheLatestLabel: number = Math.min(
-                this.viewportIn.width,
-                Default.MaxWidthOfTheLatestLabel
-            );
-
-            return Histogram.getTailoredTextOrDefault(
-                formattedLabel,
-                maxWidthOfTheLatestLabel
-            );
-        }
+        //     const tailoredLabel: string = Histogram.getTailoredTextOrDefault(
+        //         formattedLabel,
+        //         maxWidthOfTheLatestLabel
+        //     );
+        //     console.warn('tailoredLabel', index, maxWidthOfTheLatestLabel, labelValue, tailoredLabel);
+        //     return tailoredLabel;
+        // }
 
         return formattedLabel;
     }

@@ -103,17 +103,13 @@ export class HistogramChartBuilder extends VisualBuilderBase<VisualClass> {
 
     public get xAxisLabel(): JQuery {
         return this.legend.filter((i: number, element: Element) => {
-            // return d3.transform($(element).attr("transform")).rotate === 0;
-            //return d3.transition($(element).attr("transform"))
-            return true; //TODO TMP
+            return $(element).attr("transform").indexOf("rotate") < 0;
         });
     }
 
     public get yAxisLabel(): JQuery {
         return this.legend.filter((i: number, element: Element) => {
-            // return d3.transform($(element).attr("transform")).rotate !== 0;
-            console.log('DBG this.legend.filter', $(element).attr("transform"));
-            return true; //TODO TMP
+            return $(element).attr("transform").indexOf("rotate") >= 0;
         });
     }
 }

@@ -38,7 +38,7 @@ export const MinXAxisStartValue: number = -(1e+25);
 export const MaxXAxisEndValue: number = 1e+25;
 
 export const YTitleMargin: number = 70;
-export const YAxisMargin: number = 20;
+export const YAxisMargin: number = 15;
 export const MinYTitleMargin: number = 0;
 
 export const MinViewportSize: number = 100;

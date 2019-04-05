@@ -235,7 +235,7 @@ describe("HistogramChart", () => {
             expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(0);
         });
 
-        it("X-axis default ticks", () => {//DEBUG Failed
+        it("X-axis default ticks", () => {
             dataViewBuilder.categoryColumnValues = [
                 9, 10, 11, 12, 13, 14
             ];
@@ -252,7 +252,7 @@ describe("HistogramChart", () => {
             expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
         });
 
-        it("X-axis start is lesser than min", () => {//DEBUG Failed
+        it("X-axis start is lesser than min", () => {
             dataViewBuilder.categoryColumnValues = [
                 9, 10, 11, 12, 13, 14
             ];
@@ -275,7 +275,7 @@ describe("HistogramChart", () => {
             expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(5.25);
         });
 
-        it("X-axis end is greater than max and bins=7", () => {//DEBUG Failed
+        it("X-axis end is greater than max and bins=7", () => {
             dataViewBuilder.categoryColumnValues = [
                 9, 10, 11, 12, 13, 14
             ];
@@ -301,7 +301,7 @@ describe("HistogramChart", () => {
             expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(17.57);
         });
 
-        it("X-axis start is greater than min and bins=7", () => {//DEBUG Failed
+        it("X-axis start is greater than min and bins=7", () => {
             dataViewBuilder.categoryColumnValues = [
                 9, 10, 11, 12, 13, 14
             ];
@@ -327,7 +327,7 @@ describe("HistogramChart", () => {
             expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9.71);
         });
 
-        it("X-axis end is lesser than max and bins=12", () => {//DEBUG Failed
+        it("X-axis end is lesser than max and bins=12", () => {
             dataViewBuilder.categoryColumnValues = [
                 9, 10, 11, 12, 13, 14
             ];
@@ -380,7 +380,7 @@ describe("HistogramChart", () => {
             expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(13.17);
         });
 
-        it("X-axis start is greater than max", () => {//DEBUG Failed
+        it("X-axis start is greater than max", () => {
             dataViewBuilder.categoryColumnValues = [
                 9, 10, 11, 12, 13, 14
             ];
@@ -424,7 +424,7 @@ describe("HistogramChart", () => {
             expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(14);
         });
 
-        it("X-axis start and end is lesser than min", () => {//DEBUG Failed
+        it("X-axis start and end is lesser than min", () => {
             dataViewBuilder.categoryColumnValues = [
                 9, 10, 11, 12, 13, 14
             ];
@@ -498,7 +498,7 @@ describe("HistogramChart", () => {
                 expect(visualBuilder.yAxisTicks.length).toBeGreaterThan(1);
             });
 
-            it("bins", () => { //DEBUG Failed
+            it("bins", () => {
                 let bins: number = 3;
 
                 dataView.metadata.objects = {
@@ -559,7 +559,7 @@ describe("HistogramChart", () => {
                 expect(visualBuilder.xAxisTicks).not.toBeInDOM();
             });
 
-            it("display Units", () => {//DEBUG Failed
+            it("display Units", () => {
                 const displayUnits: number = 1000;
 
                 (dataView.metadata.objects as any).xAxis.displayUnits = displayUnits;
@@ -573,7 +573,7 @@ describe("HistogramChart", () => {
                     });
             });
 
-            it("title", () => {
+            it("title", () => {//DEBUG Failed
                 (dataView.metadata.objects as any).xAxis.title = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
