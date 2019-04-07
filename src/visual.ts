@@ -263,7 +263,6 @@ export class Histogram implements IVisual {
 
         let settings: HistogramSettings,
             categoryColumn: DataViewCategoryColumn = dataView.categorical.categories[0],
-            histogramLayout: HistogramLayout<any, number>,
             values: HistogramValue[],
             numericalValues: number[] = [],
             bins: LayoutBin[],
@@ -308,15 +307,15 @@ export class Histogram implements IVisual {
 
         const [min, max] = d3.extent(numericalValues);
 
-        histogramLayout = d3.histogram();
-
-        if (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins) {
-            histogramLayout = histogramLayout.thresholds(
-                d3.range(min, max, ((max - min) / settings.general.bins ))
-            );
-        }
-
-        bins = histogramLayout(numericalValues);
+        const binsCount: number = 
+            (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
+            ? settings.general.bins
+            : d3.histogram()(numericalValues).length; //predict bins count for interval correction
+        const interval: number = (max - min) / binsCount;
+        
+        bins = d3.histogram().thresholds(
+            d3.range(min, max, interval)
+        )(numericalValues);
 
         bins.forEach((bin: LayoutBin, index: number) => {
             let filteredValues: HistogramValue[],
@@ -362,10 +361,10 @@ export class Histogram implements IVisual {
             ? xAxisSettings.start
             : borderValues.minX;
 
-        // REVIEW mutability!
         settings.xAxis.start = Histogram.getCorrectXAxisValue(minXValue);
         settings.xAxis.end = Histogram.getCorrectXAxisValue(maxXValue);
 
+        // formatters
         if (values.length >= Default.MinAmountOfValues) {
             valueFormatter = ValueFormatter.create({
                 format: ValueFormatter.getFormatStringByColumn(dataView.categorical.categories[0].source),
@@ -814,7 +813,6 @@ export class Histogram implements IVisual {
                 return;
             }
 
-
             const maxWidthOfVerticalAxisLabel = Histogram.getWidthOfLabel(
                 this.data.borderValues.maxY,
                 this.data.yLabelFormatter),
@@ -823,27 +821,26 @@ export class Histogram implements IVisual {
                 this.data.xLabelFormatter),
             maxHeightOfVerticalAxisLabel = Histogram.getHeightOfLabel(
                 this.data.borderValues.maxX,
-                this.data.xLabelFormatter),
-
-            ySource = dataView.categorical.values &&
-                dataView.categorical.values[0] &&
-                dataView.categorical.values[0].values
-                ? dataView.categorical.values[0].source
-                : dataView.categorical.categories[0].source,
-            xSource = dataView.categorical.categories[0].source;
+                this.data.xLabelFormatter);
 
             this.updateViewportIn();
 
-
             this.createScales();
 
+            //Y Axis
+            const ySource = dataView.categorical.values &&
+                dataView.categorical.values[0] &&
+                dataView.categorical.values[0].values
+                ? dataView.categorical.values[0].source
+                : dataView.categorical.categories[0].source;
             this.yAxisProperties = this.calculateYAxes(ySource, maxHeightOfVerticalAxisLabel);
-            this.xAxisProperties = this.calculateXAxes(xSource, maxWidthOfHorizontalAxisLabel, false);
-
             this.renderYAxis();
 
             this.updateViewportIn(maxWidthOfVerticalAxisLabel);
 
+            //X Axis
+            const xSource = dataView.categorical.categories[0].source;
+            this.xAxisProperties = this.calculateXAxes(xSource, maxWidthOfHorizontalAxisLabel, false);
             this.renderXAxis();
 
             this.columnsAndAxesTransform(maxWidthOfVerticalAxisLabel);
@@ -985,7 +982,6 @@ export class Histogram implements IVisual {
         ) {
             return;
         }
-
         let subDataPoints: SelectableDataPoint[] = [];
 
         this.data.dataPoints.forEach((dataPoint: HistogramDataPoint) => {
@@ -1059,7 +1055,9 @@ export class Histogram implements IVisual {
             : borderValues.minX;
 
         const widthOfColumn = countOfValues
-            ? this.data.xScale(firstDataPoint + (this.data.dataPoints[0].x1 - this.data.dataPoints[0].x0)) - Default.ColumnPadding - strokeWidth
+            ? this.data.xScale(
+                firstDataPoint + (this.data.dataPoints[0].x1 - this.data.dataPoints[0].x0)
+            ) - Default.ColumnPadding - strokeWidth
             : Default.MinViewportInSize;
 
         return Math.max(widthOfColumn, Default.MinViewportInSize);
@@ -1122,6 +1120,8 @@ export class Histogram implements IVisual {
             this.getLabelLayout(),
             this.viewportIn
         );
+
+        console.log('DBG labels', labels, '\n dataPointsArray', dataPointsArray.length, dataPointsArray);
 
         if (labels) {
             labels.attr("transform", (dataPoint: HistogramDataPoint) => {
@@ -1280,9 +1280,10 @@ export class Histogram implements IVisual {
         }
 
         const amountOfLabels: number = this.xAxisProperties.values.length || Default.MinLabelNumber;
+        console.warn('DBG this.xAxisProperties.values', this.xAxisProperties.values, 'this.xAxisProperties.dataDomain', this.xAxisProperties.dataDomain);
 
         const xAxis = d3.axisBottom(this.data.xScale)
-            .ticks(amountOfLabels)
+            .tickValues(this.xAxisProperties.dataDomain)
             .tickFormat((
                 (value: number, index: number) => this.xAxisTicksFormatter(value, index, amountOfLabels)
             ) as any); // We cast this function to any, because the type definition doesn't contain the second argument
@@ -1324,7 +1325,7 @@ export class Histogram implements IVisual {
     ): IAxisProperties {
         let axes: IAxisProperties,
             width: number = this.viewportIn.width,
-            xPoints: number[] = this.getDataDomain();
+            xPoints: number[] = this.getXPoints();
 
         axes = HistogramAxisHelper.createAxis({
             pixelSpan: this.viewportIn.width,
@@ -1359,12 +1360,15 @@ export class Histogram implements IVisual {
             Default.TextProperties
         );
 
+        console.warn('DBG axes', axes, 'axes.dataDomain', axes.dataDomain);
+        
         return axes;
     }
 
-    private getDataDomain(): number[] {
+    private getXPoints(): number[] {
         const { start, end } = this.data.settings.xAxis,
             { minX, maxX } = this.data.borderValues,
+            { dataPoints } = this.data,
             interval: number = this.data.dataPoints[0].x1 - this.data.dataPoints[0].x0;
         let xPoints: number[],
             tmpStart: number,
@@ -1372,10 +1376,24 @@ export class Histogram implements IVisual {
             tmpArr: number[],
             closerLimit: number;
 
-        xPoints = Histogram.rangesToArray(this.data.dataPoints);
+        xPoints = dataPoints.reduce(
+            (previousValue: number[], currentValue: HistogramDataPoint, index: number) =>
+                previousValue.concat((index === 0)
+                ? currentValue.range
+                : currentValue.range.slice(1)),
+            []
+        );
+        
         // It is necessary to find out interval to calculate all necessary points before and after offset (if start and end for X axis was changed by user)
         if ((maxX !== end || minX !== start) && xPoints.length > 1) {
 
+            console.log(
+                'DBG { start, end }', { start, end }, 
+                '{ minX, maxX }', { minX, maxX }, 
+                'start > minX',start > minX, 
+                'end < maxX', end < maxX, 
+                'interval', interval
+                );
             // The interval must be greater than zero to avoid infinity loops
             if (Histogram.isIntervalValid(interval)) {
                 // If start point is greater than min border, it is necessary to remove non-using data points
@@ -1414,18 +1432,10 @@ export class Histogram implements IVisual {
                 }
             }
         }
+        console.warn('DBG dataPoints', dataPoints, 'xPoints', xPoints);
 
         return xPoints;
     }
-
-    private static rangesToArray = (data: HistogramDataPoint[]): number[] =>
-        data.reduce(
-            (previousValue: number[], currentValue: HistogramDataPoint, index: number) =>
-                previousValue.concat((index === 0)
-                ? currentValue.range
-                : currentValue.range.slice(1)),
-            []
-        )
 
     /// Using in case when xAxis start (set in options) is greater than calculated border min.
     /// This function detect the closest point to xAxis start (set in options).
