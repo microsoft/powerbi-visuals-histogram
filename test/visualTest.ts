@@ -41,7 +41,7 @@ import { assertColorsMatch } from "powerbi-visuals-utils-testutils";
 
 import { Histogram as VisualClass } from "../src/visual";
 import { HistogramDataPoint } from "../src/dataInterfaces";
-import { HistogramAxisStyle } from "../src/settings"; 
+import { HistogramAxisStyle } from "../src/settings";
 import * as histogramUtils from "../src/utils";
 import * as Default from "../src/constants";
 
@@ -116,7 +116,7 @@ describe("HistogramChart", () => {
                 const labels: Element[] = visualBuilder.labelTexts.get();
 
                 labels.forEach((label: Element) => {
-                    let jqueryLabel = $(label), //DBG : JQuery<any>
+                    let jqueryLabel = $(label), // DBG : JQuery<any>
                         x: number,
                         y: number,
                         dx: number,
@@ -448,7 +448,7 @@ describe("HistogramChart", () => {
             expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(14);
         });
 
-        it("X-axis start and end is greater than max", () => {//DEBUG Failed
+        it("X-axis start and end is greater than max", () => {// DEBUG Failed
             dataViewBuilder.categoryColumnValues = [
                 9, 10, 11, 12, 13, 14
             ];
@@ -532,7 +532,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.columns
                     .toArray()
-                    .forEach((element) => { //TODO TYPE
+                    .forEach((element) => { // TODO TYPE
                         assertColorsMatch($(element).css("fill"), color);
                     });
             });
@@ -568,12 +568,12 @@ describe("HistogramChart", () => {
 
                 visualBuilder.xAxisTicks
                     .toArray()
-                    .forEach((element) => {//TODO TYPE
+                    .forEach((element) => {// TODO TYPE
                         expect(last($(element).text())).toEqual("K");
                     });
             });
 
-            it("title", () => {//DEBUG Failed
+            it("title", () => {// DEBUG Failed
                 (dataView.metadata.objects as any).xAxis.title = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
@@ -615,12 +615,12 @@ describe("HistogramChart", () => {
 
                 visualBuilder.yAxisTicks
                     .toArray()
-                    .forEach((element) => {//TODO TYPE
+                    .forEach((element) => {// TODO TYPE
                         expect(last($(element).text())).toEqual("K");
                     });
             });
 
-            it("title", () => {//DEBUG Failed
+            it("title", () => {// DEBUG Failed
                 (dataView.metadata.objects as any).yAxis.title = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
@@ -647,7 +647,7 @@ describe("HistogramChart", () => {
             });
 
             function getAxisTranslate(visualBuilder: HistogramChartBuilder): number {
-                //return d3.transition(visualBuilder.yAxis.attr("transform")).translate[0];
+                // TODO REVIEW return d3.transition(visualBuilder.yAxis.attr("transform")).translate[0];
                 return Number(parseTranslateTransform(visualBuilder.yAxis.attr("transform")).x);
             }
         });
@@ -661,7 +661,7 @@ describe("HistogramChart", () => {
                 };
             });
 
-            it("show", () => {//DEBUG Failed
+            it("show", () => {// DEBUG Failed
                 (dataView.metadata.objects as any).labels.show = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
@@ -682,7 +682,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.labelTexts
                     .toArray()
-                    .forEach((element) => {//TODO TYPE
+                    .forEach((element) => {// TODO TYPE
                         expect(last($(element).text())).toEqual("K");
                     });
 
@@ -693,7 +693,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.labelTexts
                     .toArray()
-                    .forEach((element) => {//TODO TYPE
+                    .forEach((element) => {// TODO TYPE
                         expect(last($(element).text())).toEqual("M");
                     });
             });
@@ -707,7 +707,7 @@ describe("HistogramChart", () => {
 
                 visualBuilder.labelTexts
                     .toArray()
-                    .forEach((element) => {//TODO TYPE
+                    .forEach((element) => {// TODO TYPE
                         expect($(element).text().split(".")[1].length).toEqual(precision);
                     });
             });
@@ -721,32 +721,32 @@ describe("HistogramChart", () => {
 
                 visualBuilder.labelTexts
                     .toArray()
-                    .forEach((element) => {//TODO TYPE
+                    .forEach((element) => {// TODO TYPE
                         expect($(element).css("font-size")).toBe(expectedFontSize);
                     });
             });
         });
     });
 
-    describe("getLegend", () => {
-        it("getLegend should return the title without any modifications", () => {
+    describe("getLegendTextWithUnits", () => {
+        it("getLegendTextWithUnits should return the title without any modifications", () => {
             let title: string = "Power BI",
                 legendTitle: string;
 
-            legendTitle = VisualClass.getLegend(title, HistogramAxisStyle.showTitleOnly, 0);
+            legendTitle = VisualClass.getLegendTextWithUnits(title, HistogramAxisStyle.showTitleOnly, 0);
 
             expect(legendTitle).toBe(title);
         });
 
-        it("getLegend shouldn't throw any exceptions when axisStyle.showUnitOnly and displayUnits is NaN", () => {
+        it("getLegendTextWithUnits shouldn't throw any exceptions when axisStyle.showUnitOnly and displayUnits is NaN", () => {
             expect(() => {
-                VisualClass.getLegend("Power BI", HistogramAxisStyle.showUnitOnly, NaN);
+                VisualClass.getLegendTextWithUnits("Power BI", HistogramAxisStyle.showUnitOnly, NaN);
             }).not.toThrow();
         });
 
-        it("getLegend shouldn't throw any exceptions when axisStyle.showBoth and displayUnits is NaN", () => {
+        it("getLegendTextWithUnits shouldn't throw any exceptions when axisStyle.showBoth and displayUnits is NaN", () => {
             expect(() => {
-                VisualClass.getLegend("Power BI", HistogramAxisStyle.showBoth, NaN);
+                VisualClass.getLegendTextWithUnits("Power BI", HistogramAxisStyle.showBoth, NaN);
             }).not.toThrow();
         });
     });
@@ -1013,7 +1013,7 @@ describe("HistogramChart", () => {
 
             it("should not use fill style", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    const layers = visualBuilder.columns.toArray().map($); //DBG : JQuery<any>[]
+                    const layers = visualBuilder.columns.toArray().map($); // DBG : JQuery<any>[]
 
                     expect(isColorAppliedToElements(layers, null, "fill"));
 
@@ -1023,7 +1023,7 @@ describe("HistogramChart", () => {
 
             it("should use stroke style", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    const layers = visualBuilder.columns.toArray().map($); //DBG : JQuery<any>[]
+                    const layers = visualBuilder.columns.toArray().map($); // DBG : JQuery<any>[]
 
                     expect(isColorAppliedToElements(layers, foregroundColor, "stroke"));
 

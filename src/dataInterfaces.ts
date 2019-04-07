@@ -50,10 +50,12 @@ export interface HistogramSubDataPoint extends SelectableDataPoint {
 export interface HistogramDataPoint extends
     HistogramBin<any, number>,
     TooltipEnabledDataPoint {
-    y: number,
+    y: number;
     range: number[];
     subDataPoints: HistogramSubDataPoint[];
     size?: ISize;
+    labelX?: number;
+    labelY?: number;
 }
 
 export interface HistogramBorderValues {

@@ -17,13 +17,12 @@ export const IncludeBrackets: Brackets = {
     right: "]"
 };
 
-//UPD property
 export const TextProperties: textMeasurementService.TextProperties = {
     fontFamily: "helvetica, arial, sans-serif",
     fontSize: PixelConverter.toString(11) // Note: This value and font-size in histogram.less should be the same.
 };
 
-//data
+// Data
 export const SumFrequency: number = 0;
 export const Frequency: number = 1;
 export const Value: number = 0;
@@ -49,7 +48,7 @@ export const MinAmountOfDataPoints: number = 0;
 
 export const MiddleFactor: number = 2;
 
-//view
+// View
 export const AdditionalWidthOfLabel: number = 3;
 export const AdditionalHeightOfLabel: number = 3;
 
@@ -70,7 +69,7 @@ export const SeparatorNumbers: string = ", ";
 
 export const MaxWidthOfTheLatestLabel: number = 40;
 
-//svg
+// SVG
 export const SvgPosition: number = 0;
 export const SvgLegendPosition: number = 0;
 export const SvgAngle: number = 270;
@@ -79,7 +78,6 @@ export const SvgOuterPadding: number = 0;
 export const SvgXAxisDx: string = "-0.5em";
 export const SvgXAxisDy: string = "-1em";
 export const SvgYAxisDx: string = "3em";
-
 
 export const SvgMargin: IMargin = {
     top: 10,

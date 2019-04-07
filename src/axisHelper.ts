@@ -185,7 +185,7 @@ export function createAxis(options: CreateAxisOptions): IAxisProperties {
 
     // sets default orientation only, cartesianChart will fix y2 for comboChart
     // tickSize(pixelSpan) is used to create gridLines
-    let axis = (isVertical 
+    let axis = (isVertical
         ? d3.axisLeft(scale)
         : d3.axisBottom(scale)
     );
@@ -546,7 +546,7 @@ export function createScale(options: CreateAxisOptions): CreateScaleResult {
         : null;
 
     let bestTickCount: number = maxTicks;
-    let scale: LinearScale<any, any> | OrdinalScale<any, any>;
+    let scale: LinearScale<any, any> | OrdinalScale<any, any> | ScaleBand<any>;
     let usingDefaultDomain: boolean = false;
 
     if (dataDomain == null
@@ -639,7 +639,7 @@ export function createScale(options: CreateAxisOptions): CreateScaleResult {
 
     // vertical ordinal axis (e.g. categorical bar chart) does not need to reverse
     if (isVertical && isScalar) {
-        scale.range(scale.range().reverse());
+        scale.range(); // TODO TMP scale.range().reverse());
     }
 
     normalizeInfinityInScale(scale as LinearScale<any, any>);
@@ -673,23 +673,18 @@ export function createOrdinalScale(
     pixelSpan: number,
     dataDomain: any[],
     innerPaddingRatio: number,
-    outerPaddingRatio: number): ScaleOrdinal<any, any> {
-
-    return (dataDomain.every(function(x, index) {
-        if (index === 0) {
-            return true;
-        }
-
-        return x === dataDomain[0];
-    }) ? scaleOrdinal()//scaleBand()
+    outerPaddingRatio: number
+): ScaleBand<any> {
+    return dataDomain.every((x, index) => (index === 0 || x === dataDomain[0]))
+        ? scaleBand() // TODO TEST
             .range([0, pixelSpan])
             .domain(dataDomain)
         /* Avoid using rangeRoundBands here as it is adding some extra padding to the axis*/
-        : scaleOrdinal()
+        : scaleBand()
             .range([0, pixelSpan])
-            //.paddingInner(innerPaddingRatio) //TODO TEST
-            //.paddingOuter(outerPaddingRatio) //TODO TEST
-            .domain(dataDomain));
+            .paddingInner(innerPaddingRatio) // TODO TEST
+            .paddingOuter(outerPaddingRatio) // TODO TEST
+            .domain(dataDomain);
 }
 
 function normalizeLinearDomain(domain: NumberRange): NumberRange {
