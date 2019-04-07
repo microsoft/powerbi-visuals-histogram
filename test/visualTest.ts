@@ -448,7 +448,7 @@ describe("HistogramChart", () => {
             expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(14);
         });
 
-        it("X-axis start and end is greater than max", () => {// DEBUG Failed
+        it("X-axis start and end is greater than max", () => {
             dataViewBuilder.categoryColumnValues = [
                 9, 10, 11, 12, 13, 14
             ];
@@ -568,12 +568,12 @@ describe("HistogramChart", () => {
 
                 visualBuilder.xAxisTicks
                     .toArray()
-                    .forEach((element) => {// TODO TYPE
+                    .forEach((element) => {
                         expect(last($(element).text())).toEqual("K");
                     });
             });
 
-            it("title", () => {// DEBUG Failed
+            it("title", () => {
                 (dataView.metadata.objects as any).xAxis.title = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
@@ -620,7 +620,7 @@ describe("HistogramChart", () => {
                     });
             });
 
-            it("title", () => {// DEBUG Failed
+            it("title", () => {
                 (dataView.metadata.objects as any).yAxis.title = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
@@ -661,7 +661,7 @@ describe("HistogramChart", () => {
                 };
             });
 
-            it("show", () => {// DEBUG Failed
+            it("show", () => {
                 (dataView.metadata.objects as any).labels.show = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 

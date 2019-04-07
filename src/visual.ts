@@ -914,7 +914,6 @@ export class Histogram implements IVisual {
 
     // REVIEW branch of UPDATE
     private updateViewport(viewport: IViewport): void {
-        console.log('DBG viewport', viewport, - Default.SvgMargin.top, - Default.SvgMargin.bottom)
         const height = viewport.height - Default.SvgMargin.top - Default.SvgMargin.bottom;
         const width = viewport.width - Default.SvgMargin.left - Default.SvgMargin.right;
 
@@ -1342,14 +1341,37 @@ export class Histogram implements IVisual {
         const xAxis = d3.axisBottom(this.data.xScale)
             .ticks(amountOfLabels)
             .tickFormat((
-                (value: number, index: number) => value // TODO REVIEW this.data.xLabelFormatter.format(value)
+                (value: number, index: number) => this.xAxisTicksFormatter(value, index, amountOfLabels)
             ) as any); // We cast this function to any, because the type definition doesn't contain the second argument
-            // .tickValues( this.xAxisProperties.values );
 
         this.axisX.call( xAxis );
         this.axisX
             .style("fill", xAxisSettings.axisColor)
             .style("stroke", xAxisSettings.strokeColor);
+    }
+
+    private xAxisTicksFormatter(
+        value: number,
+        index: number,
+        amount: number
+    ): string {
+        const formattedLabel: string = this.data.xLabelFormatter.format(value);
+
+        if (index === 0 || index === amount - 1) {
+            const maxWidthOfTheLatestLabel: number = Math.min(
+                this.viewportIn.width,
+                Default.MaxWidthOfTheLatestLabel
+            );
+
+            const tailoredLabel: string = Histogram.getTailoredTextOrDefault(
+                formattedLabel,
+                maxWidthOfTheLatestLabel
+            );
+            console.warn('tailoredLabel', index, maxWidthOfTheLatestLabel, value, tailoredLabel);
+            return tailoredLabel;
+        }
+
+        return formattedLabel;
     }
 
     // REVIEW UNIQUE branch of updateAxes / UPDATE
