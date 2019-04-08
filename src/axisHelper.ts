@@ -164,7 +164,6 @@ export function createAxis(options: CreateAxisOptions): IAxisProperties {
         tickValues = getRecommendedTickValues(bestTickCount, scale, dataType, isScalar, minTickInterval);
     }
 
-    
     if (options.scaleType && options.scaleType === axisScale.log && isLogScaleAllowed) {
         tickValues = tickValues.filter((d: any) => {
             return powerOfTen(d);

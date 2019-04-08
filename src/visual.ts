@@ -307,12 +307,12 @@ export class Histogram implements IVisual {
 
         const [min, max] = d3.extent(numericalValues);
 
-        const binsCount: number = 
+        const binsCount: number =
             (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
             ? settings.general.bins
-            : d3.histogram()(numericalValues).length; //predict bins count for interval correction
+            : d3.histogram()(numericalValues).length; // predict bins count for interval correction
         const interval: number = (max - min) / binsCount;
-        
+
         bins = d3.histogram().thresholds(
             d3.range(min, max, interval)
         )(numericalValues);
@@ -827,7 +827,7 @@ export class Histogram implements IVisual {
 
             this.createScales();
 
-            //Y Axis
+            // Y Axis
             const ySource = dataView.categorical.values &&
                 dataView.categorical.values[0] &&
                 dataView.categorical.values[0].values
@@ -838,7 +838,7 @@ export class Histogram implements IVisual {
 
             this.updateViewportIn(maxWidthOfVerticalAxisLabel);
 
-            //X Axis
+            // X Axis
             const xSource = dataView.categorical.categories[0].source;
             this.xAxisProperties = this.calculateXAxes(xSource, maxWidthOfHorizontalAxisLabel, false);
             this.renderXAxis();
@@ -1279,8 +1279,6 @@ export class Histogram implements IVisual {
 
         const amountOfLabels: number = this.xAxisProperties.values.length || Default.MinLabelNumber;
 
-        console.warn('DBG this.xAxisProperties.dataDomain', this.xAxisProperties.dataDomain);
-
         const xAxis = d3.axisBottom(this.data.xScale)
             .tickValues(this.xAxisProperties.dataDomain)
             .tickFormat((
@@ -1380,17 +1378,10 @@ export class Histogram implements IVisual {
                 : currentValue.range.slice(1)),
             []
         );
-        
+
         // It is necessary to find out interval to calculate all necessary points before and after offset (if start and end for X axis was changed by user)
         if ((maxX !== end || minX !== start) && xPoints.length > 1) {
 
-            console.log(
-                'DBG { start, end }', { start, end }, 
-                '{ minX, maxX }', { minX, maxX }, 
-                'start > minX',start > minX, 
-                'end < maxX', end < maxX, 
-                'interval', interval
-                );
             // The interval must be greater than zero to avoid infinity loops
             if (Histogram.isIntervalValid(interval)) {
                 // If start point is greater than min border, it is necessary to remove non-using data points
@@ -1429,7 +1420,7 @@ export class Histogram implements IVisual {
                 }
             }
         }
-        console.log('DBG xPoints', xPoints, 'xCorrectedMin', this.data.xCorrectedMin);
+
         return xPoints;
     }
 
