@@ -248,7 +248,7 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(visualBuilder.xAxisTicks.length).toBe(5);
+            expect(visualBuilder.xAxisTicks.length).toBe(6);
             expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
         });
 
@@ -265,14 +265,14 @@ describe("HistogramChart", () => {
 
             dataView.metadata.objects = {
                 xAxis: {
-                    start: 6
+                    start: 7.2
                 }
             };
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
             expect(visualBuilder.xAxisTicks.length).toBe(8);
-            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(5.25);
+            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(7);
         });
 
         it("X-axis end is greater than max and bins=7", () => {
@@ -422,54 +422,6 @@ describe("HistogramChart", () => {
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
             expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(14);
-        });
-
-        it("X-axis start and end is lesser than min", () => {
-            dataViewBuilder.categoryColumnValues = [
-                9, 10, 11, 12, 13, 14
-            ];
-
-            dataViewBuilder.valuesColumnValues = [
-                772, 878, 398, 616, 170, 267,
-            ];
-
-            dataView = dataViewBuilder.getDataView();
-
-            dataView.metadata.objects = {
-                xAxis: {
-                    start: 8,
-                    end: 8
-                }
-            };
-
-            visualBuilder.updateFlushAllD3Transitions(dataView);
-
-            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(7.75);
-            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(14);
-        });
-
-        it("X-axis start and end is greater than max", () => {
-            dataViewBuilder.categoryColumnValues = [
-                9, 10, 11, 12, 13, 14
-            ];
-
-            dataViewBuilder.valuesColumnValues = [
-                772, 878, 398, 616, 170, 267,
-            ];
-
-            dataView = dataViewBuilder.getDataView();
-
-            dataView.metadata.objects = {
-                xAxis: {
-                    start: 16,
-                    end: 16
-                }
-            };
-
-            visualBuilder.updateFlushAllD3Transitions(dataView);
-
-            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
-            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(16.5);
         });
     });
 

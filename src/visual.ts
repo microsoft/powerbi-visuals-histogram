@@ -357,7 +357,7 @@ export class Histogram implements IVisual {
             ? xAxisSettings.end
             : borderValues.maxX;
 
-        let minXValue: number = (xAxisSettings.start !== null) && xAxisSettings.start < maxXValue
+        let minXValue: number = (xAxisSettings.start !== null) && (xAxisSettings.start < maxXValue)
             ? xAxisSettings.start
             : borderValues.minX;
 
@@ -1121,8 +1121,6 @@ export class Histogram implements IVisual {
             this.viewportIn
         );
 
-        console.log('DBG labels', labels, '\n dataPointsArray', dataPointsArray.length, dataPointsArray);
-
         if (labels) {
             labels.attr("transform", (dataPoint: HistogramDataPoint) => {
                 let size: ISize = dataPoint.size,
@@ -1280,7 +1278,8 @@ export class Histogram implements IVisual {
         }
 
         const amountOfLabels: number = this.xAxisProperties.values.length || Default.MinLabelNumber;
-        console.warn('DBG this.xAxisProperties.values', this.xAxisProperties.values, 'this.xAxisProperties.dataDomain', this.xAxisProperties.dataDomain);
+
+        console.warn('DBG this.xAxisProperties.dataDomain', this.xAxisProperties.dataDomain);
 
         const xAxis = d3.axisBottom(this.data.xScale)
             .tickValues(this.xAxisProperties.dataDomain)
@@ -1360,8 +1359,6 @@ export class Histogram implements IVisual {
             Default.TextProperties
         );
 
-        console.warn('DBG axes', axes, 'axes.dataDomain', axes.dataDomain);
-        
         return axes;
     }
 
@@ -1432,8 +1429,7 @@ export class Histogram implements IVisual {
                 }
             }
         }
-        console.warn('DBG dataPoints', dataPoints, 'xPoints', xPoints);
-
+        console.log('DBG xPoints', xPoints, 'xCorrectedMin', this.data.xCorrectedMin);
         return xPoints;
     }
 
