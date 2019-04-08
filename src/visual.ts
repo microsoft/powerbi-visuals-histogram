@@ -1006,12 +1006,11 @@ export class Histogram implements IVisual {
     }
 
     private renderColumns(): Selection<HistogramDataPoint> {
-        const data: HistogramDataPoint[] = this.data.dataPoints;
-
-        const xScale: LinearScale<any, any> = this.data.xScale;
-        const yScale: LinearScale<any, any> = this.data.yScale;
-
-        const columnsSelection: Selection<any> = this.columnsSelection.data(data);
+        const { start, end } = this.data.settings.xAxis,
+            data: HistogramDataPoint[] = this.data.dataPoints,
+            xScale: LinearScale<any, any> = this.data.xScale,
+            yScale: LinearScale<any, any> = this.data.yScale,
+            columnsSelection: Selection<any> = this.columnsSelection.data(data);
 
         let updateColumnsSelection = columnsSelection
             .enter()
@@ -1024,7 +1023,11 @@ export class Histogram implements IVisual {
             Math.max(
                 this.viewportIn.height - yScale(column.y),
                 Default.MinColumnHeight
-            );
+            ),
+        interval: number = data[0].x1 - data[0].x0;
+
+        const isOutOfBorders = (dataPoint: HistogramDataPoint): boolean =>
+            (dataPoint.x0 < start - interval) || (dataPoint.x1 > end + interval);
 
         columnsSelection
             .merge(updateColumnsSelection)
@@ -1035,7 +1038,9 @@ export class Histogram implements IVisual {
 
             .style("fill", this.colorHelper.isHighContrast ? null : this.data.settings.dataPoint.fill)
             .style("stroke", this.colorHelper.isHighContrast ? this.data.settings.dataPoint.fill : null)
-            .style("stroke-width", PixelConverter.toString(this.strokeWidth));
+            .style("stroke-width", PixelConverter.toString(this.strokeWidth))
+
+            .style("display", (dataPoint: HistogramDataPoint) => isOutOfBorders(dataPoint) ? "none" : null);
 
         updateOpacity(
             columnsSelection.merge(updateColumnsSelection),
@@ -1261,9 +1266,9 @@ export class Histogram implements IVisual {
             this.clearElement(this.axisY);
             return;
         }
-        
-        const yAxis: Axis<number | { valueOf(): number}> = 
-            (Histogram.shouldShowYOnRight(this.data.settings) ? d3.axisRight: d3.axisLeft)
+
+        const yAxis: Axis<number | { valueOf(): number }> =
+            (Histogram.shouldShowYOnRight(this.data.settings) ? d3.axisRight : d3.axisLeft)
             (this.data.yScale)
             .tickFormat((item: number) => {
                 return this.data.yLabelFormatter.format(item);
