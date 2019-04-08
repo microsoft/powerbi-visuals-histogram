@@ -41,7 +41,7 @@ process.env.CHROME_BIN = require("puppeteer").executablePath();
 
 module.exports = (config) => {
     config.set({
-        browsers: ["Chrome"],
+        browsers: ["ChromeHeadless"],
         browserNoActivityTimeout: 100000,
         colors: true,
         frameworks: ["jasmine"],

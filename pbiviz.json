@@ -2,7 +2,7 @@
   "visual": {
     "name": "Histogram 2.0.0",
     "displayName": "Histogram 2.0.0",
-    "guid": "HistogramDEBUG1445664487616",
+    "guid": "Histogram1445664487616",
     "visualClassName": "Histogram",
     "version": "2.0.0",
     "description": "A histogram chart plots data ranges into intervals. Useful for estimating density.",

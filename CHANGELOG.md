@@ -1,3 +1,12 @@
+## 2.0.0
+* API version 2.3.1
+* D3 version 5.4.0
+* Render Event API
+
+Fixed bugs:
+* crash in case of cross-highlighting
+* columns overflow in case of x-axis start/end setting usage
+
 ## 1.4.0
 * High contrast mode
 * API 1.13.0

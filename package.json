@@ -28,7 +28,6 @@
   },
   "homepage": "https://github.com/Microsoft/PowerBI-visuals-histogram#readme",
   "dependencies": {
-    "ajv": "^6.10.0",
     "d3": "^5.4.0",
     "jquery": "3.1.1",
     "lodash": "4.17.5",
