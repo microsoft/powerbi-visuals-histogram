@@ -115,6 +115,7 @@ import * as HistogramAxisHelper from "./axisHelper";
 import * as Default from "./constants";
 
 import "../style/visual.less";
+import { Axis } from "d3";
 
 interface HistogramValue {
     value: number;
@@ -790,12 +791,13 @@ export class Histogram implements IVisual {
             || !options.dataViews[0]) {
             return;
         }
+
         try {
             this.events.renderingStarted(options);
 
             const dataView: DataView = options.dataViews[0];
 
-            this.updateViewport(options.viewport);
+            this.setViewportSize(options.viewport);
 
             this.updateElements(
                 Math.max(options.viewport.height, Default.MinViewportSize),
@@ -813,6 +815,9 @@ export class Histogram implements IVisual {
                 return;
             }
 
+            this.updateViewportIn();
+
+            // update Axes
             const maxWidthOfVerticalAxisLabel = Histogram.getWidthOfLabel(
                 this.data.borderValues.maxY,
                 this.data.yLabelFormatter),
@@ -821,32 +826,31 @@ export class Histogram implements IVisual {
                 this.data.xLabelFormatter),
             maxHeightOfVerticalAxisLabel = Histogram.getHeightOfLabel(
                 this.data.borderValues.maxX,
-                this.data.xLabelFormatter);
-
-            this.updateViewportIn();
-
-            this.createScales();
-
-            // Y Axis
-            const ySource = dataView.categorical.values &&
+                this.data.xLabelFormatter),
+            ySource = dataView.categorical.values &&
                 dataView.categorical.values[0] &&
                 dataView.categorical.values[0].values
                 ? dataView.categorical.values[0].source
-                : dataView.categorical.categories[0].source;
+                : dataView.categorical.categories[0].source,
+            xSource = dataView.categorical.categories[0].source;
+
+            this.createScales();
+
             this.yAxisProperties = this.calculateYAxes(ySource, maxHeightOfVerticalAxisLabel);
             this.renderYAxis();
 
             this.updateViewportIn(maxWidthOfVerticalAxisLabel);
+            this.createScales();
 
-            // X Axis
-            const xSource = dataView.categorical.categories[0].source;
             this.xAxisProperties = this.calculateXAxes(xSource, maxWidthOfHorizontalAxisLabel, false);
             this.renderXAxis();
 
             this.columnsAndAxesTransform(maxWidthOfVerticalAxisLabel);
 
+            this.createScales();
             this.applySelectionStateToData();
 
+            // render
             const columnsSelection: Selection<any> = this.renderColumns();
 
             this.tooltipServiceWrapper.addTooltip(
@@ -880,7 +884,7 @@ export class Histogram implements IVisual {
         }
     }
 
-    private updateViewport(viewport: IViewport): void {
+    private setViewportSize(viewport: IViewport): void {
         const height = viewport.height - Default.SvgMargin.top - Default.SvgMargin.bottom;
         const width = viewport.width - Default.SvgMargin.left - Default.SvgMargin.right;
 
@@ -1257,8 +1261,10 @@ export class Histogram implements IVisual {
             this.clearElement(this.axisY);
             return;
         }
-
-        const yAxis = d3.axisLeft(this.data.yScale)
+        
+        const yAxis: Axis<number | { valueOf(): number}> = 
+            (Histogram.shouldShowYOnRight(this.data.settings) ? d3.axisRight: d3.axisLeft)
+            (this.data.yScale)
             .tickFormat((item: number) => {
                 return this.data.yLabelFormatter.format(item);
             });
@@ -1279,7 +1285,7 @@ export class Histogram implements IVisual {
 
         const amountOfLabels: number = this.xAxisProperties.values.length || Default.MinLabelNumber;
 
-        const xAxis = d3.axisBottom(this.data.xScale)
+        const xAxis: Axis<number | { valueOf(): number; }> = this.xAxisProperties.axis
             .tickValues(this.xAxisProperties.dataDomain)
             .tickFormat((
                 (value: number, index: number) => this.xAxisTicksFormatter(value, index, amountOfLabels)
