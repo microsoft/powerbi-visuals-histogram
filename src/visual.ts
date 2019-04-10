@@ -1007,6 +1007,7 @@ export class Histogram implements IVisual {
 
     private renderColumns(): Selection<HistogramDataPoint> {
         const { start, end } = this.data.settings.xAxis,
+            bottomBorder = this.data.settings.yAxis.start,
             data: HistogramDataPoint[] = this.data.dataPoints,
             xScale: LinearScale<any, any> = this.data.xScale,
             yScale: LinearScale<any, any> = this.data.yScale,
@@ -1026,8 +1027,12 @@ export class Histogram implements IVisual {
             ),
         interval: number = data[0].x1 - data[0].x0;
 
-        const isOutOfBorders = (dataPoint: HistogramDataPoint): boolean =>
-            (dataPoint.x0 < start - interval) || (dataPoint.x1 > end + interval);
+        const isOutOfXBorders = (dataPoint: HistogramDataPoint): boolean =>
+            (dataPoint.x0 <= start - interval) || (dataPoint.x1 >= end + interval);
+
+        const isUnderYBottomBorder = (dataPoint: HistogramDataPoint): boolean => {
+            return yScale(dataPoint.y) > yScale(bottomBorder);
+        }
 
         columnsSelection
             .merge(updateColumnsSelection)
@@ -1040,7 +1045,11 @@ export class Histogram implements IVisual {
             .style("stroke", this.colorHelper.isHighContrast ? this.data.settings.dataPoint.fill : null)
             .style("stroke-width", PixelConverter.toString(this.strokeWidth))
 
-            .style("display", (dataPoint: HistogramDataPoint) => isOutOfBorders(dataPoint) ? "none" : null);
+            .style("display", (dataPoint: HistogramDataPoint) => 
+                isOutOfXBorders(dataPoint) || isUnderYBottomBorder(dataPoint) 
+                ? "none" 
+                : null
+            );
 
         updateOpacity(
             columnsSelection.merge(updateColumnsSelection),
