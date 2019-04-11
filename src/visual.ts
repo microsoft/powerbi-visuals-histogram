@@ -617,8 +617,8 @@ export class Histogram implements IVisual {
         bin: LayoutBin,
         index: number
     ): boolean {
-        return ((index === 0 && value.value >= bin.x1) || (value.value > bin.x1))
-            && value.value <= bin.x1 + (bin.x1 - bin.x0);
+        return ((index === 0 && value.value >= bin.x0) || (value.value > bin.x0))
+            && value.value <= bin.x0 + (bin.x1 - bin.x0);
     }
 
     private static parseSettings(
@@ -1030,9 +1030,13 @@ export class Histogram implements IVisual {
         const isOutOfXBorders = (dataPoint: HistogramDataPoint): boolean =>
             (dataPoint.x0 <= start - interval) || (dataPoint.x1 >= end + interval);
 
-        const isUnderYBottomBorder = (dataPoint: HistogramDataPoint): boolean => {
-            return yScale(dataPoint.y) > yScale(bottomBorder);
-        }
+        const isUnderYBottomBorder = (dataPoint: HistogramDataPoint): boolean =>
+            (yScale(dataPoint.y) > yScale(bottomBorder));
+
+        const getColumnFillColor = (dataPoint: HistogramDataPoint, index: number) =>
+            this.colorHelper.isHighContrast
+            ? null
+            : ((index % 2) ? this.data.settings.dataPoint.fill : this.data.settings.dataPoint.fillEven);
 
         columnsSelection
             .merge(updateColumnsSelection)
@@ -1041,13 +1045,13 @@ export class Histogram implements IVisual {
             .attr("width", this.columnWidth)
             .attr("height", (dataPoint: HistogramDataPoint) => getColumnHeight(dataPoint))
 
-            .style("fill", this.colorHelper.isHighContrast ? null : this.data.settings.dataPoint.fill)
+            .style("fill", (dataPoint: HistogramDataPoint, index: number) => getColumnFillColor(dataPoint, index))
             .style("stroke", this.colorHelper.isHighContrast ? this.data.settings.dataPoint.fill : null)
             .style("stroke-width", PixelConverter.toString(this.strokeWidth))
 
-            .style("display", (dataPoint: HistogramDataPoint) => 
-                isOutOfXBorders(dataPoint) || isUnderYBottomBorder(dataPoint) 
-                ? "none" 
+            .style("display", (dataPoint: HistogramDataPoint) =>
+                isOutOfXBorders(dataPoint) || isUnderYBottomBorder(dataPoint)
+                ? "none"
                 : null
             );
 

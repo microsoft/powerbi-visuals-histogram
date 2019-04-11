@@ -79,12 +79,23 @@
             }
         },
         "dataPoint": {
-            "displayName": "Data colors",            
+            "displayName": "Data colors",
             "displayNameKey": "Visual_DataColors",
             "properties": {
                 "fill": {
                     "displayName": "Fill",
                     "displayNameKey": "Visual_Fill",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fillEven": {
+                    "displayName": "Even Columns Fill",
+                    "displayNameKey": "FillEven",
                     "type": {
                         "fill": {
                             "solid": {

@@ -1,3 +1,7 @@
+## 2.0.1
+* Fixes for 2.0.0
+* Even columns color setting
+
 ## 2.0.0
 * API version 2.3.1
 * D3 version 5.4.0

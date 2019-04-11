@@ -472,11 +472,13 @@ describe("HistogramChart", () => {
 
         describe("Data colors", () => {
             it("color", () => {
-                const color: string = "#ABCDEF";
+                const color: string = "#ABCDEF",
+                    evenColor: string = "#AACCEE";
 
                 dataView.metadata.objects = {
                     dataPoint: {
-                        fill: getSolidColorStructuralObject(color)
+                        fill: getSolidColorStructuralObject(color),
+                        fillEven: getSolidColorStructuralObject(evenColor)
                     }
                 };
 
@@ -484,8 +486,8 @@ describe("HistogramChart", () => {
 
                 visualBuilder.columns
                     .toArray()
-                    .forEach((element) => { // TODO TYPE
-                        assertColorsMatch($(element).css("fill"), color);
+                    .forEach((element, index) => { // TODO TYPE
+                        assertColorsMatch($(element).css("fill"), (index % 2) ? color : evenColor);
                     });
             });
         });
