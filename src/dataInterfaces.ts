@@ -24,60 +24,64 @@
  *  THE SOFTWARE.
  */
 
-module powerbi.extensibility.visual {
-    // d3
-    import HistogramBin = d3.layout.histogram.Bin;
+// d3
+import * as d3 from "d3";
+import { ScaleLinear } from "d3-scale";
 
-    // powerbi.extensibility.utils.formatting
-    import IValueFormatter = powerbi.extensibility.utils.formatting.IValueFormatter;
+import HistogramBin = d3.Bin; // .HistogramBin; //ThresholdNumberArrayGenerator;
 
-    // powerbi.extensibility.utils.tooltip
-    import TooltipEnabledDataPoint = powerbi.extensibility.utils.tooltip.TooltipEnabledDataPoint;
+import { valueFormatter as vf } from "powerbi-visuals-utils-formattingutils";
+import IValueFormatter = vf.IValueFormatter;
 
-    // powerbi.extensibility.utils.interactivity
-    import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
+import { TooltipEnabledDataPoint } from "powerbi-visuals-utils-tooltiputils";
 
-    // powerbi.extensibility.utils.svg
-    import ISize = powerbi.extensibility.utils.svg.shapes.ISize;
+import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
+import SelectableDataPoint = interactivityService.SelectableDataPoint;
 
-    export interface HistogramSubDataPoint extends SelectableDataPoint {
-        highlight?: boolean;
-    }
+import { shapesInterfaces } from "powerbi-visuals-utils-svgutils";
+import ISize = shapesInterfaces.ISize;
 
-    export interface HistogramDataPoint extends
-        HistogramBin<number>,
-        TooltipEnabledDataPoint {
+import { HistogramSettings } from "./settings";
 
-        range: number[];
-        subDataPoints: HistogramSubDataPoint[];
-        size?: ISize;
-    }
+export interface HistogramSubDataPoint extends SelectableDataPoint {
+    highlight?: boolean;
+}
 
-    export interface HistogramBorderValues {
-        minX: number;
-        maxX: number;
-        minY: number;
-        maxY: number;
-    }
+export interface HistogramDataPoint extends
+    HistogramBin<any, number>,
+    TooltipEnabledDataPoint {
+    y: number;
+    range: number[];
+    subDataPoints: HistogramSubDataPoint[];
+    size?: ISize;
+    labelX?: number;
+    labelY?: number;
+}
 
-    export interface HistogramData {
-        dataPoints: HistogramDataPoint[];
+export interface HistogramBorderValues {
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+}
 
-        borderValues: HistogramBorderValues;
+export interface HistogramData {
+    dataPoints: HistogramDataPoint[];
 
-        settings: HistogramSettings;
-        formatter: IValueFormatter;
+    borderValues: HistogramBorderValues;
 
-        xLegendSize: number;
-        yLegendSize: number;
+    settings: HistogramSettings;
+    formatter: IValueFormatter;
 
-        xCorrectedMax: number;
-        xCorrectedMin: number;
+    xLegendSize: number;
+    yLegendSize: number;
 
-        xScale?: d3.scale.Linear<any, any>;
-        yScale?: d3.scale.Linear<any, any>;
+    xCorrectedMax: number;
+    xCorrectedMin: number;
 
-        xLabelFormatter?: IValueFormatter;
-        yLabelFormatter?: IValueFormatter;
-    }
+    xScale?: ScaleLinear<any, any>;
+    yScale?: ScaleLinear<any, any>;
+
+    xLabelFormatter?: IValueFormatter;
+    yLabelFormatter?: IValueFormatter;
 }

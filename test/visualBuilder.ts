@@ -24,92 +24,92 @@
  *  THE SOFTWARE.
  */
 
-/// <reference path="_references.ts"/>
+import powerbi from "powerbi-visuals-api";
 
-module powerbi.extensibility.visual.test {
-    // powerbi.extensibility.utils.test
-    import VisualBuilderBase = powerbi.extensibility.utils.test.VisualBuilderBase;
+import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
 
-    // Histogram1445664487616
-    import VisualClass = powerbi.extensibility.visual.Histogram1445664487616.Histogram;
+import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
+import { manipulation } from "powerbi-visuals-utils-svgutils";
+import parseTranslateTransform = manipulation.parseTranslateTransform;
 
-    export class HistogramChartBuilder extends VisualBuilderBase<VisualClass> {
-        constructor(width: number, height: number) {
-            super(width, height, "Histogram1445664487616");
-        }
+import { Histogram as VisualClass } from "../src/visual";
 
-        public get instance(): VisualClass {
-            return this.visual;
-        }
+export class HistogramChartBuilder extends VisualBuilderBase<VisualClass> {
+    constructor(width: number, height: number) {
+        super(width, height, "Histogram1445664487616");
+    }
 
-        protected build(options: VisualConstructorOptions): VisualClass {
-            return new VisualClass(options);
-        }
+    public get instance(): VisualClass {
+        return this.visual;
+    }
 
-        public get mainElement(): JQuery {
-            return this.element.children("svg.histogram");
-        }
+    protected build(options: VisualConstructorOptions): VisualClass {
+        return new VisualClass(options);
+    }
 
-        public get labelsContainer(): JQuery {
-            return this.mainElement
-                .children("g")
-                .children(".labelGraphicsContext");
-        }
+    public get mainElement(): JQuery {
+        return this.element.children("svg.histogram");
+    }
 
-        public get labelTexts(): JQuery {
-            return this.mainElement
-                .children("g")
-                .children("g.labelGraphicsContext")
-                .children("g.labels")
-                .children("text.data-labels");
-        }
+    public get labelsContainer(): JQuery {
+        return this.mainElement
+            .children("g")
+            .children(".labelGraphicsContext");
+    }
 
-        public get columns() {
-            return this.mainElement
-                .children("g")
-                .children("g.columns")
-                .children("rect.column");
-        }
+    public get labelTexts(): JQuery {
+        return this.mainElement
+            .children("g")
+            .children("g.labelGraphicsContext")
+            .children("g.labels")
+            .children("text.data-labels");
+    }
 
-        public get axes(): JQuery {
-            return this.mainElement
-                .children("g")
-                .children(".axes");
-        }
+    public get columns() {
+        return this.mainElement
+            .children("g")
+            .children("g.columns")
+            .children("rect.column");
+    }
 
-        public get xAxis(): JQuery {
-            return this.axes.children("g.xAxis");
-        }
+    public get axes(): JQuery {
+        return this.mainElement
+            .children("g")
+            .children(".axes");
+    }
 
-        public get xAxisTicks(): JQuery {
-            return this.xAxis.children("g.tick");
-        }
+    public get xAxis(): JQuery {
+        return this.axes.children("g.xAxis");
+    }
 
-        public get yAxis(): JQuery {
-            return this.axes.children("g.yAxis");
-        }
+    public get xAxisTicks(): JQuery {
+        return this.xAxis.children("g.tick");
+    }
 
-        public get yAxisTicks(): JQuery {
-            return this.yAxis.children("g.tick");
-        }
+    public get yAxis(): JQuery {
+        return this.axes.children("g.yAxis");
+    }
 
-        public get legend(): JQuery {
-            return this.mainElement
-                .children("g")
-                .children("g.legends")
-                .children("text.legend");
-        }
+    public get yAxisTicks(): JQuery {
+        return this.yAxis.children("g.tick");
+    }
 
-        public get xAxisLabel(): JQuery {
-            return this.legend.filter((i: number, element: Element) => {
-                return d3.transform($(element).attr("transform")).rotate === 0;
-            });
-        }
+    public get legend(): JQuery {
+        return this.mainElement
+            .children("g")
+            .children("g.legends")
+            .children("text.legend");
+    }
 
-        public get yAxisLabel(): JQuery {
-            return this.legend.filter((i: number, element: Element) => {
-                return d3.transform($(element).attr("transform")).rotate !== 0;
-            });
-        }
+    public get xAxisLabel(): JQuery {
+        return this.legend.filter((i: number, element: Element) => {
+            return $(element).attr("transform").indexOf("rotate") < 0;
+        });
+    }
+
+    public get yAxisLabel(): JQuery {
+        return this.legend.filter((i: number, element: Element) => {
+            return $(element).attr("transform").indexOf("rotate") >= 0;
+        });
     }
 }

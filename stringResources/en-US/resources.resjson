@@ -3,6 +3,7 @@
 	"Visual_General_Bins": "Bins",
 	"Visual_DataColors": "Data colors",
 	"Visual_DataColors_Fill": "Fill",
+	"Visual_DataColors_FillEven": "Even columns fill",
 	"Visual_XAxis": "X-Axis",
 	"Visual_Show": "Show",
 	"Visual_Color": "Color",

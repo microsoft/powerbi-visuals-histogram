@@ -24,72 +24,72 @@
  *  THE SOFTWARE.
  */
 
-module powerbi.extensibility.visual {
-    // d3
-    import Selection = d3.Selection;
 
-    // powerbi.extensibility.utils.interactivity
-    import IInteractivityService = powerbi.extensibility.utils.interactivity.IInteractivityService;
+// d3
+import * as d3 from "d3";
+type Selection<T> = d3.Selection<any, T, any, any>;
 
-    export interface StateOfDataPoint {
-        selected: boolean;
-        highlight: boolean;
+import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
+import IInteractivityService = interactivityService.IInteractivityService;
+
+import { HistogramDataPoint, HistogramSubDataPoint } from "./dataInterfaces";
+
+export interface StateOfDataPoint {
+    selected: boolean;
+    highlight: boolean;
+}
+
+export const DimmedOpacity: number = 0.4;
+export const DefaultOpacity: number = 1.0;
+
+export function getOpacity(
+    selected: boolean,
+    highlight: boolean,
+    hasSelection: boolean,
+    hasPartialHighlights: boolean): number {
+
+    if ((hasPartialHighlights && !highlight) || (hasSelection && !selected)) {
+        return DimmedOpacity;
     }
 
-    export module histogramUtils {
-        export const DimmedOpacity: number = 0.4;
-        export const DefaultOpacity: number = 1.0;
+    return DefaultOpacity;
+}
 
-        export function getOpacity(
-            selected: boolean,
-            highlight: boolean,
-            hasSelection: boolean,
-            hasPartialHighlights: boolean): number {
+export function getStateOfDataPoint(dataPoint: HistogramDataPoint): StateOfDataPoint {
+    let selected: boolean = false,
+        highlight: boolean = false;
 
-            if ((hasPartialHighlights && !highlight) || (hasSelection && !selected)) {
-                return DimmedOpacity;
-            }
-
-            return DefaultOpacity;
-        }
-
-        export function getStateOfDataPoint(dataPoint: HistogramDataPoint): StateOfDataPoint {
-            let selected: boolean = false,
-                highlight: boolean = false;
-
-            if (dataPoint.subDataPoints && dataPoint.subDataPoints.length > 0) {
-                dataPoint.subDataPoints.forEach((subDataPoint: HistogramSubDataPoint) => {
-                    selected = selected || subDataPoint.selected;
-                    highlight = highlight || subDataPoint.highlight;
-                });
-            }
-
-            return {
-                selected,
-                highlight
-            };
-        }
-
-        export function updateOpacity(
-            columns: Selection<HistogramDataPoint>,
-            interactivityService?: IInteractivityService,
-            hasSelection: boolean = false): void {
-
-            let hasHighlights: boolean = false;
-
-            if (interactivityService) {
-                hasHighlights = interactivityService.hasSelection();
-            }
-
-            columns.style("opacity", (dataPoint: HistogramDataPoint) => {
-                const selectedDataPoint: StateOfDataPoint = histogramUtils.getStateOfDataPoint(dataPoint);
-
-                return histogramUtils.getOpacity(
-                    selectedDataPoint.selected,
-                    selectedDataPoint.highlight,
-                    !selectedDataPoint.highlight && hasSelection,
-                    !selectedDataPoint.selected && hasHighlights);
-            });
-        }
+    if (dataPoint.subDataPoints && dataPoint.subDataPoints.length > 0) {
+        dataPoint.subDataPoints.forEach((subDataPoint: HistogramSubDataPoint) => {
+            selected = selected || subDataPoint.selected;
+            highlight = highlight || subDataPoint.highlight;
+        });
     }
+
+    return {
+        selected,
+        highlight
+    };
+}
+
+export function updateOpacity(
+    columns: Selection<HistogramDataPoint>,
+    interactivityService?: IInteractivityService,
+    hasSelection: boolean = false): void {
+
+    let hasHighlights: boolean = false;
+
+    if (interactivityService) {
+        hasHighlights = interactivityService.hasSelection();
+    }
+
+    columns.style("opacity", (dataPoint: HistogramDataPoint) => {
+        const selectedDataPoint: StateOfDataPoint = getStateOfDataPoint(dataPoint);
+
+        return getOpacity(
+            selectedDataPoint.selected,
+            selectedDataPoint.highlight,
+            !selectedDataPoint.highlight && hasSelection,
+            !selectedDataPoint.selected && hasHighlights);
+    });
 }

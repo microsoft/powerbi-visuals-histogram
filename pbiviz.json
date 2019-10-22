@@ -1,15 +1,15 @@
 {
   "visual": {
-    "name": "Histogram",
-    "displayName": "Histogram",
+    "name": "Histogram 2.0.1",
+    "displayName": "Histogram 2.0.1",
     "guid": "Histogram1445664487616",
     "visualClassName": "Histogram",
-    "version": "1.4.0",
+    "version": "2.0.1",
     "description": "A histogram chart plots data ranges into intervals. Useful for estimating density.",
     "supportUrl": "https://community.powerbi.com",
     "gitHubUrl": "https://github.com/Microsoft/PowerBI-visuals-histogram"
   },
-  "apiVersion": "1.13.0",
+  "apiVersion": "2.3.0",
   "author": {
     "name": "Microsoft",
     "email": "pbicvsupport@microsoft.com"
@@ -17,21 +17,7 @@
   "assets": {
     "icon": "assets/icon.png"
   },
-  "externalJS": [
-    "node_modules/jquery/dist/jquery.min.js",
-    "node_modules/d3/d3.min.js",
-    "node_modules/lodash/lodash.min.js",
-    "node_modules/globalize/lib/globalize.js",
-    "node_modules/globalize/lib/cultures/globalize.culture.en-US.js",
-    "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-svgutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-colorutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-chartutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-tooltiputils/lib/index.js"
-  ],
+  "externalJS": [],
   "style": "style/visual.less",
   "capabilities": "capabilities.json"
 }
