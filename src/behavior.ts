@@ -52,7 +52,7 @@ export class HistogramBehavior implements IInteractiveBehavior {
     private clearCatcher: Selection<any>;
     private interactivityService: IInteractivityService<SelectableDataPoint>;
 
-    public static create(): IInteractiveBehavior {
+    public static CREATE(): IInteractiveBehavior {
         return new HistogramBehavior();
     }
 
@@ -66,7 +66,7 @@ export class HistogramBehavior implements IInteractiveBehavior {
         this.clearCatcher = behaviorOptions.clearCatcher;
 
         this.columns.on("click", (dataPoint: HistogramDataPoint) => {
-            const isCtrlPressed: boolean = d3.event && (d3.event as MouseEvent).ctrlKey;
+            const isCtrlPressed: boolean = d3.event && (<MouseEvent>d3.event).ctrlKey;
 
             selectionHandler.handleSelection(dataPoint.subDataPoints, isCtrlPressed);
         });

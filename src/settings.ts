@@ -56,9 +56,9 @@ export class HistogramDataPointSettings {
 }
 
 export enum HistogramAxisStyle {
-    showTitleOnly = "showTitleOnly" as any,
-    showUnitOnly = "showUnitOnly" as any,
-    showBoth = "showBoth" as any
+    showTitleOnly = <any>"showTitleOnly",
+    showUnitOnly = <any>"showUnitOnly",
+    showBoth = <any>"showBoth"
 }
 
 export class HistogramAxisSettings {
@@ -83,8 +83,8 @@ export class HistogramYAxisSettings extends HistogramAxisSettings {
 }
 
 export enum HistogramPositionType {
-    Left = "Left" as any,
-    Right = "Right" as any
+    Left = <any>"Left",
+    Right = <any>"Right"
 }
 
 export class HistogramLabelSettings {
