@@ -30,9 +30,8 @@ import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
 
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import { manipulation } from "powerbi-visuals-utils-svgutils";
-import parseTranslateTransform = manipulation.parseTranslateTransform;
 
-import { Histogram as VisualClass } from "../src/visual";
+import { Visual as VisualClass } from "../src/visual";
 
 export class HistogramChartBuilder extends VisualBuilderBase<VisualClass> {
     constructor(width: number, height: number) {

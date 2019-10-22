@@ -42,21 +42,19 @@ import { valueType } from "powerbi-visuals-utils-typeutils";
 import ValueType = valueType.ValueType;
 
 // powerbi.extensibility.utils.formatting
-import { valueFormatter as vf, dateTimeSequence as dts, formattingService as fs } from "powerbi-visuals-utils-formattingutils";
+import { valueFormatter, dateTimeSequence as dts, formattingService as fs } from "powerbi-visuals-utils-formattingutils";
 import numberFormat = fs.numberFormat;
-import valueFormatter = vf.valueFormatter;
-import IValueFormatter = vf.IValueFormatter;
-import ValueFormatterOptions = vf.ValueFormatterOptions;
+import IValueFormatter = valueFormatter.IValueFormatter;
+import ValueFormatterOptions = valueFormatter.ValueFormatterOptions;
 import DateTimeSequence = dts.DateTimeSequence;
 
 // powerbi-visuals-utils-chartutils
 import { axis as AxisHelper, axisInterfaces, axisScale } from "powerbi-visuals-utils-chartutils";
 import IAxisProperties = axisInterfaces.IAxisProperties;
-import BaseCreateAxisOptions = axisInterfaces.CreateAxisOptions;
+import CreateAxisOptions = axisInterfaces.CreateAxisOptions;
 
 /**
  * HistogramAxisHelper based on AxisHelper.
- * TODO: Update the core AxisHelper instead.
  */
 const DefaultOuterPadding: number = 0;
 
@@ -105,7 +103,7 @@ export interface CreateScaleResult {
     usingDefaultDomain?: boolean;
 }
 
-export interface CreateAxisOptions extends BaseCreateAxisOptions {
+export interface CreateAxisOptionsExtended extends CreateAxisOptions {
     innerPaddingRatio: number;
     tickLabelPadding: number;
     minOrdinalRectThickness: number;
@@ -115,7 +113,7 @@ export interface CreateAxisOptions extends BaseCreateAxisOptions {
  * Create a D3 axis including scale. Can be vertical or horizontal, and either datetime, numeric, or text.
  * @param options The properties used to create the axis.
  */
-export function createAxis(options: CreateAxisOptions): IAxisProperties {
+export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties {
     let pixelSpan: number = options.pixelSpan,
         dataDomain: number[] = options.dataDomain,
         metaDataColumn: DataViewMetadataColumn = options.metaDataColumn,
@@ -142,14 +140,7 @@ export function createAxis(options: CreateAxisOptions): IAxisProperties {
     let isLogScaleAllowed: boolean = isLogScalePossible(dataDomain, dataType);
 
     // fix categoryThickness if scalar and the domain was adjusted when making the scale "nice"
-    if (categoryThickness && isScalar && dataDomain && dataDomain.length === 2) {
-        let oldSpan: number = dataDomain[1] - dataDomain[0];
-        let newSpan: number = scaleDomain[1] - scaleDomain[0];
-
-        if (oldSpan > 0 && newSpan > 0) {
-            categoryThickness = categoryThickness * oldSpan / newSpan;
-        }
-    }
+    categoryThickness = fixCategoryThickness(categoryThickness, isScalar, dataDomain, scaleDomain);
 
     // Prepare Tick Values for formatting
     let tickValues: any[];
@@ -195,21 +186,7 @@ export function createAxis(options: CreateAxisOptions): IAxisProperties {
         formattedTickValues = formatAxisTickValues(axis, tickValues, formatter, dataType, getValueFn);
     }
 
-    let xLabelMaxWidth: number;
-    // Use category layout of labels if specified, otherwise use scalar layout of labels
-    if (!isScalar && categoryThickness) {
-        xLabelMaxWidth = Math.max(
-            DefaultXLabelMaxWidth,
-            categoryThickness - tickLabelPadding * DefaultXLabelFactor);
-    }
-    else {
-        // When there are 0 or 1 ticks, then xLabelMaxWidth = pixelSpan
-        xLabelMaxWidth = tickValues.length > DefaultXLabelMaxWidth
-            ? getScalarLabelMaxWidth(scale, tickValues)
-            : pixelSpan;
-
-        xLabelMaxWidth = xLabelMaxWidth - ScalarTickLabelPadding * DefaultXLabelFactor;
-    }
+    let xLabelMaxWidth: number = getXLabelMaxWidth(isScalar, categoryThickness, tickLabelPadding, tickValues, scale, pixelSpan);
 
     return {
         scale: scale,
@@ -226,6 +203,33 @@ export function createAxis(options: CreateAxisOptions): IAxisProperties {
         isLogScaleAllowed: isLogScaleAllowed,
         dataDomain: dataDomain,
     };
+}
+
+function fixCategoryThickness(categoryThickness: number, isScalar: boolean, dataDomain: number[], scaleDomain: number[]) {
+    if (categoryThickness && isScalar && dataDomain && dataDomain.length === 2) {
+        let oldSpan: number = dataDomain[1] - dataDomain[0];
+        let newSpan: number = scaleDomain[1] - scaleDomain[0];
+        if (oldSpan > 0 && newSpan > 0) {
+            categoryThickness = categoryThickness * oldSpan / newSpan;
+        }
+    }
+    return categoryThickness;
+}
+
+function getXLabelMaxWidth(isScalar: boolean, categoryThickness: number, tickLabelPadding: number, tickValues: any[], scale: d3.ScaleLinear<any, any>, pixelSpan: number) {
+    let xLabelMaxWidth: number;
+    // Use category layout of labels if specified, otherwise use scalar layout of labels
+    if (!isScalar && categoryThickness) {
+        xLabelMaxWidth = Math.max(DefaultXLabelMaxWidth, categoryThickness - tickLabelPadding * DefaultXLabelFactor);
+    }
+    else {
+        // When there are 0 or 1 ticks, then xLabelMaxWidth = pixelSpan
+        xLabelMaxWidth = tickValues.length > DefaultXLabelMaxWidth
+            ? getScalarLabelMaxWidth(scale, tickValues)
+            : pixelSpan;
+        xLabelMaxWidth = xLabelMaxWidth - ScalarTickLabelPadding * DefaultXLabelFactor;
+    }
+    return xLabelMaxWidth;
 }
 
 /**
@@ -395,7 +399,7 @@ export function getRecommendedTickValues(
     minTickInterval?: number): any[] {
 
     if (!isScalar || isOrdinalScale(scale)) {
-        return getRecommendedTickValuesForAnOrdinalRange(maxTicks, scale.domain() as any);
+        return getRecommendedTickValuesForAnOrdinalRange(maxTicks, <any>scale.domain());
     }
     else if (isDateTime(axisType)) {
         return getRecommendedTickValuesForADateTimeRange(maxTicks, scale.domain());
@@ -493,7 +497,7 @@ function getRecommendedTickValuesForADateTimeRange(maxTicks: number, dataDomain:
 }
 
 export function isOrdinalScale(scale: any): boolean {
-    return typeof scale.invert === "undefined";
+    return scale.invert == undefined;
 }
 
 /**
@@ -515,7 +519,7 @@ export function columnDataTypeHasValue(dataType: ValueTypeDescriptor) {
     return dataType && (dataType.bool || dataType.numeric || dataType.text || dataType.dateTime);
 }
 
-export function createScale(options: CreateAxisOptions): CreateScaleResult {
+export function createScale(options: CreateAxisOptionsExtended): CreateScaleResult {
     let pixelSpan: number = options.pixelSpan,
         dataDomain: number[] = options.dataDomain,
         metaDataColumn: DataViewMetadataColumn = options.metaDataColumn,
@@ -531,36 +535,18 @@ export function createScale(options: CreateAxisOptions): CreateScaleResult {
 
     let dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
 
-    let maxTicks: number = isVertical
-        ? getRecommendedNumberOfTicksForYAxis(pixelSpan)
-        : getRecommendedNumberOfTicksForXAxis(pixelSpan);
+    let maxTicks: number = getMaxTicks(isVertical, pixelSpan, maxTickCount);
 
-    if (maxTickCount &&
-        maxTicks > maxTickCount) {
-
-        maxTicks = maxTickCount;
-    }
-
-    let scalarDomain: number[] = dataDomain
-        ? dataDomain.slice()
-        : null;
+    let scalarDomain: number[] = dataDomain ? dataDomain.slice() : null;
 
     let bestTickCount: number = maxTicks;
     let scale: LinearScale<any, any> | OrdinalScale<any, any> | ScaleBand<any>;
     let usingDefaultDomain: boolean = false;
 
-    if (dataDomain == null
-        || (dataDomain.length === 2 && dataDomain[0] == null && dataDomain[1] == null)
+    if (!dataDomain || (dataDomain.length === 2 && !dataDomain[0] && !dataDomain[1])
         || (dataDomain.length !== 2 && isScalar)) {
-
         usingDefaultDomain = true;
-
-        if (dataType.dateTime || !isOrdinal(dataType)) {
-            dataDomain = emptyDomain;
-        }
-        else { // ordinal
-            dataDomain = [];
-        }
+        dataDomain = getEmptyDomain(dataType);
 
         if (isOrdinal(dataType)) {
             scale = createOrdinalScale(
@@ -576,7 +562,7 @@ export function createScale(options: CreateAxisOptions): CreateScaleResult {
                 dataDomain,
                 dataType,
                 outerPadding,
-                bestTickCount);
+                maxTicks);
         }
     }
     else {
@@ -590,15 +576,7 @@ export function createScale(options: CreateAxisOptions): CreateScaleResult {
                     maxTicks,
                     dataType.dateTime);
 
-            let normalizedRange: ValueRange<number> = normalizeLinearDomain({
-                min: dataDomain[0],
-                max: dataDomain[dataDomain.length - 1]
-            });
-
-            scalarDomain = [
-                normalizedRange.min,
-                normalizedRange.max
-            ];
+            scalarDomain = getScalarDomain(dataDomain, scalarDomain);
         }
 
         if (isScalar && dataType.numeric && !dataType.dateTime) {
@@ -611,16 +589,12 @@ export function createScale(options: CreateAxisOptions): CreateScaleResult {
                 outerPadding,
                 null,
                 shouldClamp);
-
-            bestTickCount = maxTicks === 0
-                ? 0
-                : Math.floor((pixelSpan - outerPadding * 2) / minOrdinalRectThickness);
+            bestTickCount = maxTicks === 0 ? 0 : Math.floor((pixelSpan - outerPadding * 2) / minOrdinalRectThickness);
         }
         else if (isScalar && dataType.dateTime) {
             // Use of a linear scale, instead of a D3.time.scale, is intentional since we want
             // to control the formatting of the time values, since d3"s implementation isn"t
-            // in accordance to our design.
-            // scalarDomain: should already be in long-int time (via category.values[0].getTime())
+            // in accordance to our design. scalarDomain: should already be in long-int time (via category.values[0].getTime())
             scale = createLinearScale(pixelSpan, scalarDomain, outerPadding, null, shouldClamp); // DO NOT PASS TICKCOUNT
         }
         else if (dataType.text || dataType.dateTime || dataType.numeric || dataType.bool) {
@@ -637,18 +611,45 @@ export function createScale(options: CreateAxisOptions): CreateScaleResult {
         }
     }
 
-    // vertical ordinal axis (e.g. categorical bar chart) does not need to reverse
-    if (isVertical && isScalar) {
-        scale.range(); // TODO TMP scale.range().reverse());
-    }
-
-    normalizeInfinityInScale(scale as LinearScale<any, any>);
+    normalizeInfinityInScale(<LinearScale<any, any>>scale);
 
     return {
-        scale: scale as LinearScale<any, any>,
+        scale: <LinearScale<any, any>>scale,
         bestTickCount: bestTickCount,
         usingDefaultDomain: usingDefaultDomain,
     };
+}
+
+function getScalarDomain(dataDomain: number[], scalarDomain: number[]) {
+    let normalizedRange: ValueRange<number> = normalizeLinearDomain({
+        min: dataDomain[0],
+        max: dataDomain[dataDomain.length - 1]
+    });
+    scalarDomain = [
+        normalizedRange.min,
+        normalizedRange.max
+    ];
+    return scalarDomain;
+}
+
+function getEmptyDomain(dataType: valueType.ValueType) {
+    if (dataType.dateTime || !isOrdinal(dataType)) {
+        return emptyDomain;
+    }
+    else { // ordinal
+        return [];
+    }
+}
+
+function getMaxTicks(isVertical: boolean, pixelSpan: number, maxTickCount: number) {
+    let maxTicks: number = isVertical
+        ? getRecommendedNumberOfTicksForYAxis(pixelSpan)
+        : getRecommendedNumberOfTicksForXAxis(pixelSpan);
+    if (maxTickCount &&
+        maxTicks > maxTickCount) {
+        maxTicks = maxTickCount;
+    }
+    return maxTicks;
 }
 
 export function normalizeInfinityInScale(scale: LinearScale<any, any>): void {
@@ -676,14 +677,14 @@ export function createOrdinalScale(
     outerPaddingRatio: number
 ): ScaleBand<any> {
     return dataDomain.every((x, index) => (index === 0 || x === dataDomain[0]))
-        ? scaleBand() // TODO TEST
+        ? scaleBand()
             .range([0, pixelSpan])
             .domain(dataDomain)
-        /* Avoid using rangeRoundBands here as it is adding some extra padding to the axis*/
+        // Avoid using rangeRoundBands here as it is adding some extra padding to the axis*/
         : scaleBand()
             .range([0, pixelSpan])
-            .paddingInner(innerPaddingRatio) // TODO TEST
-            .paddingOuter(outerPaddingRatio) // TODO TEST
+            .paddingInner(innerPaddingRatio)
+            .paddingOuter(outerPaddingRatio)
             .domain(dataDomain);
 }
 
@@ -740,7 +741,7 @@ function createLogScale(
         .clamp(true);
 
     if (niceCount) {
-        (scale as LinearScale<any, any>).nice(niceCount);
+        (<LinearScale<any, any>>scale).nice(niceCount);
     }
 
     return scale;

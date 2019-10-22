@@ -28,15 +28,13 @@
 import * as d3 from "d3";
 import { ScaleLinear } from "d3-scale";
 
-import HistogramBin = d3.Bin; // .HistogramBin; //ThresholdNumberArrayGenerator;
-
 import { valueFormatter as vf } from "powerbi-visuals-utils-formattingutils";
 import IValueFormatter = vf.IValueFormatter;
 
 import { TooltipEnabledDataPoint } from "powerbi-visuals-utils-tooltiputils";
 
-import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
-import SelectableDataPoint = interactivityService.SelectableDataPoint;
+import { interactivitySelectionService } from "powerbi-visuals-utils-interactivityutils";
+import SelectableDataPoint = interactivitySelectionService.SelectableDataPoint;
 
 import { shapesInterfaces } from "powerbi-visuals-utils-svgutils";
 import ISize = shapesInterfaces.ISize;
@@ -48,7 +46,7 @@ export interface HistogramSubDataPoint extends SelectableDataPoint {
 }
 
 export interface HistogramDataPoint extends
-    HistogramBin<any, number>,
+    d3.Bin<any, number>,
     TooltipEnabledDataPoint {
     y: number;
     range: number[];
@@ -76,8 +74,8 @@ export interface HistogramData {
     xLegendSize: number;
     yLegendSize: number;
 
-    xCorrectedMax: number;
-    xCorrectedMin: number;
+    xCorrectedMax?: number;
+    xCorrectedMin?: number;
 
     xScale?: ScaleLinear<any, any>;
     yScale?: ScaleLinear<any, any>;

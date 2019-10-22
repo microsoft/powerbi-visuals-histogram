@@ -29,10 +29,11 @@
 import * as d3 from "d3";
 type Selection<T> = d3.Selection<any, T, any, any>;
 
-import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
-import IInteractivityService = interactivityService.IInteractivityService;
+import { interactivityBaseService } from "powerbi-visuals-utils-interactivityutils";
+import IInteractivityService = interactivityBaseService.IInteractivityService;
 
 import { HistogramDataPoint, HistogramSubDataPoint } from "./dataInterfaces";
+import { SelectableDataPoint } from "powerbi-visuals-utils-interactivityutils/lib/interactivitySelectionService";
 
 export interface StateOfDataPoint {
     selected: boolean;
@@ -74,7 +75,7 @@ export function getStateOfDataPoint(dataPoint: HistogramDataPoint): StateOfDataP
 
 export function updateOpacity(
     columns: Selection<HistogramDataPoint>,
-    interactivityService?: IInteractivityService,
+    interactivityService?: IInteractivityService<SelectableDataPoint>,
     hasSelection: boolean = false): void {
 
     let hasHighlights: boolean = false;

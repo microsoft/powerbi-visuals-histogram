@@ -1,3 +1,8 @@
+## 2.1.0
+* Update packages
+* Update API to 2.6.1
+* Replace @babel/polyfill by core-js 3
+
 ## 2.0.1
 * Fixes for 2.0.0
 * Even columns color setting

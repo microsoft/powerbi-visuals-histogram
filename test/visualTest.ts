@@ -39,7 +39,7 @@ import parseTranslateTransform = manipulation.parseTranslateTransform;
 
 import { assertColorsMatch } from "powerbi-visuals-utils-testutils";
 
-import { Histogram as VisualClass } from "../src/visual";
+import { Visual as VisualClass } from "../src/visual";
 import { HistogramDataPoint } from "../src/dataInterfaces";
 import { HistogramAxisStyle } from "../src/settings";
 import * as histogramUtils from "../src/utils";
@@ -687,20 +687,20 @@ describe("HistogramChart", () => {
             let title: string = "Power BI",
                 legendTitle: string;
 
-            legendTitle = VisualClass.getLegendTextWithUnits(title, HistogramAxisStyle.showTitleOnly, 0);
+            legendTitle = VisualClass.GET_LEGEND_TEXT_WITH_UNITS(title, HistogramAxisStyle.showTitleOnly, 0);
 
             expect(legendTitle).toBe(title);
         });
 
         it("getLegendTextWithUnits shouldn't throw any exceptions when axisStyle.showUnitOnly and displayUnits is NaN", () => {
             expect(() => {
-                VisualClass.getLegendTextWithUnits("Power BI", HistogramAxisStyle.showUnitOnly, NaN);
+                VisualClass.GET_LEGEND_TEXT_WITH_UNITS("Power BI", HistogramAxisStyle.showUnitOnly, NaN);
             }).not.toThrow();
         });
 
         it("getLegendTextWithUnits shouldn't throw any exceptions when axisStyle.showBoth and displayUnits is NaN", () => {
             expect(() => {
-                VisualClass.getLegendTextWithUnits("Power BI", HistogramAxisStyle.showBoth, NaN);
+                VisualClass.GET_LEGEND_TEXT_WITH_UNITS("Power BI", HistogramAxisStyle.showBoth, NaN);
             }).not.toThrow();
         });
     });
@@ -756,7 +756,7 @@ describe("HistogramChart", () => {
             let areValuesNumbers: boolean,
                 categoryColumn = createCategoryColumn(true);
 
-            areValuesNumbers = VisualClass.areValuesNumbers(categoryColumn);
+            areValuesNumbers = VisualClass.ARE_VALUES_NUMBERS(categoryColumn);
 
             expect(areValuesNumbers).toBeTruthy();
         });
@@ -765,7 +765,7 @@ describe("HistogramChart", () => {
             let areValuesNumbers: boolean,
                 categoryColumn = createCategoryColumn(undefined, true);
 
-            areValuesNumbers = VisualClass.areValuesNumbers(categoryColumn);
+            areValuesNumbers = VisualClass.ARE_VALUES_NUMBERS(categoryColumn);
 
             expect(areValuesNumbers).toBeTruthy();
         });
@@ -774,7 +774,7 @@ describe("HistogramChart", () => {
             let areValuesNumbers: boolean,
                 categoryColumn = createCategoryColumn();
 
-            areValuesNumbers = VisualClass.areValuesNumbers(categoryColumn);
+            areValuesNumbers = VisualClass.ARE_VALUES_NUMBERS(categoryColumn);
 
             expect(areValuesNumbers).toBeFalsy();
         });
@@ -823,7 +823,7 @@ describe("HistogramChart", () => {
             actualValue: number,
             expectedValue: number): void {
 
-            const value: number = VisualClass.getCorrectYAxisValue(actualValue);
+            const value: number = VisualClass.GET_CORRECT_Y_AXIS_VALUE(actualValue);
 
             expect(value).toBe(expectedValue);
         }
@@ -856,7 +856,7 @@ describe("HistogramChart", () => {
             actualValue: number,
             expectedValue: number): void {
 
-            const value: number = VisualClass.getCorrectXAxisValue(actualValue);
+            const value: number = VisualClass.GET_CORRECT_X_AXIS_VALUE(actualValue);
 
             expect(value).toBe(expectedValue);
         }
