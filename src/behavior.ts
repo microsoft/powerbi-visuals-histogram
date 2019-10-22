@@ -24,7 +24,6 @@
  *  THE SOFTWARE.
  */
 
-import "@babel/polyfill";
 // d3
 import * as d3 from "d3";
 type Selection<T> = d3.Selection<any, T, any, any>;
@@ -32,24 +31,26 @@ type Selection<T> = d3.Selection<any, T, any, any>;
 import powerbi from "powerbi-visuals-api";
 import ISelectionId = powerbi.visuals.ISelectionId;
 
-import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
-import ISelectionHandler = interactivityService.ISelectionHandler;
-import IInteractiveBehavior = interactivityService.IInteractiveBehavior;
-import IInteractivityService = interactivityService.IInteractivityService;
+import { interactivityBaseService, interactivitySelectionService } from "powerbi-visuals-utils-interactivityutils";
+import ISelectionHandler = interactivityBaseService.ISelectionHandler;
+import SelectableDataPoint = interactivitySelectionService.SelectableDataPoint;
+import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
+import IBehaviorOptions = interactivityBaseService.IBehaviorOptions;
+import IInteractivityService = interactivityBaseService.IInteractivityService;
 
 import { HistogramDataPoint } from "./dataInterfaces";
 import { updateOpacity } from "./utils";
 
-export interface HistogramBehaviorOptions {
+export interface HistogramBehaviorOptions extends IBehaviorOptions<SelectableDataPoint>{
     columns: Selection<HistogramDataPoint>;
     clearCatcher: Selection<any>;
-    interactivityService: IInteractivityService;
+    interactivityService: IInteractivityService<SelectableDataPoint>;
 }
 
 export class HistogramBehavior implements IInteractiveBehavior {
     private columns: Selection<HistogramDataPoint>;
     private clearCatcher: Selection<any>;
-    private interactivityService: IInteractivityService;
+    private interactivityService: IInteractivityService<SelectableDataPoint>;
 
     public static create(): IInteractiveBehavior {
         return new HistogramBehavior();

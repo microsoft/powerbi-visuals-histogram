@@ -25,6 +25,7 @@
  */
 
 // d3
+import "core-js/stable";
 import * as d3 from "d3";
 type Selection<T> = d3.Selection<any, T, any, any>;
 
@@ -69,9 +70,8 @@ import ClassAndSelector = CssConstants.ClassAndSelector;
 import createClassAndSelector = CssConstants.createClassAndSelector;
 
 // powerbi-visuals-utils-formattingutils
-import { valueFormatter as vf, textMeasurementService as tms } from "powerbi-visuals-utils-formattingutils";
-import IValueFormatter = vf.IValueFormatter;
-import ValueFormatter  = vf.valueFormatter;
+import { valueFormatter as ValueFormatter, textMeasurementService as tms } from "powerbi-visuals-utils-formattingutils";
+import IValueFormatter = ValueFormatter.IValueFormatter;
 import TextProperties = tms.TextProperties;
 import textMeasurementService = tms.textMeasurementService;
 
@@ -86,12 +86,12 @@ import willLabelsFit = axis.LabelLayoutStrategy.willLabelsFit;
 import willLabelsWordBreak = axis.LabelLayoutStrategy.willLabelsWordBreak;
 
 // powerbi-visuals-utils-interactivityutils
-import { interactivityService } from "powerbi-visuals-utils-interactivityutils";
-import appendClearCatcher = interactivityService.appendClearCatcher;
-import IInteractiveBehavior = interactivityService.IInteractiveBehavior;
-import IInteractivityService = interactivityService.IInteractivityService;
-import createInteractivityService = interactivityService.createInteractivityService;
-import SelectableDataPoint = interactivityService.SelectableDataPoint;
+import { interactivitySelectionService, interactivityBaseService, interactivityUtils } from "powerbi-visuals-utils-interactivityutils";
+import appendClearCatcher = interactivityBaseService.appendClearCatcher;
+import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
+import IInteractivityService = interactivityBaseService.IInteractivityService;
+import createInteractivityService = interactivitySelectionService.createInteractivitySelectionService;
+import SelectableDataPoint = interactivitySelectionService.SelectableDataPoint;
 
 // powerbi-visuals-utils-tooltiputils
 import { TooltipEventArgs, ITooltipServiceWrapper, createTooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
@@ -165,7 +165,7 @@ export class Histogram implements IVisual {
 
     private visualHost: IVisualHost;
     private localizationManager: ILocalizationManager;
-    private interactivityService: IInteractivityService;
+    private interactivityService: IInteractivityService<SelectableDataPoint>;
     private behavior: IInteractiveBehavior;
 
     private root: Selection<any>;
@@ -993,16 +993,14 @@ export class Histogram implements IVisual {
         });
 
         const behaviorOptions: HistogramBehaviorOptions = {
+            dataPoints: subDataPoints,
             columns: columnsSelection,
             clearCatcher: this.clearCatcher,
             interactivityService: this.interactivityService,
+            behavior: this.behavior
         };
 
-        this.interactivityService.bind(
-            subDataPoints,
-            this.behavior,
-            behaviorOptions
-        );
+        this.interactivityService.bind(behaviorOptions);
     }
 
     private renderColumns(): Selection<HistogramDataPoint> {

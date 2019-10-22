@@ -42,11 +42,10 @@ import { valueType } from "powerbi-visuals-utils-typeutils";
 import ValueType = valueType.ValueType;
 
 // powerbi.extensibility.utils.formatting
-import { valueFormatter as vf, dateTimeSequence as dts, formattingService as fs } from "powerbi-visuals-utils-formattingutils";
+import { valueFormatter, dateTimeSequence as dts, formattingService as fs } from "powerbi-visuals-utils-formattingutils";
 import numberFormat = fs.numberFormat;
-import valueFormatter = vf.valueFormatter;
-import IValueFormatter = vf.IValueFormatter;
-import ValueFormatterOptions = vf.ValueFormatterOptions;
+import IValueFormatter = valueFormatter.IValueFormatter;
+import ValueFormatterOptions = valueFormatter.ValueFormatterOptions;
 import DateTimeSequence = dts.DateTimeSequence;
 
 // powerbi-visuals-utils-chartutils
