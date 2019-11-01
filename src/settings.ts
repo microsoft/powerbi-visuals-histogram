@@ -52,7 +52,7 @@ export class HistogramGeneralSettings {
 
 export class HistogramDataPointSettings {
     public fill: string = "#01b8aa";
-    public fillEven: string = "#34C6BB";
+    public fillEven: string = "#01b8aa";
 }
 
 export enum HistogramAxisStyle {
