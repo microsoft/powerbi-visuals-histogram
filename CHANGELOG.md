@@ -1,3 +1,6 @@
+## 2.1.1
+* Fix Y axis labels alignment
+
 ## 2.1.0
 * Update packages
 * Update API to 2.6.1
