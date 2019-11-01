@@ -107,6 +107,7 @@ export interface CreateAxisOptionsExtended extends CreateAxisOptions {
     innerPaddingRatio: number;
     tickLabelPadding: number;
     minOrdinalRectThickness: number;
+    onRight?: boolean;
 }
 
 /**
@@ -128,7 +129,8 @@ export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties 
         axisDisplayUnits: number = options.axisDisplayUnits,
         axisPrecision: number = options.axisPrecision,
         is100Pct: boolean = !!options.is100Pct,
-        tickLabelPadding: number = options.tickLabelPadding || TickLabelPadding;
+        tickLabelPadding: number = options.tickLabelPadding || TickLabelPadding,
+        onRight: boolean = options.onRight || false;
 
     let dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
 
@@ -177,7 +179,7 @@ export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties 
     // sets default orientation only, cartesianChart will fix y2 for comboChart
     // tickSize(pixelSpan) is used to create gridLines
     let axis = (isVertical
-        ? d3.axisLeft(scale)
+        ? onRight ? d3.axisRight(scale) : d3.axisLeft(scale)
         : d3.axisBottom(scale)
     );
 
