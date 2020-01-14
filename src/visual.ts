@@ -1250,6 +1250,7 @@ export class Visual implements IVisual {
                 : undefined;
 
         return HistogramAxisHelper.createAxis({
+            onRight: Visual.shouldShowYOnRight(this.data.settings),
             pixelSpan: this.viewportIn.height,
             dataDomain: [yAxisSettings.start, yAxisSettings.end],
             metaDataColumn,
@@ -1283,10 +1284,11 @@ export class Visual implements IVisual {
                 return this.data.yLabelFormatter.format(item);
             });
 
-        this.axisY.call(yAxis);
+        yAxis(this.axisY);
         this.axisY
             .style("fill", yAxisSettings.axisColor)
-            .style("stroke", yAxisSettings.strokeColor);
+            .style("stroke", yAxisSettings.strokeColor)
+            .attr("text-anchor", Visual.shouldShowYOnRight(this.data.settings) ? "start": "end") // d3 updates the anchor for entered elements only
     }
 
     private renderXAxis(): void {
@@ -1343,6 +1345,7 @@ export class Visual implements IVisual {
             xPoints: number[] = this.getXPoints();
 
         axes = HistogramAxisHelper.createAxis({
+            onRight: Visual.shouldShowYOnRight(this.data.settings),
             pixelSpan: this.viewportIn.width,
             dataDomain: xPoints,
             metaDataColumn,
