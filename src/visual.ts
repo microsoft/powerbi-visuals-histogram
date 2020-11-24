@@ -296,15 +296,18 @@ export class Visual implements IVisual {
 
         const [min, max] = d3.extent(numericalValues);
 
+        const minMaybeSet = (settings.xAxis.start !== null) ? settings.xAxis.start : min;
+        const maxMaybeSet = (settings.xAxis.end !== null) ? settings.xAxis.end : max;
+
         const binsCount: number =
             (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
             ? settings.general.bins
             : d3.histogram()(numericalValues).length; // predict bins count for interval correction
-        const interval: number = (max - min) / binsCount;
+        const interval: number = (maxMaybeSet - minMaybeSet) / binsCount;
 
-        bins = d3.histogram().thresholds(
-            d3.range(min, max, interval)
-        )(numericalValues);
+        bins = d3.histogram()
+            .thresholds(d3.range(minMaybeSet, maxMaybeSet, interval))
+            .domain([minMaybeSet, maxMaybeSet])(numericalValues);
 
         bins.forEach((bin: LayoutBin, index: number) => {
             let filteredValues: HistogramValue[],
@@ -1068,9 +1071,16 @@ export class Visual implements IVisual {
         const countOfValues: number = this.data.dataPoints.length;
         const borderValues: HistogramBorderValues = this.data.borderValues;
 
+        // fix bin width if start/end is set
+        const correctedBorderValues: HistogramBorderValues = {
+            minX: (this.data.settings.xAxis.start !== null) ? this.data.settings.xAxis.start : borderValues.minX,
+            maxX: (this.data.settings.xAxis.end !== null) ? this.data.settings.xAxis.end : borderValues.maxX,
+            minY: borderValues.minY,
+            maxY: borderValues.maxY
+        };
         const firstDataPoint: number = this.data.xCorrectedMin
             ? this.data.xCorrectedMin
-            : borderValues.minX;
+            : correctedBorderValues.minX;
 
         const widthOfColumn = countOfValues
             ? this.data.xScale(
@@ -1399,48 +1409,6 @@ export class Visual implements IVisual {
                 : currentValue.range.slice(1)),
             []
         );
-
-        // It is necessary to find out interval to calculate all necessary points before and after offset (if start and end for X axis was changed by user)
-        if ((maxX !== end || minX !== start) && xPoints.length > 1) {
-
-            // The interval must be greater than zero to avoid infinity loops
-            if (Visual.isIntervalValid(interval)) {
-                // If start point is greater than min border, it is necessary to remove non-using data points
-                if (start > minX) {
-                    closerLimit = this.findBorderMinCloserToXAxisStart(minX, start, interval);
-                    xPoints = xPoints.filter(dpv => this.formatXLabelsForFiltering(dpv) >= closerLimit);
-                    this.data.xCorrectedMin = xPoints && xPoints.length > 0 ? xPoints[0] : null;
-                }
-                else {
-                    // Add points before
-                    tmpArr = [];
-                    tmpStart = minX;
-                    while (start < tmpStart) {
-                        tmpStart = tmpStart - interval;
-                        tmpArr.push(tmpStart);
-                        this.data.xCorrectedMin = tmpStart;
-                    }
-                    tmpArr.reverse();
-                    xPoints = tmpArr.concat(xPoints);
-                }
-
-                // If end point is lesser than max border, it is necessary to remove non-using data points
-                if (end < maxX) {
-                    closerLimit = this.findBorderMaxCloserToXAxisEnd(maxX, end, interval);
-                    xPoints = xPoints.filter(dpv => this.formatXLabelsForFiltering(dpv) <= closerLimit);
-                    this.data.xCorrectedMax = xPoints && xPoints.length > 0 ? xPoints[xPoints.length - 1] : null;
-                }
-                else {
-                    // Add points after
-                    tmpEnd = maxX;
-                    while (end > tmpEnd) {
-                        tmpEnd = tmpEnd + interval;
-                        xPoints.push(tmpEnd);
-                        this.data.xCorrectedMax = tmpEnd;
-                    }
-                }
-            }
-        }
 
         return xPoints;
     }
