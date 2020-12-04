@@ -294,20 +294,7 @@ export class Visual implements IVisual {
             sumFrequency += value.frequency;
         });
 
-        const [min, max] = d3.extent(numericalValues);
-
-        const minMaybeSet = (settings.xAxis.start !== null) ? settings.xAxis.start : min;
-        const maxMaybeSet = (settings.xAxis.end !== null) ? settings.xAxis.end : max;
-
-        const binsCount: number =
-            (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
-            ? settings.general.bins
-            : d3.histogram()(numericalValues).length; // predict bins count for interval correction
-        const interval: number = (maxMaybeSet - minMaybeSet) / binsCount;
-
-        bins = d3.histogram()
-            .thresholds(d3.range(minMaybeSet, maxMaybeSet, interval))
-            .domain([minMaybeSet, maxMaybeSet])(numericalValues);
+        bins = Visual.SETBINNING(numericalValues, settings, bins)
 
         bins.forEach((bin: LayoutBin, index: number) => {
             let filteredValues: HistogramValue[],
@@ -335,7 +322,8 @@ export class Visual implements IVisual {
         Visual.setMinMaxForXAxis(settings.xAxis, borderValues);
 
         // formatters
-        let formatters: { valueFormatter?: IValueFormatter, xLabelFormatter?: IValueFormatter, yLabelFormatter?: IValueFormatter } = {};
+        let formatters: { valueFormatter?: IValueFormatter, xLabelFormatter?: IValueFormatter,
+            yLabelFormatter?: IValueFormatter } = {};
         if (values.length >= Default.MinAmountOfValues) {
             formatters = Visual.createFormatters(dataView, values, settings);
         }
@@ -361,6 +349,29 @@ export class Visual implements IVisual {
             xCorrectedMin: null,
             xCorrectedMax: null
         };
+    }
+
+    public static SETBINNING(
+        numericalValues: number[],
+        settings: HistogramSettings,
+        bins: LayoutBin[]
+    ): LayoutBin[] {
+        const [min, max] = d3.extent(numericalValues);
+
+        const minMaybeSet = (settings.xAxis.start !== null) ? settings.xAxis.start : min;
+        const maxMaybeSet = (settings.xAxis.end !== null) ? settings.xAxis.end : max;
+
+        const binsCount: number =
+            (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
+            ? settings.general.bins
+            : d3.histogram()(numericalValues).length; // predict bins count for interval correction
+        const interval: number = (maxMaybeSet - minMaybeSet) / binsCount;
+
+        bins = d3.histogram()
+            .thresholds(d3.range(minMaybeSet, maxMaybeSet, interval))
+            .domain([minMaybeSet, maxMaybeSet])(numericalValues);
+
+        return bins
     }
 
     private static setMinMaxForXAxis(xAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
