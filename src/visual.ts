@@ -114,6 +114,7 @@ import * as Default from "./constants";
 
 import "../style/visual.less";
 import { Axis } from "d3";
+import { VisualContainerDisplayMode } from "powerbi-models";
 
 interface HistogramValue {
     value: number;
@@ -357,9 +358,24 @@ export class Visual implements IVisual {
         bins: LayoutBin[]
     ): LayoutBin[] {
         const [min, max] = d3.extent(numericalValues);
+        // console.info('min', min)
+        // console.info('max', max)
 
-        const minMaybeSet = (settings.xAxis.start !== null) ? settings.xAxis.start : min;
-        const maxMaybeSet = (settings.xAxis.end !== null) ? settings.xAxis.end : max;
+        let minMaybeSet = min
+        let maxMaybeSet = max
+
+        if (settings.xAxis.start !== null && settings.xAxis.start < max) {
+            minMaybeSet = settings.xAxis.start
+        }
+        if (settings.xAxis.end !== null && settings.xAxis.end > min) {
+            maxMaybeSet = settings.xAxis.end
+        }
+
+        // const minMaybeSet = (settings.xAxis.start !== null) ? settings.xAxis.start : min;
+        // const maxMaybeSet = (settings.xAxis.end !== null) ? settings.xAxis.end : max;
+
+        // console.info('minMaybeSet', minMaybeSet)
+        // console.info('maxMaybeSet', maxMaybeSet)
 
         const binsCount: number =
             (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
