@@ -271,8 +271,8 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(visualBuilder.xAxisTicks.length).toBe(8);
-            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(7);
+            expect(visualBuilder.xAxisTicks.length).toBe(6);
+            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(7.2);
         });
 
         it("X-axis end is greater than max and bins=7", () => {
@@ -297,8 +297,8 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(visualBuilder.xAxisTicks.length).toBe(13);
-            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(17.57);
+            expect(visualBuilder.xAxisTicks.length).toBe(8);
+            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(17.34);
         });
 
         it("X-axis start is greater than min and bins=7", () => {
@@ -323,8 +323,8 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(visualBuilder.xAxisTicks.length).toBe(7);
-            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9.71);
+            expect(visualBuilder.xAxisTicks.length).toBe(8);
+            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(10);
         });
 
         it("X-axis end is lesser than max and bins=12", () => {
@@ -349,8 +349,8 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(visualBuilder.xAxisTicks.length).toBe(9);
-            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(12.33);
+            expect(visualBuilder.xAxisTicks.length).toBe(13);
+            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(12);
         });
 
         it("X-axis end is lesser than max and bins=6 and periodic number case", () => {
@@ -375,9 +375,9 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(visualBuilder.xAxisTicks.length).toBe(6);
+            expect(visualBuilder.xAxisTicks.length).toBe(7);
             expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
-            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(13.17);
+            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(13);
         });
 
         it("X-axis start is greater than max", () => {
