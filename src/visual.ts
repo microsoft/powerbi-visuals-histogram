@@ -295,16 +295,31 @@ export class Visual implements IVisual {
         });
 
         const [min, max] = d3.extent(numericalValues);
+        console.log("11" ,settings.general.bins)
 
         const binsCount: number =
             (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
             ? settings.general.bins
             : d3.histogram()(numericalValues).length; // predict bins count for interval correction
-        const interval: number = (max - min) / binsCount;
+
+        let binSize: number = settings.general.binSize; 
+
+        if ( binSize < HistogramGeneralSettings.MinBinSize) {
+            binSize = HistogramGeneralSettings.MinBinSize;
+        } else if (binSize > (max - min)) {
+            binSize = (max - min);
+        }
+        const interval: number = binSize
 
         bins = d3.histogram().thresholds(
             d3.range(min, max, interval)
         )(numericalValues);
+
+        if (settings.general.bins != bins.length)
+            settings.general.bins = bins.length;
+
+        console.log("33",bins.length);
+        console.log("44",settings.general.bins);    
 
         bins.forEach((bin: LayoutBin, index: number) => {
             let filteredValues: HistogramValue[],
@@ -627,6 +642,7 @@ export class Visual implements IVisual {
         ) || null;
 
         let bins: number = Math.round(settings.general.bins);
+        let binSize: number = Math.round(settings.general.binSize);
 
         if (displayName) {
             settings.general.displayName = displayName;
@@ -639,7 +655,9 @@ export class Visual implements IVisual {
         }
 
         settings.general.bins = bins;
+        settings.general.binSize = binSize;
 
+        
         settings.dataPoint.fill = colorHelper.getHighContrastColor("foreground", settings.dataPoint.fill);
 
         settings.xAxis.precision = Visual.getPrecision(settings.xAxis.precision);
@@ -778,7 +796,7 @@ export class Visual implements IVisual {
         });
     }
 
-    public update(options: VisualUpdateOptions): void {
+    public update(options: VisualUpdateOptions): void {        
         let dataView = options.dataViews[0];
         if (!dataView
             || !dataView.categorical

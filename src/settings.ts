@@ -37,8 +37,10 @@ export class HistogramSettings extends DataViewObjectsParser {
 
 export class HistogramGeneralSettings {
     public static DefaultBins: number = null;
+    public static DefaultBinSize: number = null;
     public static MinNumberOfBins: number = 0;
     public static MaxNumberOfBins: number = 5000;
+    public static MinBinSize: number = 1;
 
     /**
      * Please note that this property isn't enumerated in capabilities.json.
@@ -47,6 +49,7 @@ export class HistogramGeneralSettings {
     public displayName: string = "Histogram";
 
     public bins: number = HistogramGeneralSettings.DefaultBins;
+    public binSize: number = HistogramGeneralSettings.DefaultBinSize;
     public frequency: boolean = true;
 }
 

@@ -75,6 +75,13 @@
                     "type": {
                         "bool": true
                     }
+                },
+                "binSize": {
+                    "displayName": "BinSize",
+                    "displayNameKey": "Visual_BinSize",
+                    "type": {
+                        "numeric": true
+                    }
                 }
             }
         },
