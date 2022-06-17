@@ -294,8 +294,7 @@ export class Visual implements IVisual {
             sumFrequency += value.frequency;
         });
 
-        const [min, max] = d3.extent(numericalValues);
-        console.log("11" ,settings.general.bins)
+        const [min, max] = d3.extent(numericalValues);        
 
         const binsCount: number =
             (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
@@ -309,17 +308,27 @@ export class Visual implements IVisual {
         } else if (binSize > (max - min)) {
             binSize = (max - min);
         }
-        const interval: number = binSize
 
+        let interval: number = (max - min)/binsCount;
+        
         bins = d3.histogram().thresholds(
             d3.range(min, max, interval)
         )(numericalValues);
 
-        if (settings.general.bins != bins.length)
-            settings.general.bins = bins.length;
-
-        console.log("33",bins.length);
-        console.log("44",settings.general.bins);    
+        console.log("general", settings.general);
+        console.log("bins.length", bins.length);
+        console.log("interval", Math.round(interval));
+        
+        if (bins.length == binsCount){
+            settings.general.binSize = Visual.roundTo(interval, 2);
+         } else if (Math.round(interval) != binSize && bins.length == binsCount){     
+             
+            interval = binSize;  
+            bins = d3.histogram().thresholds(
+                d3.range(min, max, interval)
+            )(numericalValues);
+            settings.general.bins = bins.length;       
+        }          
 
         bins.forEach((bin: LayoutBin, index: number) => {
             let filteredValues: HistogramValue[],
@@ -374,6 +383,11 @@ export class Visual implements IVisual {
             xCorrectedMax: null
         };
     }
+
+    private static roundTo(num: number, places: number) :number{
+        const factor = 10 ** places;
+        return Math.round(num * factor) / factor;
+      };
 
     private static setMinMaxForXAxis(xAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
         let maxXValue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > borderValues.minX)
@@ -778,7 +792,7 @@ export class Visual implements IVisual {
             : <HistogramSettings>HistogramSettings.getDefault();
 
         return HistogramSettings.enumerateObjectInstances(settings, options);
-    }
+        }          
 
     public isDataValid(data: HistogramData): boolean {
         if (!data
@@ -831,7 +845,7 @@ export class Visual implements IVisual {
                 return;
             }
 
-            this.updateViewportIn();
+            this.updateViewportIn();            
 
             // update Axes
             const maxWidthOfVerticalAxisLabel = Visual.getWidthOfLabel(
