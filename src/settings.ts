@@ -36,10 +36,9 @@ export class HistogramSettings extends DataViewObjectsParser {
 }
 
 export class HistogramGeneralSettings {
-    public static DefaultBins: number = null;
-    public static DefaultBinSize: number = null;
-    public static MinNumberOfBins: number = 0;
-    public static MaxNumberOfBins: number = 5000;
+    public static DefaultBins: number = 10;
+    public static DefaultBinSize: number = 1;
+    public static MinNumberOfBins: number = 1;
     public static MinBinSize: number = 1;
 
     /**
