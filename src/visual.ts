@@ -135,6 +135,11 @@ interface ILastOptions {
     binSize: number;
 }
 
+interface IBinValues {
+    binSize: number;
+    bins: LayoutBin[]
+}
+
 export class Visual implements IVisual {
     private static ClassName: string = "histogram";
 
@@ -302,41 +307,20 @@ export class Visual implements IVisual {
             numericalValues.push(value.value);
             sumFrequency += value.frequency;
         });
-
-        const [min, max] = d3.extent(numericalValues);        
         
-            if(lastDataViewOptions.bins != settings.general.bins && lastDataViewOptions.bins != 0){
-                const binsCount: number =
-                    (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
-                    ? settings.general.bins
-                    : d3.histogram()(numericalValues).length; // predict bins count for interval correction
+        if(lastDataViewOptions.bins != settings.general.bins && lastDataViewOptions.bins != 0){  
+            let binValues = Visual.GET_BIN_VALUES(settings.general.bins, 0, numericalValues);
+            bins = binValues.bins;
+            settings.general.binSize = Visual.roundTo(binValues.binSize, 2);      
+            settings.general.bins =  bins.length;      
+        }
+        else if(lastDataViewOptions.binSize != settings.general.binSize){    
+            let binValues = Visual.GET_BIN_VALUES(0, settings.general.binSize, numericalValues);
+            bins = binValues.bins;
+            settings.general.bins =  bins.length;
+        }      
 
-                let binSize: number = (max - min)/binsCount;
-                bins = Visual.createBins(min, max, binSize, numericalValues);  
-                settings.general.binSize = Visual.roundTo(binSize, 2);
-            }
-            else if(lastDataViewOptions.binSize != settings.general.binSize){         
-                let binSize = Visual.getBinSize(settings.general.binSize, (max - min));       
-                bins = Visual.createBins(min, max, binSize, numericalValues);
-                settings.general.bins =  bins.length;
-            }      
-
-        bins.forEach((bin: LayoutBin, index: number) => {
-            let filteredValues: HistogramValue[],
-                frequency: number;
-
-            filteredValues = values.filter((value: HistogramValue) => {
-                return Visual.isValueContainedInRange(value, bin, index);
-            });
-
-            frequency = filteredValues.reduce((previousValue: number, currentValue: HistogramValue): number => {
-                return previousValue + currentValue.frequency;
-            }, 0);
-
-            bin.y = settings.general.frequency
-                ? frequency
-                : frequency / sumFrequency;
-            });
+        Visual.setFrequency(bins, settings.general.frequency, values, sumFrequency);
 
         borderValues = Visual.GET_BORDER_VALUES(bins);
 
@@ -375,7 +359,7 @@ export class Visual implements IVisual {
         };
     }
 
-    private static createBins(min: number, max: number, interval: number, numericalValues: number[]) : LayoutBin[]{
+    public static CREATE_BINS(min: number, max: number, interval: number, numericalValues: number[]) : LayoutBin[]{
         return d3.histogram().thresholds(
             d3.range(min, max, interval)
         )(numericalValues);
@@ -386,14 +370,57 @@ export class Visual implements IVisual {
         return Math.round(num * factor) / factor;
       };
 
-    private static getBinSize(binSize: number, maxSize: number) :number{        
+    private static checkBinSize(binSize: number, maxSize: number) :number{     
         if ( binSize < HistogramGeneralSettings.MinBinSize) {
             binSize = HistogramGeneralSettings.MinBinSize;
         } else if (binSize > maxSize) {
             binSize = maxSize;
         }
         return binSize;
+    };   
+
+    public static GET_BIN_VALUES(binsCount: number, binSize: number, numericalValues: number[]) :IBinValues{     
+        const result: IBinValues = {
+            binSize: 0,
+            bins: []
+        };
+
+        const [min, max] = d3.extent(numericalValues); 
+        const maxBinSize: number = max - min;
+        let interval: number = 0;
+        
+        if( binsCount > 0){
+            interval = maxBinSize / binsCount;
+        }
+        else {
+            interval = Visual.checkBinSize(binSize, maxBinSize);
+        }
+
+        const bins = Visual.CREATE_BINS(min, max, interval, numericalValues);
+        result.binSize = interval;
+        result.bins = bins;
+        return result;
     };
+
+    private static setFrequency(bins: LayoutBin[], settingsFrequency: boolean, values: HistogramValue[], sumFrequency: number){
+        bins.forEach((bin: LayoutBin, index: number) => {
+            let filteredValues: HistogramValue[],
+                frequency: number;
+
+            filteredValues = values.filter((value: HistogramValue) => {
+                return Visual.isValueContainedInRange(value, bin, index);
+            });
+
+            frequency = filteredValues.reduce((previousValue: number, currentValue: HistogramValue): number => {
+                return previousValue + currentValue.frequency;
+            }, 0);
+
+            bin.y = settingsFrequency
+                ? frequency
+                : frequency / sumFrequency;
+            });
+
+    }
 
     private static setMinMaxForXAxis(xAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
         let maxXValue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > borderValues.minX)
@@ -668,7 +695,7 @@ export class Visual implements IVisual {
             settings.general.displayName = displayName;
         }
 
-        if (isNaN(bins) || bins <= HistogramGeneralSettings.MinNumberOfBins) {
+        if (isNaN(bins) || bins < HistogramGeneralSettings.MinNumberOfBins) {
             bins = HistogramGeneralSettings.DefaultBins;
         }
 

@@ -469,6 +469,32 @@ describe("HistogramChart", () => {
                 expect(visualBuilder.columns.length).toBe(bins);
             });
 
+            it("bins is defined binSize is not", () => {
+                let bins: number = 3;
+                let binSize: number = 0;
+
+                dataView.metadata.objects = {
+                    general: { binSize,  bins }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.columns.length).toBe(bins);
+            });
+
+            it("binSize is defined bins is not", () => {
+                let bins: number = 0;
+                let binSize: number = 3;
+
+                dataView.metadata.objects = {
+                    general: { binSize,  bins}
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.columns.length).toBe(bins);
+            });
+
             it("binsSize", () => {
                 let binsSize: number = 22;
 
