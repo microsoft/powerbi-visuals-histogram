@@ -43,6 +43,7 @@ import DataViewMetadataColumn = powerbi.DataViewMetadataColumn;
 import DataViewCategoryColumn = powerbi.DataViewCategoryColumn;
 import VisualObjectInstanceEnumeration = powerbi.VisualObjectInstanceEnumeration;
 import EnumerateVisualObjectInstancesOptions = powerbi.EnumerateVisualObjectInstancesOptions;
+import VisualObjectInstance = powerbi.VisualObjectInstance;
 
 // powerbi.extensibility
 import IVisual = powerbi.extensibility.IVisual;
@@ -129,6 +130,16 @@ interface ILegend {
     color: string;
 }
 
+interface ILastOptions {
+    bins: number;
+    binSize: number;
+}
+
+interface IBinValues {
+    binSize: number;
+    bins: LayoutBin[]
+}
+
 export class Visual implements IVisual {
     private static ClassName: string = "histogram";
 
@@ -175,6 +186,8 @@ export class Visual implements IVisual {
     private legend: Selection<any>;
     private columns: Selection<HistogramDataPoint>;
     private labelGraphicsContext: Selection<any>;
+    private lastBins: number;
+    private lastBinSize: number;
 
     private get columnsSelection(): Selection<HistogramDataPoint> {
         return this.main
@@ -258,7 +271,8 @@ export class Visual implements IVisual {
         dataView: DataView,
         visualHost: IVisualHost,
         localizationManager: ILocalizationManager,
-        colorHelper: ColorHelper
+        colorHelper: ColorHelper,
+        lastDataViewOptions: ILastOptions
     ): HistogramData {
 
         let settings: HistogramSettings,
@@ -293,35 +307,20 @@ export class Visual implements IVisual {
             numericalValues.push(value.value);
             sumFrequency += value.frequency;
         });
+        
+        if(lastDataViewOptions.bins != settings.general.bins && lastDataViewOptions.bins != 0){  
+            let binValues = Visual.GET_BIN_VALUES(settings.general.bins, 0, numericalValues);
+            bins = binValues.bins;
+            settings.general.binSize = Visual.roundTo(binValues.binSize, 2);      
+            settings.general.bins =  bins.length;      
+        }
+        else if(lastDataViewOptions.binSize != settings.general.binSize){    
+            let binValues = Visual.GET_BIN_VALUES(0, settings.general.binSize, numericalValues);
+            bins = binValues.bins;
+            settings.general.bins =  bins.length;
+        }      
 
-        const [min, max] = d3.extent(numericalValues);
-
-        const binsCount: number =
-            (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
-            ? settings.general.bins
-            : d3.histogram()(numericalValues).length; // predict bins count for interval correction
-        const interval: number = (max - min) / binsCount;
-
-        bins = d3.histogram().thresholds(
-            d3.range(min, max, interval)
-        )(numericalValues);
-
-        bins.forEach((bin: LayoutBin, index: number) => {
-            let filteredValues: HistogramValue[],
-                frequency: number;
-
-            filteredValues = values.filter((value: HistogramValue) => {
-                return Visual.isValueContainedInRange(value, bin, index);
-            });
-
-            frequency = filteredValues.reduce((previousValue: number, currentValue: HistogramValue): number => {
-                return previousValue + currentValue.frequency;
-            }, 0);
-
-            bin.y = settings.general.frequency
-                ? frequency
-                : frequency / sumFrequency;
-            });
+        Visual.setFrequency(bins, settings.general.frequency, values, sumFrequency);
 
         borderValues = Visual.GET_BORDER_VALUES(bins);
 
@@ -358,6 +357,69 @@ export class Visual implements IVisual {
             xCorrectedMin: null,
             xCorrectedMax: null
         };
+    }
+
+    public static CREATE_BINS(min: number, max: number, interval: number, numericalValues: number[]) : LayoutBin[]{
+        return d3.histogram().thresholds(
+            d3.range(min, max, interval)
+        )(numericalValues);
+    }
+
+    private static roundTo(num: number, places: number) :number{
+        const factor = 10 ** places;
+        return Math.round(num * factor) / factor;
+      };
+
+    private static checkBinSize(binSize: number, maxSize: number) :number{     
+        if ( binSize < HistogramGeneralSettings.MinBinSize) {
+            binSize = HistogramGeneralSettings.MinBinSize;
+        } else if (binSize > maxSize) {
+            binSize = maxSize;
+        }
+        return binSize;
+    };   
+
+    public static GET_BIN_VALUES(binsCount: number, binSize: number, numericalValues: number[]) :IBinValues{     
+        const result: IBinValues = {
+            binSize: 0,
+            bins: []
+        };
+
+        const [min, max] = d3.extent(numericalValues); 
+        const maxBinSize: number = max - min;
+        let interval: number = 0;
+        
+        if( binsCount > 0){
+            interval = maxBinSize / binsCount;
+        }
+        else {
+            interval = Visual.checkBinSize(binSize, maxBinSize);
+        }
+
+        const bins = Visual.CREATE_BINS(min, max, interval, numericalValues);
+        result.binSize = interval;
+        result.bins = bins;
+        return result;
+    };
+
+    private static setFrequency(bins: LayoutBin[], settingsFrequency: boolean, values: HistogramValue[], sumFrequency: number){
+        bins.forEach((bin: LayoutBin, index: number) => {
+            let filteredValues: HistogramValue[],
+                frequency: number;
+
+            filteredValues = values.filter((value: HistogramValue) => {
+                return Visual.isValueContainedInRange(value, bin, index);
+            });
+
+            frequency = filteredValues.reduce((previousValue: number, currentValue: HistogramValue): number => {
+                return previousValue + currentValue.frequency;
+            }, 0);
+
+            bin.y = settingsFrequency
+                ? frequency
+                : frequency / sumFrequency;
+            });
+
     }
 
     private static setMinMaxForXAxis(xAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
@@ -625,21 +687,22 @@ export class Visual implements IVisual {
             && dataView.metadata.columns[0]
             && dataView.metadata.columns[0].displayName
         ) || null;
-
+            
         let bins: number = Math.round(settings.general.bins);
+        let binSize: number = Math.round(settings.general.binSize);
 
         if (displayName) {
             settings.general.displayName = displayName;
         }
 
-        if (isNaN(bins) || bins <= HistogramGeneralSettings.MinNumberOfBins) {
+        if (isNaN(bins) || bins < HistogramGeneralSettings.MinNumberOfBins) {
             bins = HistogramGeneralSettings.DefaultBins;
-        } else if (bins > HistogramGeneralSettings.MaxNumberOfBins) {
-            bins = HistogramGeneralSettings.MaxNumberOfBins;
         }
 
         settings.general.bins = bins;
+        settings.general.binSize = binSize;
 
+        
         settings.dataPoint.fill = colorHelper.getHighContrastColor("foreground", settings.dataPoint.fill);
 
         settings.xAxis.precision = Visual.getPrecision(settings.xAxis.precision);
@@ -758,9 +821,9 @@ export class Visual implements IVisual {
         const settings: HistogramSettings = this.data && this.data.settings
             ? this.data.settings
             : <HistogramSettings>HistogramSettings.getDefault();
-
+        
         return HistogramSettings.enumerateObjectInstances(settings, options);
-    }
+        }          
 
     public isDataValid(data: HistogramData): boolean {
         if (!data
@@ -778,7 +841,7 @@ export class Visual implements IVisual {
         });
     }
 
-    public update(options: VisualUpdateOptions): void {
+    public update(options: VisualUpdateOptions): void {        
         let dataView = options.dataViews[0];
         if (!dataView
             || !dataView.categorical
@@ -790,84 +853,83 @@ export class Visual implements IVisual {
             return null;
         }
 
-        try {
-            this.events.renderingStarted(options);
+        this.events.renderingStarted(options);
 
-            const dataView: DataView = options.dataViews[0];
+        this.setViewportSize(options.viewport);
 
-            this.setViewportSize(options.viewport);
+        this.updateElements(
+            Math.max(options.viewport.height, Default.MinViewportSize),
+            Math.max(options.viewport.width, Default.MinViewportSize));
 
-            this.updateElements(
-                Math.max(options.viewport.height, Default.MinViewportSize),
-                Math.max(options.viewport.width, Default.MinViewportSize));
+        this.data = Visual.CONVERTER(
+            dataView,
+            this.visualHost,
+            this.localizationManager,
+            this.colorHelper,
+            { bins: this.lastBins, binSize: this.lastBinSize}
+        );
 
-            this.data = Visual.CONVERTER(
-                dataView,
-                this.visualHost,
-                this.localizationManager,
-                this.colorHelper
-            );
-
-            if (!this.isDataValid(this.data)) {
-                this.clear();
-                return;
-            }
-
-            this.updateViewportIn();
-
-            // update Axes
-            const maxWidthOfVerticalAxisLabel = Visual.getWidthOfLabel(
-                this.data.borderValues.maxY,
-                this.data.yLabelFormatter),
-            maxWidthOfHorizontalAxisLabel = Visual.getWidthOfLabel(
-                this.data.borderValues.maxX,
-                this.data.xLabelFormatter),
-            maxHeightOfVerticalAxisLabel = Visual.getHeightOfLabel(
-                this.data.borderValues.maxX,
-                this.data.xLabelFormatter),
-            ySource = dataView.categorical.values &&
-                dataView.categorical.values[0] &&
-                dataView.categorical.values[0].values
-                ? dataView.categorical.values[0].source
-                : dataView.categorical.categories[0].source,
-            xSource = dataView.categorical.categories[0].source;
-
-            this.createScales();
-
-            this.yAxisProperties = this.calculateYAxes(ySource, maxHeightOfVerticalAxisLabel);
-            this.renderYAxis();
-
-            this.updateViewportIn(maxWidthOfVerticalAxisLabel);
-            this.createScales();
-
-            this.xAxisProperties = this.calculateXAxes(xSource, maxWidthOfHorizontalAxisLabel, false);
-            this.renderXAxis();
-
-            this.columnsAndAxesTransform(maxWidthOfVerticalAxisLabel);
-
-            this.createScales();
-            this.applySelectionStateToData();
-
-            // render
-            const columnsSelection: Selection<any> = this.renderColumns();
-
-            this.tooltipServiceWrapper.addTooltip(
-                columnsSelection,
-                (eventArgs: TooltipEventArgs<HistogramDataPoint>) => eventArgs.data.tooltipInfo
-            );
-
-            this.bindSelectionHandler(columnsSelection);
-
-            this.renderLegend();
-
-            this.renderLabels();
-
-            this.events.renderingFinished(options);
+        if (!this.isDataValid(this.data)) {
+            this.clear();
+            return;
         }
-        catch (e) {
-            console.error(e);
-            this.events.renderingFailed(options);
-        }
+
+        this.updateViewportIn();            
+
+        // update Axes
+        const maxWidthOfVerticalAxisLabel = Visual.getWidthOfLabel(
+            this.data.borderValues.maxY,
+            this.data.yLabelFormatter),
+        maxWidthOfHorizontalAxisLabel = Visual.getWidthOfLabel(
+            this.data.borderValues.maxX,
+            this.data.xLabelFormatter),
+        maxHeightOfVerticalAxisLabel = Visual.getHeightOfLabel(
+            this.data.borderValues.maxX,
+            this.data.xLabelFormatter),
+        ySource = dataView.categorical.values &&
+            dataView.categorical.values[0] &&
+            dataView.categorical.values[0].values
+            ? dataView.categorical.values[0].source
+            : dataView.categorical.categories[0].source,
+        xSource = dataView.categorical.categories[0].source;
+
+        this.createScales();
+
+        this.yAxisProperties = this.calculateYAxes(ySource, maxHeightOfVerticalAxisLabel);
+        this.renderYAxis();
+
+        this.updateViewportIn(maxWidthOfVerticalAxisLabel);
+        this.createScales();
+
+        this.xAxisProperties = this.calculateXAxes(xSource, maxWidthOfHorizontalAxisLabel, false);
+        this.renderXAxis();
+
+        this.columnsAndAxesTransform(maxWidthOfVerticalAxisLabel);
+
+        this.createScales();
+        this.applySelectionStateToData();
+
+        // render
+        const columnsSelection: Selection<any> = this.renderColumns();
+
+        this.tooltipServiceWrapper.addTooltip(
+            columnsSelection,
+            (eventArgs: TooltipEventArgs<HistogramDataPoint>) => eventArgs.data.tooltipInfo
+        );
+
+        this.bindSelectionHandler(columnsSelection);
+
+        this.renderLegend();
+
+        this.renderLabels();
+
+        this.events.renderingFinished(options);
+
+        this.lastBins = (dataView && dataView.metadata.objects && dataView.metadata.objects.general && dataView.metadata.objects.general.bins) ?
+        <number>dataView.metadata.objects.general.bins : 0;
+            
+        this.lastBinSize = (dataView && dataView.metadata.objects && dataView.metadata.objects.general && dataView.metadata.objects.general.binSize) ?
+        <number>(dataView.metadata.objects.general.binSize) : 0;
     }
 
     public destroy(): void {

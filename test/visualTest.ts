@@ -468,6 +468,51 @@ describe("HistogramChart", () => {
 
                 expect(visualBuilder.columns.length).toBe(bins);
             });
+
+            it("bins is defined binSize is not", () => {
+                let bins: number = 3;
+                let binSize: number = 0;
+
+                dataView.metadata.objects = {
+                    general: { binSize,  bins }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.columns.length).toBe(bins);
+            });
+
+            it("binSize is defined bins is not", () => {
+                let bins: number = 0;
+                let binSize: number = 3;
+
+                dataView.metadata.objects = {
+                    general: { binSize,  bins}
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.columns.length).toBe(bins);
+            });
+
+            it("binsSize", () => {
+                let binsSize: number = 22;
+
+                dataView.metadata.objects = {
+                    general: { binsSize }
+                };
+
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.columns.length).toBe(binsSize);
+
+                binsSize = 12;
+
+                (dataView.metadata.objects as any).general.binsSize = binsSize;
+                visualBuilder.updateFlushAllD3Transitions(dataView);
+
+                expect(visualBuilder.columns.length).toBe(binsSize);
+            });
         });
 
         describe("Data colors", () => {
