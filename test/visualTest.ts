@@ -41,7 +41,7 @@ import { assertColorsMatch } from "powerbi-visuals-utils-testutils";
 
 import { Visual as VisualClass } from "../src/visual";
 import { HistogramDataPoint } from "../src/dataInterfaces";
-import { HistogramAxisStyle } from "../src/settings";
+import { HistogramAxisStyle, HistogramGeneralSettings } from "../src/settings";
 import * as histogramUtils from "../src/utils";
 import * as Default from "../src/constants";
 
@@ -454,7 +454,7 @@ describe("HistogramChart", () => {
                 let bins: number = 3;
 
                 dataView.metadata.objects = {
-                    general: { bins }
+                    general: { bins: bins }
                 };
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
@@ -468,6 +468,87 @@ describe("HistogramChart", () => {
 
                 expect(visualBuilder.columns.length).toBe(bins);
             });
+
+            it("bins count change triggers update of bin size", () => {
+                VisualClass.CurrentBinsCount = 5;
+                VisualClass.CurrentBinSize = 0.6;
+
+                let binsCount: number = 4;
+                let isBinSizeEnabled = true;
+                let numericalValues: number[] = [3, 4, 5, 6];
+
+                dataView.metadata.objects = {
+                    general: { 
+                        bins: binsCount,
+                        binSize: VisualClass.CurrentBinSize,
+                        isBinSizeEnabled: isBinSizeEnabled
+                    }
+                };
+
+                let binsSettings = VisualClass.GET_BINS_SETTINGS(binsCount, VisualClass.CurrentBinSize, isBinSizeEnabled, numericalValues);
+
+                expect(binsSettings.shouldUpdateBinSize).toBe(true);
+                expect(binsSettings.binValues.binSize).toBe(0.75);
+                expect(binsSettings.binValues.bins.length).toBe(4);
+            });
+
+            it("bin size change triggers update of bins count", () => {
+                VisualClass.CurrentBinsCount = 5;
+                VisualClass.CurrentBinSize = 0.6;
+
+                let binSize: number = 2;
+                let isBinSizeEnabled = true;
+                let numericalValues: number[] = [3, 4, 5, 6];
+
+                dataView.metadata.objects = {
+                    general: { 
+                        bins: VisualClass.CurrentBinsCount,
+                        binSize: binSize,
+                        isBinSizeEnabled: isBinSizeEnabled
+                    }
+                };
+
+                let binsSettings = VisualClass.GET_BINS_SETTINGS(VisualClass.CurrentBinsCount, binSize, isBinSizeEnabled, numericalValues);
+
+                expect(binsSettings.shouldUpdateBinSize).toBe(false);
+                expect(binsSettings.binValues.binSize).toBe(2);
+                expect(binsSettings.binValues.bins.length).toBe(2);
+            });
+
+            for (let { name, count } of [
+                {
+                    name: 'zero',
+                    count: 0
+                }, 
+                {
+                    name: 'negative',
+                    count: -5
+                }
+            ]) {
+                it(`if bins count is ${name} bin size is changed to default value`, () => {
+                    VisualClass.CurrentBinsCount = 5;
+                    VisualClass.CurrentBinSize = 0.6;
+    
+                    let binsCount: number = count;
+                    let isBinSizeEnabled = true;
+                    let numericalValues: number[] = [3, 4, 5, 6];
+    
+                    dataView.metadata.objects = {
+                        general: { 
+                            bins: binsCount,
+                            binSize: VisualClass.CurrentBinSize,
+                            isBinSizeEnabled: isBinSizeEnabled
+                        }
+                    };
+    
+                    let binsSettings = VisualClass.GET_BINS_SETTINGS(binsCount, VisualClass.CurrentBinSize, isBinSizeEnabled, numericalValues);
+                    let expectedInterval = Math.max(...numericalValues) - Math.min(...numericalValues);
+    
+                    expect(binsSettings.shouldUpdateBinSize).toBe(true);
+                    expect(binsSettings.binValues.binSize).toBe(HistogramGeneralSettings.MinBinSize);
+                    expect(binsSettings.binValues.bins.length).toBe(expectedInterval);
+                });
+            }
         });
 
         describe("Data colors", () => {

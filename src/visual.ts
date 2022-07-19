@@ -161,8 +161,8 @@ export class Visual implements IVisual {
 
     private static LabelGraphicsContext: ClassAndSelector = createClassAndSelector("labelGraphicsContext");
 
-    private static CurrentBinSize: number = HistogramGeneralSettings.DefaultBinSize;
-    private static CurrentBinsCount: number = HistogramGeneralSettings.DefaultBins;
+    public static CurrentBinSize: number = HistogramGeneralSettings.DefaultBinSize;
+    public static CurrentBinsCount: number = HistogramGeneralSettings.DefaultBins;
     
     private events: IVisualEventService;
     private tooltipServiceWrapper: ITooltipServiceWrapper;
@@ -312,8 +312,17 @@ export class Visual implements IVisual {
             numericalValues.push(value.value);
             sumFrequency += value.frequency;
         });
+
+        const binsCount: number =
+            (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
+            ? settings.general.bins
+            : d3.histogram()(numericalValues).length; // predict bins count for interval correction
+
+        const binSize = settings.general.binSize 
+            ? settings.general.binSize 
+            : HistogramGeneralSettings.DefaultBinSize;
     
-        const { binValues, shouldUpdateBinSize } = Visual.getBinSettings(settings.general, numericalValues);
+        const { binValues, shouldUpdateBinSize } = Visual.GET_BINS_SETTINGS(binsCount, binSize, settings.general.isBinSizeEnabled, numericalValues);
 
         bins = binValues.bins;
         settings.general.bins = binValues.bins.length;
@@ -364,22 +373,19 @@ export class Visual implements IVisual {
         };
     }
 
-    private static getBinSettings = (generalSettings: HistogramGeneralSettings, numericalValues: number[]): IBinSettings => {
-        const binsCount: number =
-            (generalSettings.bins && generalSettings.bins > HistogramGeneralSettings.MinNumberOfBins)
-            ? generalSettings.bins
-            : d3.histogram()(numericalValues).length; // predict bins count for interval correction
-
-        const binSize = generalSettings.binSize 
-            ? generalSettings.binSize 
-            : HistogramGeneralSettings.DefaultBinSize;
+    public static GET_BINS_SETTINGS = (
+        binsCount: number, 
+        binSize: number, 
+        isBinSizeEnabled: boolean, 
+        numericalValues: number[]
+    ): IBinSettings => {
 
         if (binsCount !== Visual.CurrentBinsCount) {
             return {
                 binValues: Visual.getBinValues(binsCount, 0, numericalValues),
                 shouldUpdateBinSize: true
             }
-        } else if (binSize !== Visual.CurrentBinSize && binSize !== 0 && generalSettings.isBinSizeEnabled) {
+        } else if (binSize !== Visual.CurrentBinSize && binSize !== 0 && isBinSizeEnabled) {
             return {
                 binValues: Visual.getBinValues(0, binSize, numericalValues),
                 shouldUpdateBinSize: false
