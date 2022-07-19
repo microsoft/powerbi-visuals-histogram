@@ -161,8 +161,8 @@ export class Visual implements IVisual {
 
     private static LabelGraphicsContext: ClassAndSelector = createClassAndSelector("labelGraphicsContext");
 
-    private static currentBinSize: number = HistogramGeneralSettings.DefaultBinSize;
-    private static currentBinsCount: number = HistogramGeneralSettings.DefaultBins;
+    private static CurrentBinSize: number = HistogramGeneralSettings.DefaultBinSize;
+    private static CurrentBinsCount: number = HistogramGeneralSettings.DefaultBins;
     
     private events: IVisualEventService;
     private tooltipServiceWrapper: ITooltipServiceWrapper;
@@ -314,7 +314,7 @@ export class Visual implements IVisual {
         });
     
         const { binValues, shouldUpdateBinSize } = Visual.getBinSettings(settings.general, numericalValues);
-debugger
+
         bins = binValues.bins;
         settings.general.bins = binValues.bins.length;
 
@@ -322,8 +322,8 @@ debugger
             settings.general.binSize = Visual.roundTo(binValues.binSize, 2);
         }
 
-        Visual.currentBinSize = settings.general.binSize;
-        Visual.currentBinsCount = settings.general.bins;
+        Visual.CurrentBinSize = settings.general.binSize;
+        Visual.CurrentBinsCount = settings.general.bins;
         
         Visual.setFrequency(bins, settings.general.frequency, values, sumFrequency);
 
@@ -369,24 +369,24 @@ debugger
             (generalSettings.bins && generalSettings.bins > HistogramGeneralSettings.MinNumberOfBins)
             ? generalSettings.bins
             : d3.histogram()(numericalValues).length; // predict bins count for interval correction
-debugger
+
         const binSize = generalSettings.binSize 
             ? generalSettings.binSize 
             : HistogramGeneralSettings.DefaultBinSize;
 
-        if (binsCount !== Visual.currentBinsCount) {
+        if (binsCount !== Visual.CurrentBinsCount) {
             return {
                 binValues: Visual.getBinValues(binsCount, 0, numericalValues),
                 shouldUpdateBinSize: true
             }
-        } else if (binSize !== Visual.currentBinSize && binSize !== 0 && generalSettings.isBinSizeEnabled) {
+        } else if (binSize !== Visual.CurrentBinSize && binSize !== 0 && generalSettings.isBinSizeEnabled) {
             return {
                 binValues: Visual.getBinValues(0, binSize, numericalValues),
                 shouldUpdateBinSize: false
             }
         } else {
             return {
-                binValues: Visual.getBinValues(Visual.currentBinsCount, Visual.currentBinSize, numericalValues),
+                binValues: Visual.getBinValues(Visual.CurrentBinsCount, Visual.CurrentBinSize, numericalValues),
                 shouldUpdateBinSize: false
             }
         }
