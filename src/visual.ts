@@ -133,6 +133,7 @@ interface IPaneProperties {
     binsCount: number,
     binSize: number,
     isBinSizeEnabled: boolean,
+    frequency: boolean,
 }
 
 interface IBinValues {
@@ -912,6 +913,7 @@ export class Visual implements IVisual {
                 binsCount: this.data.settings.general.bins,
                 binSize: this.data.settings.general.binSize,
                 isBinSizeEnabled: this.data.settings.general.isBinSizeEnabled,
+                frequency: this.data.settings.general.frequency,
             }
             
             this.persistProperties(propertiesToPersist);
@@ -985,7 +987,8 @@ export class Visual implements IVisual {
                     properties: {
                         bins: properties.binsCount,
                         isBinSizeEnabled: properties.isBinSizeEnabled,
-                        binSize: properties.binSize
+                        binSize: properties.binSize,
+                        frequency: properties.frequency,
                     }
                 }]
         };
