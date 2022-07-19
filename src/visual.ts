@@ -129,6 +129,22 @@ interface ILegend {
     color: string;
 }
 
+interface IPaneProperties {
+    binsCount: number,
+    binSize: number,
+    isBinSizeEnabled: boolean,
+}
+
+interface IBinValues {
+    bins: LayoutBin[],
+    binSize: number;
+}
+
+interface IBinSettings {
+    binValues: IBinValues,
+    shouldUpdateBinSize: boolean;
+}
+
 export class Visual implements IVisual {
     private static ClassName: string = "histogram";
 
@@ -145,6 +161,9 @@ export class Visual implements IVisual {
 
     private static LabelGraphicsContext: ClassAndSelector = createClassAndSelector("labelGraphicsContext");
 
+    private static currentBinSize: number = HistogramGeneralSettings.DefaultBinSize;
+    private static currentBinsCount: number = HistogramGeneralSettings.DefaultBins;
+    
     private events: IVisualEventService;
     private tooltipServiceWrapper: ITooltipServiceWrapper;
 
@@ -282,7 +301,7 @@ export class Visual implements IVisual {
 
         frequencies = Visual.GET_FREQUENCIES(dataView.categorical);
 
-        let values:  HistogramValue[] = Visual.getValuesByFrequencies(
+        let values: HistogramValue[] = Visual.getValuesByFrequencies(
             visualHost,
             categoryColumn,
             sourceValues,
@@ -293,35 +312,20 @@ export class Visual implements IVisual {
             numericalValues.push(value.value);
             sumFrequency += value.frequency;
         });
+    
+        const { binValues, shouldUpdateBinSize } = Visual.getBinSettings(settings.general, numericalValues);
+debugger
+        bins = binValues.bins;
+        settings.general.bins = binValues.bins.length;
 
-        const [min, max] = d3.extent(numericalValues);
+        if (shouldUpdateBinSize) {
+            settings.general.binSize = Visual.roundTo(binValues.binSize, 2);
+        }
 
-        const binsCount: number =
-            (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
-            ? settings.general.bins
-            : d3.histogram()(numericalValues).length; // predict bins count for interval correction
-        const interval: number = (max - min) / binsCount;
-
-        bins = d3.histogram().thresholds(
-            d3.range(min, max, interval)
-        )(numericalValues);
-
-        bins.forEach((bin: LayoutBin, index: number) => {
-            let filteredValues: HistogramValue[],
-                frequency: number;
-
-            filteredValues = values.filter((value: HistogramValue) => {
-                return Visual.isValueContainedInRange(value, bin, index);
-            });
-
-            frequency = filteredValues.reduce((previousValue: number, currentValue: HistogramValue): number => {
-                return previousValue + currentValue.frequency;
-            }, 0);
-
-            bin.y = settings.general.frequency
-                ? frequency
-                : frequency / sumFrequency;
-            });
+        Visual.currentBinSize = settings.general.binSize;
+        Visual.currentBinsCount = settings.general.bins;
+        
+        Visual.setFrequency(bins, settings.general.frequency, values, sumFrequency);
 
         borderValues = Visual.GET_BORDER_VALUES(bins);
 
@@ -359,6 +363,85 @@ export class Visual implements IVisual {
             xCorrectedMax: null
         };
     }
+
+    private static getBinSettings = (generalSettings: HistogramGeneralSettings, numericalValues: number[]): IBinSettings => {
+        const binsCount: number =
+            (generalSettings.bins && generalSettings.bins > HistogramGeneralSettings.MinNumberOfBins)
+            ? generalSettings.bins
+            : d3.histogram()(numericalValues).length; // predict bins count for interval correction
+debugger
+        const binSize = generalSettings.binSize 
+            ? generalSettings.binSize 
+            : HistogramGeneralSettings.DefaultBinSize;
+
+        if (binsCount !== Visual.currentBinsCount) {
+            return {
+                binValues: Visual.getBinValues(binsCount, 0, numericalValues),
+                shouldUpdateBinSize: true
+            }
+        } else if (binSize !== Visual.currentBinSize && binSize !== 0 && generalSettings.isBinSizeEnabled) {
+            return {
+                binValues: Visual.getBinValues(0, binSize, numericalValues),
+                shouldUpdateBinSize: false
+            }
+        } else {
+            return {
+                binValues: Visual.getBinValues(Visual.currentBinsCount, Visual.currentBinSize, numericalValues),
+                shouldUpdateBinSize: false
+            }
+        }
+    }
+
+    private static getBinValues(binsCount: number, binSize: number, numericalValues: number[]): IBinValues {
+        const [min, max] = d3.extent(numericalValues);
+        const maxBinSize = max - min;
+
+        const getBinSize = (): number => {     
+            if (binSize < HistogramGeneralSettings.MinBinSize) {
+                return HistogramGeneralSettings.MinBinSize;
+            }  
+            else if (binSize > maxBinSize) {
+                return maxBinSize;
+            }
+
+            return binSize;
+        };   
+
+        const interval: number = binsCount > 0 
+            ? (max - min) / binsCount
+            : getBinSize();
+
+        const bins = d3.histogram().thresholds(d3.range(min, max, interval))(numericalValues); 
+
+        return {
+            bins: bins,
+            binSize: interval
+        };
+    }
+
+    private static setFrequency(bins: LayoutBin[], settingsFrequency: boolean, values: HistogramValue[], sumFrequency: number) { 
+        bins.forEach((bin: LayoutBin, index: number) => {
+            let filteredValues: HistogramValue[],
+                frequency: number;
+
+            filteredValues = values.filter((value: HistogramValue) => {
+                return Visual.isValueContainedInRange(value, bin, index);
+            });
+
+            frequency = filteredValues.reduce((previousValue: number, currentValue: HistogramValue): number => {
+                return previousValue + currentValue.frequency;
+            }, 0);
+
+            bin.y = settingsFrequency
+                ? frequency
+                : frequency / sumFrequency;
+            });
+    }
+
+    private static roundTo (number: number, places: number): number {
+        const factor = 10 ** places;
+        return Math.round(number * factor) / factor;
+    };
 
     private static setMinMaxForXAxis(xAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
         let maxXValue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > borderValues.minX)
@@ -627,18 +710,20 @@ export class Visual implements IVisual {
         ) || null;
 
         let bins: number = Math.round(settings.general.bins);
+        let binSize: number = Visual.roundTo(settings.general.binSize, 2);
 
         if (displayName) {
             settings.general.displayName = displayName;
         }
 
-        if (isNaN(bins) || bins <= HistogramGeneralSettings.MinNumberOfBins) {
+        if (isNaN(bins) || bins < HistogramGeneralSettings.MinNumberOfBins) {
             bins = HistogramGeneralSettings.DefaultBins;
         } else if (bins > HistogramGeneralSettings.MaxNumberOfBins) {
             bins = HistogramGeneralSettings.MaxNumberOfBins;
         }
 
         settings.general.bins = bins;
+        settings.general.binSize = binSize;
 
         settings.dataPoint.fill = colorHelper.getHighContrastColor("foreground", settings.dataPoint.fill);
 
@@ -759,6 +844,10 @@ export class Visual implements IVisual {
             ? this.data.settings
             : <HistogramSettings>HistogramSettings.getDefault();
 
+        if (!this.data.settings.general.isBinSizeEnabled) {
+            delete this.data.settings.general.binSize;
+        }
+
         return HistogramSettings.enumerateObjectInstances(settings, options);
     }
 
@@ -811,8 +900,15 @@ export class Visual implements IVisual {
             if (!this.isDataValid(this.data)) {
                 this.clear();
                 return;
-            }
+            }   
 
+            const propertiesToPersist: IPaneProperties = {
+                binsCount: this.data.settings.general.bins,
+                binSize: this.data.settings.general.binSize,
+                isBinSizeEnabled: this.data.settings.general.isBinSizeEnabled,
+            }
+            
+            this.persistProperties(propertiesToPersist);
             this.updateViewportIn();
 
             // update Axes
@@ -872,6 +968,23 @@ export class Visual implements IVisual {
 
     public destroy(): void {
         this.root = null;
+    }
+
+    private persistProperties(properties: IPaneProperties) {
+        const objectToPersist: powerbi.VisualObjectInstancesToPersist = {
+            replace: [
+                {
+                    objectName: "general",
+                    selector: undefined,
+                    properties: {
+                        bins: properties.binsCount,
+                        isBinSizeEnabled: properties.isBinSizeEnabled,
+                        binSize: properties.binSize
+                    }
+                }]
+        };
+        
+        this.visualHost.persistProperties(objectToPersist);
     }
 
     private applySelectionStateToData(): void {

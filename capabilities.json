@@ -69,6 +69,20 @@
                         "numeric": true
                     }
                 },
+                "isBinSizeEnabled": {
+                    "displayName": "Enable Bin Size",
+                    "displayNameKey": "Visual__General_IsBinSizeEnabled",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "binSize": {
+                    "displayName": "Bin Size",
+                    "displayNameKey": "Visual_General_BinSize",
+                    "type": {
+                        "numeric": true
+                    }
+                },
                 "frequency": {
                     "displayName": "Frequency",
                     "displayNameKey": "Visual_Frequency",
