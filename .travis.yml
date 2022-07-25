@@ -8,9 +8,9 @@ node_js:
 install:
   - npm install
 script:
-  - pwd && ls -la
   - npm run lint
   - npm run test
+  - pwd && ls -la
 after_success:
   - node node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
 notifications:
