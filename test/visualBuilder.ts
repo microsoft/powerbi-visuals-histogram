@@ -47,7 +47,7 @@ export class HistogramChartBuilder extends VisualBuilderBase<VisualClass> {
     }
 
     public get mainElement(): JQuery {
-        return this.element.children("svg.histogram");
+        return $(this.element).children("svg.histogram");
     }
 
     public get labelsContainer(): JQuery {

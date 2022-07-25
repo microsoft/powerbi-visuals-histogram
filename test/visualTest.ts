@@ -67,7 +67,7 @@ describe("HistogramChart", () => {
         it("update", (done) => {
             visualBuilder.updateRenderTimeout(dataView, () => {
                 const binsNumber: number = d3.histogram()(
-                    dataView.categorical.categories[0].values as number[]
+                    dataView.categorical!.categories![0].values as number[]
                 ).length;
 
                 expect(visualBuilder.mainElement.find(".column").length).toBe(binsNumber);
@@ -77,12 +77,12 @@ describe("HistogramChart", () => {
         });
 
         it("update with one category", (done) => {
-            dataView.categorical.categories[0].values = [1];
-            dataView.categorical.values = null;
+            dataView.categorical!.categories![0].values = [1];
+            dataView.categorical!.values = undefined;
 
             visualBuilder.updateRenderTimeout(dataView, () => {
                 const binsNumber: number = d3.histogram()(
-                    dataView.categorical.categories[0].values as number[]
+                    dataView.categorical!.categories![0].values as number[]
                 ).length;
 
                 expect(visualBuilder.mainElement.find(".column").length).toBe(binsNumber);
@@ -157,8 +157,8 @@ describe("HistogramChart", () => {
             visualBuilder.updateRenderTimeout(dataView, () => {
                 const labels: JQuery = visualBuilder.xAxis.find(".tick text");
 
-                expectTextContainsThreeDots(labels.get(0).textContent );
-                expectTextContainsThreeDots(labels.get(labels.length - 1).textContent);
+                expectTextContainsThreeDots(labels.get(0)?.textContent ?? "");
+                expectTextContainsThreeDots(labels.get(labels.length - 1)?.textContent ?? "");
 
                 done();
             });
@@ -211,7 +211,7 @@ describe("HistogramChart", () => {
         it("Y-axis start is undefined validation", () => {
             dataView.metadata.objects = {
                 yAxis: {
-                    start: undefined,
+                    start: {},
                     end: 78
                 }
             };
@@ -225,7 +225,7 @@ describe("HistogramChart", () => {
             dataView.metadata.objects = {
                 yAxis: {
                     start: 0,
-                    end: undefined
+                    end: {}
                 }
             };
 
@@ -861,12 +861,12 @@ describe("HistogramChart", () => {
         });
 
         function createCategoryColumn(
-            isInteger: boolean = undefined,
-            isNumeric: boolean = undefined): DataViewCategoryColumn {
+            isInteger: boolean | undefined = undefined,
+            isNumeric: boolean | undefined = undefined): DataViewCategoryColumn {
 
             return {
                 source: {
-                    displayName: undefined,
+                    displayName: "",
                     type: {
                         integer: isInteger,
                         numeric: isNumeric
@@ -901,10 +901,12 @@ describe("HistogramChart", () => {
         });
 
         function checkCorrectYAxisValue(
-            actualValue: number,
+            actualValue: number | undefined,
             expectedValue: number): void {
 
-            const value: number = VisualClass.GET_CORRECT_Y_AXIS_VALUE(actualValue);
+            const value: number = actualValue
+                ? VisualClass.GET_CORRECT_Y_AXIS_VALUE(actualValue)
+                : 0;
 
             expect(value).toBe(expectedValue);
         }
@@ -934,10 +936,12 @@ describe("HistogramChart", () => {
         });
 
         function checkCorrectXAxisValue(
-            actualValue: number,
+            actualValue: number | undefined,
             expectedValue: number): void {
 
-            const value: number = VisualClass.GET_CORRECT_X_AXIS_VALUE(actualValue);
+            const value: number = actualValue
+                ? VisualClass.GET_CORRECT_X_AXIS_VALUE(actualValue)
+                : 0;
 
             expect(value).toBe(expectedValue);
         }
@@ -986,12 +990,12 @@ describe("HistogramChart", () => {
             }
 
             function createDataPoint(selected: boolean, highlight: boolean): HistogramDataPoint {
-                let dataPoint: HistogramDataPoint = <HistogramDataPoint>[];
+                let dataPoint: HistogramDataPoint = <HistogramDataPoint>{};
 
                 dataPoint.subDataPoints = [{
                     selected: selected,
                     highlight: highlight,
-                    identity: null
+                    identity: {}
                 }];
 
                 return dataPoint;
@@ -1068,7 +1072,7 @@ describe("HistogramChart", () => {
 
             function isColorAppliedToElements(
                 elements: JQuery[],
-                color?: string,
+                color?: string | null,
                 colorStyleName: string = "fill"
             ): boolean {
                 return elements.some((element: JQuery) => {

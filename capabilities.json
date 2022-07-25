@@ -1,5 +1,6 @@
 {
     "supportsHighlight": true,
+    "privileges": [],
     "dataRoles": [
         {
             "name": "Values",

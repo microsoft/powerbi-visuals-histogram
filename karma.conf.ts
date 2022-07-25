@@ -48,7 +48,6 @@ module.exports = (config) => {
         reporters: [
             "progress",
             "coverage",
-            "karma-remap-istanbul"
         ],
         singleRun: true,
         files: [
