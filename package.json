@@ -15,7 +15,7 @@
     "package": "pbiviz package",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "pretest": "pbiviz package --resources --no-minify --no-pbiviz --no-plugin",
-    "test": "npm run lint && karma start",
+    "test": "karma start",
     "cert": "pbiviz --create-cert"
   },
   "author": {
