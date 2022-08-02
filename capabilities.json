@@ -72,7 +72,7 @@
                 },
                 "isBinSizeEnabled": {
                     "displayName": "Enable Bin Size",
-                    "displayNameKey": "Visual__General_IsBinSizeEnabled",
+                    "displayNameKey": "Visual_General_IsBinSizeEnabled",
                     "type": {
                         "bool": true
                     }
