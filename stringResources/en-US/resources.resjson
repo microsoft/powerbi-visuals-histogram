@@ -1,6 +1,8 @@
 {
 	"Visual_General": "General",
 	"Visual_General_Bins": "Bins",
+	"Visual_General_BinSize": "Bin Size",
+	"Visual_General_IsBinSizeEnabled": "Enable Bin Size",
 	"Visual_DataColors": "Data colors",
 	"Visual_DataColors_Fill": "Fill",
 	"Visual_DataColors_FillEven": "Even columns fill",
@@ -27,7 +29,6 @@
 	"Visual_Values": "Values",
 	"Visual_Frequency": "Frequency",
 	"Visual_Fill": "Fill",
-	"Visual_Frequency": "Frequency",
 	"Visual_Density": "Density",
 	"Visual_TooltipDisplayName": "Range"
 }
