@@ -110,6 +110,17 @@ export interface CreateAxisOptionsExtended extends CreateAxisOptions {
     onRight?: boolean;
 }
 
+interface OrdinalDataParameters {
+    bestTickCount: number, 
+    dataDomain: number[], 
+    pixelSpan: number, 
+    innerPaddingRatio: number, 
+    categoryThickness: number, 
+    outerPadding: number,
+    maxTicks: number, 
+    minOrdinalRectThickness: number
+}
+
 /**
  * Create a D3 axis including scale. Can be vertical or horizontal, and either datetime, numeric, or text.
  * @param options The properties used to create the axis.
@@ -536,9 +547,7 @@ export function createScale(options: CreateAxisOptionsExtended): CreateScaleResu
         minOrdinalRectThickness: number = options.minOrdinalRectThickness || MinOrdinalRectThickness;
 
     let dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
-
     let maxTicks: number = getMaxTicks(isVertical, pixelSpan, maxTickCount);
-
     let scalarDomain: number[] = dataDomain ? dataDomain.slice() : null;
 
     let bestTickCount: number = maxTicks;
@@ -580,7 +589,6 @@ export function createScale(options: CreateAxisOptionsExtended): CreateScaleResu
 
             scalarDomain = getScalarDomain(dataDomain, scalarDomain);
         }
-
         if (isScalar && dataType.numeric && !dataType.dateTime) {
             // Note: Don't pass bestTickCount to createNumericalScale, because it overrides boundaries of the domain.
             scale = createNumericalScale(
@@ -600,18 +608,19 @@ export function createScale(options: CreateAxisOptionsExtended): CreateScaleResu
             scale = createLinearScale(pixelSpan, scalarDomain, outerPadding, null, shouldClamp); // DO NOT PASS TICKCOUNT
         }
         else if (dataType.text || dataType.dateTime || dataType.numeric || dataType.bool) {            
-            let ordinalDomain = getOrdinalDomain(bestTickCount, dataDomain);
-
-            scale = createOrdinalScale(
+            let ordinalParameters: OrdinalDataParameters = {
+                bestTickCount,
+                dataDomain,
                 pixelSpan,
-                ordinalDomain,
                 innerPaddingRatio,
-                categoryThickness ? outerPadding / categoryThickness : 0);
-            
-            bestTickCount = maxTicks === 0 ? 0
-                : Math.min(
-                    ordinalDomain.length,
-                    (pixelSpan - outerPadding * 2) / minOrdinalRectThickness);
+                categoryThickness: categoryThickness ? outerPadding / categoryThickness : 0,
+                outerPadding,
+                maxTicks, 
+                minOrdinalRectThickness,
+            };
+            let { ordinalScale, tickCount } = getOrdinalData(ordinalParameters);
+            scale = ordinalScale;
+            bestTickCount = tickCount;
         }
     }
 
@@ -622,6 +631,30 @@ export function createScale(options: CreateAxisOptionsExtended): CreateScaleResu
         bestTickCount: bestTickCount,
         usingDefaultDomain: usingDefaultDomain,
     };
+}
+
+function getOrdinalData(ordinalDataParameters: OrdinalDataParameters) {
+    const { bestTickCount, dataDomain, pixelSpan, innerPaddingRatio, 
+        categoryThickness, outerPadding, maxTicks, minOrdinalRectThickness } = ordinalDataParameters;
+
+    const ordinalDomain = getOrdinalDomain(bestTickCount, dataDomain);
+
+    const scale = createOrdinalScale(
+        pixelSpan,
+        ordinalDomain,
+        innerPaddingRatio,
+        categoryThickness ? outerPadding / categoryThickness : 0);
+            
+    const tickCount = maxTicks === 0 
+        ? 0
+        : Math.min(
+            ordinalDomain.length,
+            (pixelSpan - outerPadding * 2) / minOrdinalRectThickness);
+
+    return {
+        ordinalScale: scale,
+        tickCount: tickCount
+    }
 }
 
 function getScalarDomain(dataDomain: number[], scalarDomain: number[]) {
@@ -643,9 +676,7 @@ function getOrdinalDomain(tickCount: number, originalDomain: number[]): number[]
     
     const dataPointsLabels = originalDomain.map(value => value.toString());
     const recommendedTickValues = getRecommendedTickValuesForAnOrdinalRange(tickCount, dataPointsLabels);
-    const domain = recommendedTickValues.map(value => parseFloat(value));
-
-    return domain;
+    return recommendedTickValues.map(value => parseFloat(value));
 }
 
 function getEmptyDomain(dataType: valueType.ValueType) {
