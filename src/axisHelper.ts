@@ -599,16 +599,18 @@ export function createScale(options: CreateAxisOptionsExtended): CreateScaleResu
             // in accordance to our design. scalarDomain: should already be in long-int time (via category.values[0].getTime())
             scale = createLinearScale(pixelSpan, scalarDomain, outerPadding, null, shouldClamp); // DO NOT PASS TICKCOUNT
         }
-        else if (dataType.text || dataType.dateTime || dataType.numeric || dataType.bool) {
+        else if (dataType.text || dataType.dateTime || dataType.numeric || dataType.bool) {            
+            let ordinalDomain = getOrdinalDomain(bestTickCount, dataDomain);
+
             scale = createOrdinalScale(
                 pixelSpan,
-                scalarDomain,
+                ordinalDomain,
                 innerPaddingRatio,
                 categoryThickness ? outerPadding / categoryThickness : 0);
-
+            
             bestTickCount = maxTicks === 0 ? 0
                 : Math.min(
-                    scalarDomain.length,
+                    ordinalDomain.length,
                     (pixelSpan - outerPadding * 2) / minOrdinalRectThickness);
         }
     }
@@ -632,6 +634,18 @@ function getScalarDomain(dataDomain: number[], scalarDomain: number[]) {
         normalizedRange.max
     ];
     return scalarDomain;
+}
+
+function getOrdinalDomain(tickCount: number, originalDomain: number[]): number[] {
+    if (tickCount === RecommendedNumberOfTicksLarge) {
+        return originalDomain;
+    }
+    
+    const dataPointsLabels = originalDomain.map(value => value.toString());
+    const recommendedTickValues = getRecommendedTickValuesForAnOrdinalRange(tickCount, dataPointsLabels);
+    const domain = recommendedTickValues.map(value => parseFloat(value));
+
+    return domain;
 }
 
 function getEmptyDomain(dataType: valueType.ValueType) {

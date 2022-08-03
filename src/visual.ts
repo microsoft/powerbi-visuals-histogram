@@ -1399,9 +1399,12 @@ export class Visual implements IVisual {
             return;
         }
 
+        const ticksCount: number = this.yAxisProperties.values.length;
+
         const yAxis: Axis<number | { valueOf(): number }> =
             (Visual.shouldShowYOnRight(this.data.settings) ? d3.axisRight : d3.axisLeft)
             (this.data.yScale)
+            .tickArguments([ticksCount])
             .tickFormat((item: number) => {
                 return this.data.yLabelFormatter.format(item);
             });
@@ -1421,13 +1424,15 @@ export class Visual implements IVisual {
             return;
         }
 
-        const amountOfLabels: number = this.xAxisProperties.values.length || Default.MinLabelNumber;
+        const ticksCount: number = this.xAxisProperties.values.length || Default.MinLabelNumber;
+        const format = <any>(
+            (value: number, index: number) => this.xAxisTicksFormatter(value, index, ticksCount)
+        ); // We cast this function to any, because the type definition doesn't contain the second argument
 
-        const xAxis: Axis<number | { valueOf(): number; }> = this.xAxisProperties.axis
-            .tickValues(this.xAxisProperties.dataDomain)
-            .tickFormat(<any>(
-                (value: number, index: number) => this.xAxisTicksFormatter(value, index, amountOfLabels)
-            )); // We cast this function to any, because the type definition doesn't contain the second argument
+        const xAxis = d3.axisBottom(this.xAxisProperties.scale);
+        this.xAxisProperties.axis = xAxis;
+        xAxis.tickArguments([ticksCount])
+            .tickFormat(format);
 
         this.axisX.call( xAxis );
         this.axisX
