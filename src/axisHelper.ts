@@ -73,12 +73,16 @@ const DefaultMinInterval: number = 0;
 const MinTickInterval100Pct: number = 0.01;
 const MinTickIntervalInteger: number = 1;
 
-const RecommendedNumberOfTicksSmall: number = 3;
-const RecommendedNumberOfTicksMiddle: number = 5;
-const RecommendedNumberOfTicksLarge: number = 8;
+const RecommendedNumberOfTicksExtraSmall: number = 3;
+const RecommendedNumberOfTicksSmall: number = 5;
+const RecommendedNumberOfTicksMiddle: number = 8;
+const RecommendedNumberOfTicksLarge: number = 16;
+const RecommendedNumberOfTicksExtraLarge: number = 32;
 
-const AvailableWidthXAxisSmall: number = 300;
-const AvailableWidthXAxisMiddle: number = 500;
+const AvailableWidthXAxisExtraSmall: number = 300;
+const AvailableWidthXAxisSmall: number = 500;
+const AvailableWidthXAxisMiddle: number = 800;
+const AvailableWidthXAxisLarge: number = 1100;
 
 const AvailableWidthYAxisSmall: number = 150;
 const AvailableWidthYAxisMiddle: number = 300;
@@ -670,12 +674,10 @@ function getScalarDomain(dataDomain: number[], scalarDomain: number[]) {
 }
 
 function getOrdinalDomain(tickCount: number, originalDomain: number[]): number[] {
-    if (tickCount === RecommendedNumberOfTicksLarge) {
-        return originalDomain;
-    }
-    
     const dataPointsLabels = originalDomain.map(value => value.toString());
+    
     const recommendedTickValues = getRecommendedTickValuesForAnOrdinalRange(tickCount, dataPointsLabels);
+
     return recommendedTickValues.map(value => parseFloat(value));
 }
 
@@ -816,6 +818,10 @@ export function createLinearScale(
 }
 
 export function getRecommendedNumberOfTicksForXAxis(availableWidth: number): number {
+    if (availableWidth < AvailableWidthXAxisExtraSmall) {
+        return RecommendedNumberOfTicksExtraSmall;
+    }
+    
     if (availableWidth < AvailableWidthXAxisSmall) {
         return RecommendedNumberOfTicksSmall;
     }
@@ -824,7 +830,11 @@ export function getRecommendedNumberOfTicksForXAxis(availableWidth: number): num
         return RecommendedNumberOfTicksMiddle;
     }
 
-    return RecommendedNumberOfTicksLarge;
+    if (availableWidth < AvailableWidthXAxisLarge) {
+        return RecommendedNumberOfTicksLarge;
+    }
+
+    return RecommendedNumberOfTicksExtraLarge;
 }
 
 export function getRecommendedNumberOfTicksForYAxis(availableWidth: number): number {
