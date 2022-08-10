@@ -28,9 +28,6 @@
 import * as d3 from "d3";
 type Selection<T> = d3.Selection<any, T, any, any>;
 
-import powerbi from "powerbi-visuals-api";
-import ISelectionId = powerbi.visuals.ISelectionId;
-
 import { interactivityBaseService, interactivitySelectionService } from "powerbi-visuals-utils-interactivityutils";
 import ISelectionHandler = interactivityBaseService.ISelectionHandler;
 import SelectableDataPoint = interactivitySelectionService.SelectableDataPoint;

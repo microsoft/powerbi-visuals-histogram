@@ -13,10 +13,11 @@
     "pbiviz": "pbiviz",
     "start": "pbiviz start",
     "package": "pbiviz package",
-    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "lint": "npm run eslint",
     "pretest": "pbiviz package --resources --no-minify --no-pbiviz --no-plugin",
     "test": "karma start",
-    "cert": "pbiviz --create-cert"
+    "cert": "pbiviz --create-cert",
+    "eslint": "npx eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "author": {
     "name": "Microsoft",
@@ -28,7 +29,6 @@
   },
   "homepage": "https://github.com/Microsoft/PowerBI-visuals-histogram#readme",
   "dependencies": {
-    "core-js": "3.3.3",
     "d3": "^5.4.0",
     "jquery": "^3.4.1",
     "lodash": "^4.17.15",
@@ -43,12 +43,16 @@
     "powerbi-visuals-utils-typeutils": "2.2.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.24.2",
     "@types/d3": "^5.0.0",
     "@types/jasmine": "^4.0.3",
     "@types/jasmine-jquery": "^1.5.34",
     "@types/jquery": "^2.0.46",
     "@types/lodash": "4.14.52",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
     "coveralls": "3.0.2",
+    "eslint-plugin-powerbi-visuals": "^0.8.1",
     "jasmine": "^4.3.0",
     "jasmine-jquery": "^2.1.1",
     "karma": "^6.4.0",
@@ -63,10 +67,8 @@
     "powerbi-visuals-api": "^4.7.0",
     "powerbi-visuals-tools": "^4.0.5",
     "powerbi-visuals-utils-testutils": "^2.6.0",
-    "puppeteer": "^15.5.0",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.1",
-    "tslint": "5.20.0",
     "tslint-microsoft-contrib": "6.2.0",
     "webpack": "^5.73.0"
   }

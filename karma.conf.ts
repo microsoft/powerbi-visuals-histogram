@@ -37,14 +37,14 @@ const srcOriginalRecursivePath = "src/**/*.ts";
 const testRecursivePath = "test/visualTest.ts";
 const coverageFolder = "coverage";
 
-process.env.CHROME_BIN = require("puppeteer").executablePath();
+process.env.CHROME_BIN = require("@playwright/test").chromium.executablePath();
 
 module.exports = (config) => {
     config.set({
         browsers: ["ChromeHeadless"],
         browserNoActivityTimeout: 100000,
         colors: true,
-        frameworks: ["jasmine"],
+        frameworks: ["webpack", "jasmine"],
         reporters: [
             "progress",
             "coverage",

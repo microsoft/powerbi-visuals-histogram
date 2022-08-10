@@ -25,7 +25,6 @@
  */
 
 // d3
-import "core-js/stable";
 import * as d3 from "d3";
 type Selection<T> = d3.Selection<any, T, any, any>;
 
@@ -84,7 +83,7 @@ import willLabelsFit = axis.LabelLayoutStrategy.willLabelsFit;
 import willLabelsWordBreak = axis.LabelLayoutStrategy.willLabelsWordBreak;
 
 // powerbi-visuals-utils-interactivityutils
-import { interactivitySelectionService, interactivityBaseService, interactivityUtils } from "powerbi-visuals-utils-interactivityutils";
+import { interactivitySelectionService, interactivityBaseService } from "powerbi-visuals-utils-interactivityutils";
 import appendClearCatcher = interactivityBaseService.appendClearCatcher;
 import IInteractiveBehavior = interactivityBaseService.IInteractiveBehavior;
 import IInteractivityService = interactivityBaseService.IInteractivityService;
@@ -281,17 +280,15 @@ export class Visual implements IVisual {
         colorHelper: ColorHelper
     ): HistogramData {
 
-        let settings: HistogramSettings,
-            categoryColumn: DataViewCategoryColumn = dataView.categorical.categories[0],
-            numericalValues: number[] = [],
-            bins: LayoutBin[],
-            dataPoints: HistogramDataPoint[],
-            frequencies: number[] = [],
-            sumFrequency: number = Default.SumFrequency,
-            borderValues: HistogramBorderValues,
-            sourceValues: number[] = <number[]>categoryColumn.values;
+        const categoryColumn: DataViewCategoryColumn = dataView.categorical.categories[0];
+        const numericalValues: number[] = [];
 
-        settings = Visual.parseSettings(dataView, colorHelper);
+        let frequencies: number[] = [],
+            sumFrequency: number = Default.SumFrequency;
+
+        const sourceValues: number[] = <number[]>categoryColumn.values;
+
+        const settings: HistogramSettings = Visual.parseSettings(dataView, colorHelper);
 
         if (!settings
             || !Visual.ARE_VALUES_NUMBERS(categoryColumn)
@@ -302,7 +299,7 @@ export class Visual implements IVisual {
 
         frequencies = Visual.GET_FREQUENCIES(dataView.categorical);
 
-        let values: HistogramValue[] = Visual.getValuesByFrequencies(
+        const values: HistogramValue[] = Visual.getValuesByFrequencies(
             visualHost,
             categoryColumn,
             sourceValues,
@@ -325,7 +322,7 @@ export class Visual implements IVisual {
     
         const { binValues, shouldUpdateBinSize } = Visual.GET_BINS_SETTINGS(binsCount, binSize, settings.general.isBinSizeEnabled, numericalValues);
 
-        bins = binValues.bins;
+        const bins: LayoutBin[] = binValues.bins;
         settings.general.bins = binValues.bins.length;
 
         if (shouldUpdateBinSize) {
@@ -337,7 +334,7 @@ export class Visual implements IVisual {
         
         Visual.setFrequency(bins, settings.general.frequency, values, sumFrequency);
 
-        borderValues = Visual.GET_BORDER_VALUES(bins);
+        const borderValues: HistogramBorderValues = Visual.GET_BORDER_VALUES(bins);
 
         // min-max for Y axis
         Visual.getMinMaxFoxYAxis(settings.yAxis, borderValues);
@@ -351,7 +348,7 @@ export class Visual implements IVisual {
             formatters = Visual.createFormatters(dataView, values, settings);
         }
 
-        dataPoints = Visual.getDataPoints(
+        const dataPoints: HistogramDataPoint[] = Visual.getDataPoints(
             values,
             bins,
             settings,
@@ -428,14 +425,11 @@ export class Visual implements IVisual {
 
     private static setFrequency(bins: LayoutBin[], settingsFrequency: boolean, values: HistogramValue[], sumFrequency: number) { 
         bins.forEach((bin: LayoutBin, index: number) => {
-            let filteredValues: HistogramValue[],
-                frequency: number;
-
-            filteredValues = values.filter((value: HistogramValue) => {
+            const filteredValues: HistogramValue[] = values.filter((value: HistogramValue) => {
                 return Visual.isValueContainedInRange(value, bin, index);
             });
 
-            frequency = filteredValues.reduce((previousValue: number, currentValue: HistogramValue): number => {
+            const frequency: number = filteredValues.reduce((previousValue: number, currentValue: HistogramValue): number => {
                 return previousValue + currentValue.frequency;
             }, 0);
 
@@ -448,13 +442,13 @@ export class Visual implements IVisual {
     private static roundTo (number: number, places: number): number {
         const factor = 10 ** places;
         return Math.round(number * factor) / factor;
-    };
+    }
 
     private static setMinMaxForXAxis(xAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
-        let maxXValue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > borderValues.minX)
+        const maxXValue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > borderValues.minX)
             ? xAxisSettings.end
             : borderValues.maxX;
-        let minXValue: number = (xAxisSettings.start !== null) && (xAxisSettings.start < maxXValue)
+        const minXValue: number = (xAxisSettings.start !== null) && (xAxisSettings.start < maxXValue)
             ? xAxisSettings.start
             : borderValues.minX;
         xAxisSettings.start = Visual.GET_CORRECT_X_AXIS_VALUE(minXValue);
@@ -462,10 +456,10 @@ export class Visual implements IVisual {
     }
 
     private static getMinMaxFoxYAxis(yAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
-        let maxYValue: number = (yAxisSettings.end !== null) && (yAxisSettings.end > yAxisSettings.start)
+        const maxYValue: number = (yAxisSettings.end !== null) && (yAxisSettings.end > yAxisSettings.start)
             ? yAxisSettings.end
             : borderValues.maxY;
-        let minYValue: number = yAxisSettings.start < maxYValue
+        const minYValue: number = yAxisSettings.start < maxYValue
             ? yAxisSettings.start
             : 0;
         yAxisSettings.start = Visual.GET_CORRECT_Y_AXIS_VALUE(minYValue);
@@ -474,19 +468,19 @@ export class Visual implements IVisual {
     }
 
     private static createFormatters(dataView: powerbi.DataView, values: HistogramValue[], settings: HistogramSettings) {
-        let valueFormatter = ValueFormatter.create({
+        const valueFormatter = ValueFormatter.create({
             format: ValueFormatter.getFormatStringByColumn(dataView.categorical.categories[0].source),
             value: values[0].value,
             value2: values[values.length - 1].value,
             precision: settings.labels.precision
         });
-        let xLabelFormatter = ValueFormatter.create({
+        const xLabelFormatter = ValueFormatter.create({
             value: settings.xAxis.displayUnits === 0
                 ? values[values.length - 1].value
                 : settings.xAxis.displayUnits,
             precision: settings.xAxis.precision
         });
-        let yLabelFormatter = ValueFormatter.create({
+        const yLabelFormatter = ValueFormatter.create({
             value: settings.yAxis.displayUnits,
             precision: settings.yAxis.precision
         });
@@ -573,14 +567,13 @@ export class Visual implements IVisual {
 
         sourceValues.forEach((item: number, index: number) => {
             let frequency: number = Default.Frequency,
-                value: number = Number(item),
-                selectionId: ISelectionId;
+                value: number = Number(item);
 
             value = isNaN(value)
                 ? Default.Value
                 : value;
 
-            selectionId = visualHost.createSelectionIdBuilder()
+            const selectionId: ISelectionId = visualHost.createSelectionIdBuilder()
                 .withCategory(categoryColumn, index)
                 .withMeasure(queryName)
                 .createSelectionId();
@@ -618,7 +611,7 @@ export class Visual implements IVisual {
         localizationManager: ILocalizationManager
     ): HistogramDataPoint[] {
 
-        let fontSizeInPx: string = PixelConverter.fromPoint(settings.labels.fontSize);
+        const fontSizeInPx: string = PixelConverter.fromPoint(settings.labels.fontSize);
 
         return bins.map((bin: any, index: number): HistogramDataPoint => {
             bin.range = [bin.x0, bin.x1];
@@ -717,7 +710,7 @@ export class Visual implements IVisual {
         ) || null;
 
         let bins: number = Math.round(settings.general.bins);
-        let binSize: number = Visual.roundTo(settings.general.binSize, 2);
+        const binSize: number = Visual.roundTo(settings.general.binSize, 2);
 
         if (displayName) {
             settings.general.displayName = displayName;
@@ -875,7 +868,7 @@ export class Visual implements IVisual {
     }
 
     public update(options: VisualUpdateOptions): void {
-        let dataView = options.dataViews[0];
+        const dataView = options.dataViews[0];
         if (!dataView
             || !dataView.categorical
             || !dataView.categorical.categories
@@ -1039,8 +1032,7 @@ export class Visual implements IVisual {
 
     private createScales(): void {
         const yAxisSettings: HistogramYAxisSettings = this.data.settings.yAxis,
-            xAxisSettings: HistogramXAxisSettings = this.data.settings.xAxis,
-            borderValues: HistogramBorderValues = this.data.borderValues;
+            xAxisSettings: HistogramXAxisSettings = this.data.settings.xAxis;
 
         this.data.xScale = scaleLinear()
             .domain([
@@ -1131,7 +1123,7 @@ export class Visual implements IVisual {
             yScale: LinearScale<any, any> = this.data.yScale,
             columnsSelection: Selection<any> = this.columnsSelection.data(data);
 
-        let updateColumnsSelection = columnsSelection
+        const updateColumnsSelection = columnsSelection
             .enter()
             .append("svg:rect")
             .classed(Visual.Column.className, true);
@@ -1211,9 +1203,9 @@ export class Visual implements IVisual {
             this.localizationManager
         );
 
-        let legendSelection: Selection<ILegend> = this.legendSelection.data(legendsData);
+        const legendSelection: Selection<ILegend> = this.legendSelection.data(legendsData);
 
-        let updateLegendSelection = legendSelection
+        const updateLegendSelection = legendSelection
             .enter()
             .append("svg:text");
 
@@ -1246,15 +1238,15 @@ export class Visual implements IVisual {
     }
 
     private renderLabels(): void {
-        let labelSettings: HistogramLabelSettings = this.data.settings.labels,
-            dataPointsArray: HistogramDataPoint[] = this.data.dataPoints,
-            labels: Selection<HistogramDataPoint>;
-        if (!labelSettings.show) {
+        const labelSettings: HistogramLabelSettings = this.data.settings.labels,
+            dataPointsArray: HistogramDataPoint[] = this.data.dataPoints;
+
+            if (!labelSettings.show) {
             dataLabelUtils.cleanDataLabels(this.labelGraphicsContext);
             return;
         }
 
-        labels = dataLabelUtils.drawDefaultLabelsForDataPointChart(
+        const labels: Selection<HistogramDataPoint> = dataLabelUtils.drawDefaultLabelsForDataPointChart(
             dataPointsArray,
             this.labelGraphicsContext,
             this.getLabelLayout(),
@@ -1263,12 +1255,9 @@ export class Visual implements IVisual {
 
         if (labels) {
             labels.attr("transform", (dataPoint: HistogramDataPoint) => {
-                let size: ISize = dataPoint.size,
-                    dx: number,
-                    dy: number;
-
-                dx = size.width / Default.DataLabelXOffset ;
-                dy = size.height / Default.DataLabelYOffset;
+                const size: ISize = dataPoint.size;
+                const dx: number = size.width / Default.DataLabelXOffset ;
+                const dy: number = size.height / Default.DataLabelYOffset;
 
                 return translate(dx, dy);
             });
@@ -1276,7 +1265,7 @@ export class Visual implements IVisual {
     }
 
     private getLabelLayout(): ILabelLayout {
-        let labelSettings: HistogramLabelSettings = this.data.settings.labels,
+        const labelSettings: HistogramLabelSettings = this.data.settings.labels,
             xScale: LinearScale<any, any> = this.data.xScale,
             yScale: LinearScale<any, any> = this.data.yScale,
             fontSizeInPx: string = PixelConverter.fromPoint(labelSettings.fontSize),
@@ -1292,23 +1281,16 @@ export class Visual implements IVisual {
             },
             labelLayout: {
                 x: (dataPoint: HistogramDataPoint) => {
-                    let x: number,
-                        dx: number;
-
-                    x = xScale(dataPoint.x0);
-                    dx = dataPoint.size.width / Default.DataLabelXOffset
+                    const x: number = xScale(dataPoint.x0);
+                    const dx: number = dataPoint.size.width / Default.DataLabelXOffset
                         - this.columnWidth / Default.MiddleFactor;
 
                     return x - dx;
                 },
                 y: (dataPoint: HistogramDataPoint) => {
-                    let y: number,
-                        dy: number,
-                        delta: number;
-
-                    y = yScale(dataPoint.y);
-                    dy = dataPoint.size.height;
-                    delta = y - dy;
+                    const y: number = yScale(dataPoint.y);
+                    const dy: number = dataPoint.size.height;
+                    const delta: number = y - dy;
 
                     return delta < 0 ? y + dy / 2 : delta;
                 }
@@ -1366,7 +1348,7 @@ export class Visual implements IVisual {
         metaDataColumn: DataViewMetadataColumn,
         minOrdinalRectThickness: number
     ): IAxisProperties {
-        let yAxisSettings: HistogramYAxisSettings = this.data.settings.yAxis,
+        const yAxisSettings: HistogramYAxisSettings = this.data.settings.yAxis,
             formatString: string = (this.data.settings.general.frequency)
                 ? ValueFormatter.getFormatStringByColumn(metaDataColumn)
                 : undefined;
@@ -1402,8 +1384,7 @@ export class Visual implements IVisual {
         const ticksCount: number = this.yAxisProperties.values.length;
 
         const yAxis: Axis<number | { valueOf(): number }> =
-            (Visual.shouldShowYOnRight(this.data.settings) ? d3.axisRight : d3.axisLeft)
-            (this.data.yScale)
+            (Visual.shouldShowYOnRight(this.data.settings) ? d3.axisRight : d3.axisLeft)(this.data.yScale)
             .tickArguments([ticksCount])
             .tickFormat((item: number) => {
                 return this.data.yLabelFormatter.format(item);
@@ -1413,7 +1394,7 @@ export class Visual implements IVisual {
         this.axisY
             .style("fill", yAxisSettings.axisColor)
             .style("stroke", yAxisSettings.strokeColor)
-            .attr("text-anchor", Visual.shouldShowYOnRight(this.data.settings) ? "start": "end") // d3 updates the anchor for entered elements only
+            .attr("text-anchor", Visual.shouldShowYOnRight(this.data.settings) ? "start" : "end") // d3 updates the anchor for entered elements only
     }
 
     private renderXAxis(): void {
@@ -1467,11 +1448,10 @@ export class Visual implements IVisual {
         widthOfLabel: number,
         scrollbarVisible: boolean
     ): IAxisProperties {
-        let axes: IAxisProperties,
-            width: number = this.viewportIn.width,
+        const width: number = this.viewportIn.width,
             xPoints: number[] = this.getXPoints();
 
-        axes = HistogramAxisHelper.createAxis({
+        const axes: IAxisProperties = HistogramAxisHelper.createAxis({
             onRight: Visual.shouldShowYOnRight(this.data.settings),
             pixelSpan: this.viewportIn.width,
             dataDomain: xPoints,
@@ -1482,7 +1462,7 @@ export class Visual implements IVisual {
             isVertical: false,
             useTickIntervalForDisplayUnits: true,
             isCategoryAxis: true,
-            getValueFn: (index, valueType) => index,
+            getValueFn: (index) => index,
             scaleType: axisScale.linear,
             innerPaddingRatio: Default.InnerPaddingRatio,
             minOrdinalRectThickness: widthOfLabel,
@@ -1630,7 +1610,7 @@ export class Visual implements IVisual {
     private formatXLabelsForFiltering(
         nonFormattedPoint: number
     ): number {
-        let formattedPoint: string = this.data.xLabelFormatter.format(nonFormattedPoint);
+        const formattedPoint: string = this.data.xLabelFormatter.format(nonFormattedPoint);
         return parseFloat(formattedPoint);
     }
 
