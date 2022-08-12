@@ -47,7 +47,6 @@
     "powerbi-visuals-utils-typeutils": "2.2.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.24.2",
     "@types/d3-array": "^1.2.9",
     "@types/d3-axis": "^1.0.16",
     "@types/d3-scale": "^1.0.17",
@@ -73,6 +72,7 @@
     "karma-typescript-preprocessor": "0.4.0",
     "karma-webpack": "^5.0.0",
     "less-loader": "^11.0.0",
+    "playwright": "^1.25.0",
     "powerbi-visuals-api": "^4.7.0",
     "powerbi-visuals-tools": "^4.0.5",
     "powerbi-visuals-utils-testutils": "^2.6.0",
