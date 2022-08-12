@@ -60,6 +60,7 @@
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
     "coveralls": "3.0.2",
+    "eslint": "^8.21.0",
     "eslint-plugin-powerbi-visuals": "^0.8.1",
     "jasmine": "^4.3.0",
     "jasmine-jquery": "^2.1.1",
