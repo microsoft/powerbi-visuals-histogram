@@ -27,10 +27,9 @@
 import powerbi from "powerbi-visuals-api";
 import { isEmpty } from "lodash";
 // d3
-import * as d3 from "d3";
+import { axisRight, axisLeft, axisBottom } from "d3-axis";
 import { Axis as SVGAxis } from "d3-axis";
-import { scaleLinear } from "d3";
-import { ScaleLogarithmic as LogScale, ScaleLinear as LinearScale, ScaleOrdinal as OrdinalScale, scaleLog, scaleBand, ScaleBand } from "d3-scale";
+import { scaleLinear, ScaleLogarithmic as LogScale, ScaleLinear as LinearScale, ScaleOrdinal as OrdinalScale, scaleLog, scaleBand, ScaleBand } from "d3-scale";
 
 // powerbi
 import NumberRange = powerbi.NumberRange;
@@ -187,8 +186,8 @@ export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties 
     // sets default orientation only, cartesianChart will fix y2 for comboChart
     // tickSize(pixelSpan) is used to create gridLines
     const axis = (isVertical
-        ? onRight ? d3.axisRight(scale) : d3.axisLeft(scale)
-        : d3.axisBottom(scale)
+        ? onRight ? axisRight(scale) : axisLeft(scale)
+        : axisBottom(scale)
     );
 
     let formattedTickValues: any[] = [];
@@ -226,7 +225,7 @@ function fixCategoryThickness(categoryThickness: number, isScalar: boolean, data
     return categoryThickness;
 }
 
-function getXLabelMaxWidth(isScalar: boolean, categoryThickness: number, tickLabelPadding: number, tickValues: any[], scale: d3.ScaleLinear<any, any>, pixelSpan: number) {
+function getXLabelMaxWidth(isScalar: boolean, categoryThickness: number, tickLabelPadding: number, tickValues: any[], scale: LinearScale<any, any>, pixelSpan: number) {
     let xLabelMaxWidth: number;
     // Use category layout of labels if specified, otherwise use scalar layout of labels
     if (!isScalar && categoryThickness) {

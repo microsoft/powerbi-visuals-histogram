@@ -25,7 +25,7 @@
  */
 
 // d3
-import * as d3 from "d3";
+import { Bin } from "d3-array";
 import { ScaleLinear } from "d3-scale";
 
 import { valueFormatter as vf } from "powerbi-visuals-utils-formattingutils";
@@ -46,7 +46,7 @@ export interface HistogramSubDataPoint extends SelectableDataPoint {
 }
 
 export interface HistogramDataPoint extends
-    d3.Bin<any, number>,
+    Bin<any, number>,
     TooltipEnabledDataPoint {
     y: number;
     range: number[];

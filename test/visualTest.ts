@@ -23,7 +23,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
  */
-import * as d3 from "d3";
+import { histogram } from "d3-array";
 import { last } from "lodash";
 
 import powerbi from "powerbi-visuals-api";
@@ -66,7 +66,7 @@ describe("HistogramChart", () => {
 
         it("update", (done) => {
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const binsNumber: number = d3.histogram()(
+                const binsNumber: number = histogram()(
                     dataView.categorical!.categories![0].values as number[]
                 ).length;
 
@@ -81,7 +81,7 @@ describe("HistogramChart", () => {
             dataView.categorical!.values = undefined;
 
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const binsNumber: number = d3.histogram()(
+                const binsNumber: number = histogram()(
                     dataView.categorical!.categories![0].values as number[]
                 ).length;
 

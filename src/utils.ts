@@ -26,8 +26,8 @@
 
 
 // d3
-import * as d3 from "d3";
-type Selection<T> = d3.Selection<any, T, any, any>;
+import { Selection as d3Selection } from "d3-selection";
+type Selection<T> = d3Selection<any, T, any, any>;
 
 import { interactivityBaseService } from "powerbi-visuals-utils-interactivityutils";
 import IInteractivityService = interactivityBaseService.IInteractivityService;

@@ -25,12 +25,14 @@
  */
 
 // d3
-import * as d3 from "d3";
-type Selection<T> = d3.Selection<any, T, any, any>;
+import { Selection as d3Selection, select as d3Select } from "d3-selection";
+type Selection<T> = d3Selection<any, T, any, any>;
 
 import { ScaleLinear as LinearScale, scaleLinear } from "d3-scale";
+import { Bin as IBin, histogram, extent, range } from "d3-array";
+import { axisLeft, axisRight, axisBottom } from "d3-axis";
 
-interface LayoutBin extends d3.Bin<number, number> {
+interface LayoutBin extends IBin<number, number> {
     y?: number;
 }
 
@@ -112,7 +114,7 @@ import * as HistogramAxisHelper from "./axisHelper";
 import * as Default from "./constants";
 
 import "../style/visual.less";
-import { Axis } from "d3";
+import { Axis } from "d3-axis";
 
 interface HistogramValue {
     value: number;
@@ -227,7 +229,7 @@ export class Visual implements IVisual {
             options.element
         );
 
-        this.root = d3.select(options.element)
+        this.root = d3Select(options.element)
             .append("svg")
             .classed(Visual.ClassName, true);
 
@@ -314,7 +316,7 @@ export class Visual implements IVisual {
         const binsCount: number =
             (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
             ? settings.general.bins
-            : d3.histogram()(numericalValues).length; // predict bins count for interval correction
+            : histogram()(numericalValues).length; // predict bins count for interval correction
 
         const binSize = settings.general.binSize 
             ? settings.general.binSize 
@@ -397,7 +399,7 @@ export class Visual implements IVisual {
     }
 
     private static getBinValues(binsCount: number, binSize: number, numericalValues: number[]): IBinValues {
-        const [min, max] = d3.extent(numericalValues);
+        const [min, max] = extent(numericalValues);
         const maxBinSize = max - min;
 
         const getBinSize = (): number => {     
@@ -415,7 +417,7 @@ export class Visual implements IVisual {
             ? (max - min) / binsCount
             : getBinSize();
 
-        const bins = d3.histogram().thresholds(d3.range(min, max, interval))(numericalValues); 
+        const bins = histogram().thresholds(range(min, max, interval))(numericalValues); 
 
         return {
             bins: bins,
@@ -1384,7 +1386,7 @@ export class Visual implements IVisual {
         const ticksCount: number = this.yAxisProperties.values.length;
 
         const yAxis: Axis<number | { valueOf(): number }> =
-            (Visual.shouldShowYOnRight(this.data.settings) ? d3.axisRight : d3.axisLeft)(this.data.yScale)
+            (Visual.shouldShowYOnRight(this.data.settings) ? axisRight : axisLeft)(this.data.yScale)
             .tickArguments([ticksCount])
             .tickFormat((item: number) => {
                 return this.data.yLabelFormatter.format(item);
@@ -1410,7 +1412,7 @@ export class Visual implements IVisual {
             (value: number, index: number) => this.xAxisTicksFormatter(value, index, ticksCount)
         ); // We cast this function to any, because the type definition doesn't contain the second argument
 
-        const xAxis = d3.axisBottom(this.xAxisProperties.scale);
+        const xAxis = axisBottom(this.xAxisProperties.scale);
         this.xAxisProperties.axis = xAxis;
         xAxis.tickArguments([ticksCount])
             .tickFormat(format);
