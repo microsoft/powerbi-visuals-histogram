@@ -53,8 +53,6 @@ module.exports = (config) => {
         files: [
             srcCssRecursivePath,
             testRecursivePath,
-            "node_modules/jquery/dist/jquery.min.js",
-            "node_modules/jasmine-jquery/lib/jasmine-jquery.js",
             {
                 pattern: "./capabilities.json",
                 watched: false,

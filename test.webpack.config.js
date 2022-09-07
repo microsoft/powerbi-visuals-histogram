@@ -19,10 +19,6 @@ module.exports = {
                 options: { esModules: true }
             },
             {
-                test: /\.json$/,
-                loader: 'json-loader'
-            },
-            {
                 test: /\.less$/,
                 use: [
                     {

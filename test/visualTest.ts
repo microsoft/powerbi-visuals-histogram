@@ -23,7 +23,8 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *  THE SOFTWARE.
  */
-import { histogram } from "d3-array";
+import capabilities from '../capabilities.json';
+import { bin } from "d3-array";
 import last from "lodash.last";
 
 import powerbi from "powerbi-visuals-api";
@@ -61,12 +62,12 @@ describe("HistogramChart", () => {
         });
 
         it("svg element created", () => {
-            expect(visualBuilder.mainElement[0]).toBeInDOM();
+            expect(visualBuilder.mainElement).toBeTruthy();
         });
 
         it("update", (done) => {
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const binsNumber: number = histogram()(
+                const binsNumber: number = bin()(
                     dataView.categorical!.categories![0].values as number[]
                 ).length;
 
@@ -81,7 +82,7 @@ describe("HistogramChart", () => {
             dataView.categorical!.values = undefined;
 
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const binsNumber: number = histogram()(
+                const binsNumber: number = bin()(
                     dataView.categorical!.categories![0].values as number[]
                 ).length;
 
@@ -584,12 +585,12 @@ describe("HistogramChart", () => {
                 (dataView.metadata.objects as any).xAxis.show = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.xAxisTicks).toBeInDOM();
+                expect(visualBuilder.xAxisTicks).toBeTruthy();
 
                 (dataView.metadata.objects as any).xAxis.show = false;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.xAxisTicks).not.toBeInDOM();
+                expect(visualBuilder.xAxisTicks?.length).toBe(0);
             });
 
             it("display Units", () => {
@@ -631,12 +632,12 @@ describe("HistogramChart", () => {
                 (dataView.metadata.objects as any).yAxis.show = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.yAxisTicks).toBeInDOM();
+                expect(visualBuilder.yAxisTicks).toBeTruthy();
 
                 (dataView.metadata.objects as any).yAxis.show = false;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.yAxisTicks).not.toBeInDOM();
+                expect(visualBuilder.yAxisTicks?.length).toBe(0);
             });
 
             it("display Units", () => {
@@ -696,13 +697,13 @@ describe("HistogramChart", () => {
                 (dataView.metadata.objects as any).labels.show = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.labelTexts).toBeInDOM();
+                expect(visualBuilder.labelTexts).toBeTruthy();
                 expect(visualBuilder.columns.length).toBe(visualBuilder.labelTexts.length);
 
                 (dataView.metadata.objects as any).labels.show = false;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.labelTexts).not.toBeInDOM();
+                expect(visualBuilder.labelTexts.length).toBe(0);
             });
 
             it("display units", () => {
@@ -997,10 +998,6 @@ describe("HistogramChart", () => {
 
     describe("Capabilities tests", () => {
         it("all items that have displayName should have displayNameKey property", () => {
-            jasmine.getJSONFixtures().fixturesPath = "base";
-
-            let jsonData = getJSONFixture("capabilities.json");
-
             let objectsChecker: Function = (obj) => {
                 for (let property in obj) {
                     let value: any = obj[property];
@@ -1015,7 +1012,7 @@ describe("HistogramChart", () => {
                 }
             };
 
-            objectsChecker(jsonData);
+            objectsChecker(capabilities.objects);
         });
     });
 
@@ -1044,7 +1041,7 @@ describe("HistogramChart", () => {
 
             it("should not use fill style", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    const layers = Array.from(visualBuilder.columns!); // DBG : JQuery<any>[]
+                    const layers = Array.from(visualBuilder.columns!);
 
                     expect(isColorAppliedToElements(layers, null, "fill"));
 
@@ -1054,7 +1051,7 @@ describe("HistogramChart", () => {
 
             it("should use stroke style", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    const layers = Array.from(visualBuilder.columns!); // DBG : JQuery<any>[]
+                    const layers = Array.from(visualBuilder.columns!);
 
                     expect(isColorAppliedToElements(layers, foregroundColor, "stroke"));
 

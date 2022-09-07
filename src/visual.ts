@@ -29,7 +29,7 @@ import { Selection as d3Selection, select as d3Select } from "d3-selection";
 type Selection<T> = d3Selection<any, T, any, any>;
 
 import { ScaleLinear as LinearScale, scaleLinear } from "d3-scale";
-import { Bin as IBin, histogram, extent, range } from "d3-array";
+import { Bin as IBin, bin, extent, range } from "d3-array";
 import { axisLeft, axisRight, axisBottom } from "d3-axis";
 
 interface LayoutBin extends IBin<number, number> {
@@ -314,7 +314,7 @@ export class Visual implements IVisual {
         const binsCount: number =
             (settings.general.bins && settings.general.bins > HistogramGeneralSettings.MinNumberOfBins)
             ? settings.general.bins
-            : histogram()(numericalValues).length; // predict bins count for interval correction
+            : bin()(numericalValues).length; // predict bins count for interval correction
 
         const binSize = settings.general.binSize 
             ? settings.general.binSize 
@@ -415,7 +415,7 @@ export class Visual implements IVisual {
             ? (max - min) / binsCount
             : getBinSize();
 
-        const bins = histogram().thresholds(range(min, max, interval))(numericalValues); 
+        const bins = bin().thresholds(range(min, max, interval))(numericalValues); 
 
         return {
             bins: bins,

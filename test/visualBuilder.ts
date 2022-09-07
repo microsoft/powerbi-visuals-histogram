@@ -51,27 +51,18 @@ export class HistogramChartBuilder extends VisualBuilderBase<VisualClass> {
 
     public get labelsContainer(): NodeListOf<Element> {
         return this.mainElement.querySelectorAll("g > .labelGraphicsContext");
-           // .children(".labelGraphicsContext");
     }
 
     public get labelTexts(): NodeListOf<Element> {
         return this.mainElement.querySelectorAll("g > g.labelGraphicsContext > g.labels > text.data-labels");
-           // .children("g.labelGraphicsContext")
-           // .children("g.labels")
-           // .children("text.data-labels");
     }
 
     public get columns() {
-        return this.mainElement?.querySelectorAll("g > g.column > rect.column");
-            //.children("g")
-            //.children("g.columns")
-            //.children("rect.column");
+        return this.mainElement?.querySelectorAll("g > g.columns > rect.column");
     }
 
     public get axes() {
         return this.mainElement?.querySelector("g > .axes");
-            //.children("g")
-            //.children(".axes");
     }
 
     public get xAxis() {
@@ -92,9 +83,6 @@ export class HistogramChartBuilder extends VisualBuilderBase<VisualClass> {
 
     public get legend() {
         return this.mainElement?.querySelectorAll("g > g.legends > text.legend");
-           // .children("g")
-           // .children("g.legends")
-           // .children("text.legend");
     }
 
     public get xAxisLabel() {
