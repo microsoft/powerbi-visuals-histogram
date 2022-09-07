@@ -25,7 +25,7 @@
  */
 
 import powerbi from "powerbi-visuals-api";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash.isempty";
 // d3
 import { axisRight, axisLeft, axisBottom } from "d3-axis";
 import { Axis as SVGAxis } from "d3-axis";
@@ -495,7 +495,7 @@ function getRecommendedTickValuesForADateTimeRange(maxTicks: number, dataDomain:
         return [];
     }
 
-    const dateTimeTickLabels: Date[] = DateTimeSequence.calculate(
+    const dateTimeTickLabels: Date[] = DateTimeSequence.CALCULATE(
         new Date(dataDomain[0]),
         new Date(dataDomain[1]), maxTicks).sequence;
 

@@ -1,6 +1,6 @@
 import { IMargin } from "powerbi-visuals-utils-svgutils";
 import { pixelConverter as PixelConverter } from "powerbi-visuals-utils-typeutils";
-import { textMeasurementService } from "powerbi-visuals-utils-formattingutils";
+import { TextProperties as UtilsTextProperties } from "powerbi-visuals-utils-formattingutils/lib/src/interfaces";
 
 export interface Brackets {
     left: string;
@@ -17,7 +17,7 @@ export const IncludeBrackets: Brackets = {
     right: "]"
 };
 
-export const TextProperties: textMeasurementService.TextProperties = {
+export const TextProperties: UtilsTextProperties = {
     fontFamily: "helvetica, arial, sans-serif",
     fontSize: PixelConverter.toString(11) // Note: This value and font-size in histogram.less should be the same.
 };

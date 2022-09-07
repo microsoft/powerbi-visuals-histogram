@@ -69,11 +69,9 @@ import ClassAndSelector = CssConstants.ClassAndSelector;
 import createClassAndSelector = CssConstants.createClassAndSelector;
 
 // powerbi-visuals-utils-formattingutils
-import { valueFormatter as ValueFormatter, textMeasurementService as tms } from "powerbi-visuals-utils-formattingutils";
+import { valueFormatter as ValueFormatter, textMeasurementService } from "powerbi-visuals-utils-formattingutils";
+import { TextProperties } from "powerbi-visuals-utils-formattingutils/lib/src/interfaces";
 import IValueFormatter = ValueFormatter.IValueFormatter;
-import TextProperties = tms.TextProperties;
-import textMeasurementService = tms.textMeasurementService;
-
 // powerbi-visuals-utils-colorutils
 import { ColorHelper } from "powerbi-visuals-utils-colorutils";
 

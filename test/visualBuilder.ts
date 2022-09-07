@@ -29,7 +29,6 @@ import powerbi from "powerbi-visuals-api";
 import { VisualBuilderBase } from "powerbi-visuals-utils-testutils";
 
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
-import { manipulation } from "powerbi-visuals-utils-svgutils";
 
 import { Visual as VisualClass } from "../src/visual";
 
@@ -46,69 +45,67 @@ export class HistogramChartBuilder extends VisualBuilderBase<VisualClass> {
         return new VisualClass(options);
     }
 
-    public get mainElement(): JQuery {
-        return $(this.element).children("svg.histogram");
+    public get mainElement() {
+        return this.element.querySelector("svg.histogram");
     }
 
-    public get labelsContainer(): JQuery {
-        return this.mainElement
-            .children("g")
-            .children(".labelGraphicsContext");
+    public get labelsContainer(): NodeListOf<Element> {
+        return this.mainElement.querySelectorAll("g > .labelGraphicsContext");
+           // .children(".labelGraphicsContext");
     }
 
-    public get labelTexts(): JQuery {
-        return this.mainElement
-            .children("g")
-            .children("g.labelGraphicsContext")
-            .children("g.labels")
-            .children("text.data-labels");
+    public get labelTexts(): NodeListOf<Element> {
+        return this.mainElement.querySelectorAll("g > g.labelGraphicsContext > g.labels > text.data-labels");
+           // .children("g.labelGraphicsContext")
+           // .children("g.labels")
+           // .children("text.data-labels");
     }
 
     public get columns() {
-        return this.mainElement
-            .children("g")
-            .children("g.columns")
-            .children("rect.column");
+        return this.mainElement?.querySelectorAll("g > g.column > rect.column");
+            //.children("g")
+            //.children("g.columns")
+            //.children("rect.column");
     }
 
-    public get axes(): JQuery {
-        return this.mainElement
-            .children("g")
-            .children(".axes");
+    public get axes() {
+        return this.mainElement?.querySelector("g > .axes");
+            //.children("g")
+            //.children(".axes");
     }
 
-    public get xAxis(): JQuery {
-        return this.axes.children("g.xAxis");
+    public get xAxis() {
+        return this.axes?.querySelector("g.xAxis");
     }
 
-    public get xAxisTicks(): JQuery {
-        return this.xAxis.children("g.tick");
+    public get xAxisTicks() {
+        return this.xAxis?.querySelectorAll("g.tick");
     }
 
-    public get yAxis(): JQuery {
-        return this.axes.children("g.yAxis");
+    public get yAxis() {
+        return this.axes?.querySelector("g.yAxis");
     }
 
-    public get yAxisTicks(): JQuery {
-        return this.yAxis.children("g.tick");
+    public get yAxisTicks() {
+        return this.yAxis?.querySelectorAll("g.tick");
     }
 
-    public get legend(): JQuery {
-        return this.mainElement
-            .children("g")
-            .children("g.legends")
-            .children("text.legend");
+    public get legend() {
+        return this.mainElement?.querySelectorAll("g > g.legends > text.legend");
+           // .children("g")
+           // .children("g.legends")
+           // .children("text.legend");
     }
 
-    public get xAxisLabel(): JQuery {
-        return this.legend.filter((i: number, element: Element) => {
-            return $(element).attr("transform").indexOf("rotate") < 0;
+    public get xAxisLabel() {
+        return (Array.from(this.legend!)).filter((element: Element, i: number) => {
+            return element.getAttribute("transform")!.indexOf("rotate") < 0;
         });
     }
 
-    public get yAxisLabel(): JQuery {
-        return this.legend.filter((i: number, element: Element) => {
-            return $(element).attr("transform").indexOf("rotate") >= 0;
+    public get yAxisLabel() {
+        return (Array.from(this.legend!)).filter((element: Element, i: number) => {
+            return element.getAttribute("transform")!.indexOf("rotate") >= 0;
         });
     }
 }

@@ -38,8 +38,6 @@ import IInteractivityService = interactivityBaseService.IInteractivityService;
 import { HistogramDataPoint } from "./dataInterfaces";
 import { updateOpacity } from "./utils";
 
-const getEvent = (): MouseEvent => <MouseEvent>require("d3-selection").event;
-
 export interface HistogramBehaviorOptions extends IBehaviorOptions<SelectableDataPoint>{
     columns: Selection<HistogramDataPoint>;
     clearCatcher: Selection<any>;
@@ -64,8 +62,7 @@ export class HistogramBehavior implements IInteractiveBehavior {
         this.interactivityService = behaviorOptions.interactivityService;
         this.clearCatcher = behaviorOptions.clearCatcher;
 
-        this.columns.on("click", (dataPoint: HistogramDataPoint) => {
-            const event: MouseEvent = getEvent();
+        this.columns.on("click", (event: MouseEvent, dataPoint: HistogramDataPoint) => {
             const isCtrlPressed: boolean = event && event.ctrlKey;
 
             selectionHandler.handleSelection(dataPoint.subDataPoints, isCtrlPressed);

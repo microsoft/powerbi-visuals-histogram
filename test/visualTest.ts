@@ -24,7 +24,7 @@
  *  THE SOFTWARE.
  */
 import { histogram } from "d3-array";
-import { last } from "lodash";
+import last from "lodash.last";
 
 import powerbi from "powerbi-visuals-api";
 import DataView = powerbi.DataView;
@@ -70,7 +70,7 @@ describe("HistogramChart", () => {
                     dataView.categorical!.categories![0].values as number[]
                 ).length;
 
-                expect(visualBuilder.mainElement.find(".column").length).toBe(binsNumber);
+                expect(visualBuilder.mainElement?.querySelectorAll(".column").length).toBe(binsNumber);
 
                 done();
             });
@@ -85,7 +85,7 @@ describe("HistogramChart", () => {
                     dataView.categorical!.categories![0].values as number[]
                 ).length;
 
-                expect(visualBuilder.mainElement.find(".column").length).toBe(binsNumber);
+                expect(visualBuilder.mainElement?.querySelectorAll(".column").length).toBe(binsNumber);
 
                 done();
             });
@@ -113,11 +113,10 @@ describe("HistogramChart", () => {
             };
 
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const labels: Element[] = visualBuilder.labelTexts.get();
+                const labels: Element[] = Array.from(visualBuilder.labelTexts);
 
                 labels.forEach((label: Element) => {
-                    let jqueryLabel = $(label), // DBG : JQuery<any>
-                        x: number,
+                    let x: number,
                         y: number,
                         dx: number,
                         dy: number,
@@ -125,10 +124,10 @@ describe("HistogramChart", () => {
                         currentX: number,
                         currentY: number;
 
-                    x = Number(jqueryLabel.attr("x"));
-                    y = Number(jqueryLabel.attr("y"));
+                    x = Number(label.getAttribute("x"));
+                    y = Number(label.getAttribute("y"));
 
-                    transform = parseTranslateTransform(jqueryLabel.attr("transform"));
+                    transform = parseTranslateTransform(label.getAttribute("transform")!);
 
                     dx = Number(transform.x);
                     dy = Number(transform.y);
@@ -155,10 +154,10 @@ describe("HistogramChart", () => {
             };
 
             visualBuilder.updateRenderTimeout(dataView, () => {
-                const labels: JQuery = visualBuilder.xAxis.find(".tick text");
+                const labels = visualBuilder.xAxis?.querySelectorAll(".tick text");
 
-                expectTextContainsThreeDots(labels.get(0)?.textContent ?? "");
-                expectTextContainsThreeDots(labels.get(labels.length - 1)?.textContent ?? "");
+                expectTextContainsThreeDots(Array.from(labels!)[0]?.textContent ?? "");
+                expectTextContainsThreeDots(Array.from(labels!)[labels!.length - 1].textContent ?? "");
 
                 done();
             });
@@ -178,7 +177,7 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+            expect(parseFloat(Array.from(visualBuilder.yAxisTicks!).at(0)!.textContent!)).toBe(0);
         });
 
         it("Y-axis start < 0 validation", () => {
@@ -191,7 +190,7 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+            expect(parseFloat(Array.from(visualBuilder.yAxisTicks!).at(0)!.textContent!)).toBe(0);
         });
 
         it("Y-axis end < 0 validation", () => {
@@ -204,8 +203,8 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
-            expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(0);
+            expect(parseFloat(Array.from(visualBuilder.yAxisTicks!).at(0)!.textContent!)).toBe(0);
+            expect(parseFloat(Array.from(visualBuilder.yAxisTicks!).at(-1)!.textContent!)).toBeGreaterThanOrEqual(0);
         });
 
         it("Y-axis start is undefined validation", () => {
@@ -218,7 +217,7 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
+            expect(parseFloat(Array.from(visualBuilder.yAxisTicks!).at(0)!.textContent!)).toBe(0);
         });
 
         it("Y-axis end is undefined validation", () => {
@@ -231,8 +230,8 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(parseFloat(visualBuilder.yAxisTicks.first().text())).toBe(0);
-            expect(parseFloat(visualBuilder.yAxisTicks.last().text())).toBeGreaterThanOrEqual(0);
+            expect(parseFloat(Array.from(visualBuilder.yAxisTicks!).at(0)!.textContent!)).toBe(0);
+            expect(parseFloat(Array.from(visualBuilder.yAxisTicks!).at(-1)!.textContent!)).toBeGreaterThanOrEqual(0);
         });
 
         it("X-axis default ticks", () => {
@@ -248,8 +247,8 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(visualBuilder.xAxisTicks.length).toBe(6);
-            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
+            expect(visualBuilder.xAxisTicks.length).toBe(7);
+            expect(parseFloat(Array.from(visualBuilder.xAxisTicks!).at(0)!.textContent!)).toBe(9);
         });
 
         it("X-axis start is lesser than min", () => {
@@ -271,8 +270,8 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(visualBuilder.xAxisTicks.length).toBe(8);
-            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(7);
+            expect(visualBuilder.xAxisTicks.length).toBe(10);
+            expect(parseFloat(Array.from(visualBuilder.xAxisTicks!).at(0)!.textContent!)).toBe(6.5);
         });
 
         it("X-axis end is greater than max and bins=7", () => {
@@ -298,7 +297,7 @@ describe("HistogramChart", () => {
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
             expect(visualBuilder.xAxisTicks.length).toBe(13);
-            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(17.57);
+            expect(parseFloat(Array.from(visualBuilder.xAxisTicks!).at(-1)!.textContent!)).toBe(17.57);
         });
 
         it("X-axis start is greater than min and bins=7", () => {
@@ -324,7 +323,7 @@ describe("HistogramChart", () => {
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
             expect(visualBuilder.xAxisTicks.length).toBe(7);
-            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9.71);
+            expect(parseFloat(Array.from(visualBuilder.xAxisTicks!).at(0)!.textContent!)).toBe(9.71);
         });
 
         it("X-axis end is lesser than max and bins=12", () => {
@@ -350,7 +349,7 @@ describe("HistogramChart", () => {
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
             expect(visualBuilder.xAxisTicks.length).toBe(9);
-            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(12.33);
+            expect(parseFloat(Array.from(visualBuilder.xAxisTicks!).at(-1)!.textContent!)).toBe(12.33);
         });
 
         it("X-axis end is lesser than max and bins=6 and periodic number case", () => {
@@ -376,8 +375,8 @@ describe("HistogramChart", () => {
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
             expect(visualBuilder.xAxisTicks.length).toBe(6);
-            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
-            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(13.17);
+            expect(parseFloat(Array.from(visualBuilder.xAxisTicks!).at(0)!.textContent!)).toBe(9);
+            expect(parseFloat(Array.from(visualBuilder.xAxisTicks!).at(-1)!.textContent!)).toBe(13.17);
         });
 
         it("X-axis start is greater than max", () => {
@@ -399,7 +398,7 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(parseFloat(visualBuilder.xAxisTicks.first().text())).toBe(9);
+            expect(parseFloat(Array.from(visualBuilder.xAxisTicks!).at(0)!.textContent!)).toBe(9);
         });
 
         it("X-axis end is lesser than min", () => {
@@ -421,7 +420,7 @@ describe("HistogramChart", () => {
 
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
-            expect(parseFloat(visualBuilder.xAxisTicks.last().text())).toBe(14);
+            expect(parseFloat(Array.from(visualBuilder.xAxisTicks!).at(-1)!.textContent!)).toBe(14);
         });
     });
 
@@ -459,14 +458,14 @@ describe("HistogramChart", () => {
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.columns.length).toBe(bins);
+                expect(visualBuilder.columns!.length).toBe(bins);
 
                 bins = 6;
 
                 (dataView.metadata.objects as any).general.bins = bins;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.columns.length).toBe(bins);
+                expect(visualBuilder.columns!.length).toBe(bins);
             });
 
             it("bins count change triggers update of bin size", () => {
@@ -565,10 +564,9 @@ describe("HistogramChart", () => {
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                visualBuilder.columns
-                    .toArray()
+                Array.from(visualBuilder.columns!)
                     .forEach((element, index) => { // TODO TYPE
-                        assertColorsMatch($(element).css("fill"), (index % 2) ? color : evenColor);
+                        assertColorsMatch(getComputedStyle(element)["fill"], (index % 2) ? color : evenColor);
                     });
             });
         });
@@ -601,10 +599,9 @@ describe("HistogramChart", () => {
 
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                visualBuilder.xAxisTicks
-                    .toArray()
+                Array.from(visualBuilder.xAxisTicks!)
                     .forEach((element) => {
-                        expect(last($(element).text())).toEqual("K");
+                        expect(last(element.textContent)).toEqual("K");
                     });
             });
 
@@ -612,12 +609,12 @@ describe("HistogramChart", () => {
                 (dataView.metadata.objects as any).xAxis.title = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.xAxisLabel.css("display")).not.toBe("none");
+                visualBuilder.xAxisLabel.forEach(l => expect(getComputedStyle(l)["display"]).not.toBe("none"));
 
                 (dataView.metadata.objects as any).xAxis.title = false;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.xAxisLabel.css("display")).toBe("none");
+                visualBuilder.xAxisLabel.forEach(l => expect(getComputedStyle(l)["display"]).toBe("none"));
             });
         });
 
@@ -648,10 +645,9 @@ describe("HistogramChart", () => {
                 (dataView.metadata.objects as any).yAxis.displayUnits = displayUnits;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                visualBuilder.yAxisTicks
-                    .toArray()
+                Array.from(visualBuilder.yAxisTicks!)
                     .forEach((element) => {// TODO TYPE
-                        expect(last($(element).text())).toEqual("K");
+                        expect(last(element.textContent)).toEqual("K");
                     });
             });
 
@@ -659,12 +655,12 @@ describe("HistogramChart", () => {
                 (dataView.metadata.objects as any).yAxis.title = true;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.yAxisLabel.css("display")).not.toBe("none");
+                visualBuilder.yAxisLabel.forEach(l => expect(getComputedStyle(l)["display"]).not.toBe("none"));
 
                 (dataView.metadata.objects as any).yAxis.title = false;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                expect(visualBuilder.yAxisLabel.css("display")).toBe("none");
+                visualBuilder.yAxisLabel.forEach(l => expect(getComputedStyle(l)["display"]).toBe("none"));
             });
 
             it("position", () => {
@@ -683,7 +679,7 @@ describe("HistogramChart", () => {
 
             function getAxisTranslate(visualBuilder: HistogramChartBuilder): number {
                 // TODO REVIEW return d3.transition(visualBuilder.yAxis.attr("transform")).translate[0];
-                return Number(parseTranslateTransform(visualBuilder.yAxis.attr("transform")).x);
+                return Number(parseTranslateTransform(visualBuilder.yAxis.getAttribute("transform")!).x);
             }
         });
 
@@ -715,10 +711,9 @@ describe("HistogramChart", () => {
                 (dataView.metadata.objects as any).labels.displayUnits = displayUnits;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                visualBuilder.labelTexts
-                    .toArray()
+                Array.from(visualBuilder.labelTexts!)
                     .forEach((element) => {// TODO TYPE
-                        expect(last($(element).text())).toEqual("K");
+                        expect(last(element.textContent)).toEqual("K");
                     });
 
                 displayUnits = 1000 * 1000;
@@ -726,10 +721,9 @@ describe("HistogramChart", () => {
                 (dataView.metadata.objects as any).labels.displayUnits = displayUnits;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                visualBuilder.labelTexts
-                    .toArray()
+                Array.from(visualBuilder.labelTexts!)
                     .forEach((element) => {// TODO TYPE
-                        expect(last($(element).text())).toEqual("M");
+                        expect(last(element.textContent)).toEqual("M");
                     });
             });
 
@@ -740,10 +734,9 @@ describe("HistogramChart", () => {
                 (dataView.metadata.objects as any).labels.precision = precision;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                visualBuilder.labelTexts
-                    .toArray()
+                Array.from(visualBuilder.labelTexts!)
                     .forEach((element) => {// TODO TYPE
-                        expect($(element).text().split(".")[1].length).toEqual(precision);
+                        expect(element.textContent!.split(".")[1].length).toEqual(precision);
                     });
             });
 
@@ -754,10 +747,9 @@ describe("HistogramChart", () => {
                 (dataView.metadata.objects as any).labels.fontSize = fontSize;
                 visualBuilder.updateFlushAllD3Transitions(dataView);
 
-                visualBuilder.labelTexts
-                    .toArray()
+                Array.from(visualBuilder.labelTexts!)
                     .forEach((element) => {// TODO TYPE
-                        expect($(element).css("font-size")).toBe(expectedFontSize);
+                        expect(getComputedStyle(element)["font-size"]).toBe(expectedFontSize);
                     });
             });
         });
@@ -1052,7 +1044,7 @@ describe("HistogramChart", () => {
 
             it("should not use fill style", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    const layers = visualBuilder.columns.toArray().map($); // DBG : JQuery<any>[]
+                    const layers = Array.from(visualBuilder.columns!); // DBG : JQuery<any>[]
 
                     expect(isColorAppliedToElements(layers, null, "fill"));
 
@@ -1062,7 +1054,7 @@ describe("HistogramChart", () => {
 
             it("should use stroke style", (done) => {
                 visualBuilder.updateRenderTimeout(dataView, () => {
-                    const layers = visualBuilder.columns.toArray().map($); // DBG : JQuery<any>[]
+                    const layers = Array.from(visualBuilder.columns!); // DBG : JQuery<any>[]
 
                     expect(isColorAppliedToElements(layers, foregroundColor, "stroke"));
 
@@ -1071,12 +1063,12 @@ describe("HistogramChart", () => {
             });
 
             function isColorAppliedToElements(
-                elements: JQuery[],
+                elements: Element[],
                 color?: string | null,
                 colorStyleName: string = "fill"
             ): boolean {
-                return elements.some((element: JQuery) => {
-                    const currentColor: string = element.css(colorStyleName);
+                return elements.some((element: Element) => {
+                    const currentColor: string = getComputedStyle(element)[colorStyleName];
 
                     if (!currentColor || !color) {
                         return currentColor === color;
