@@ -195,7 +195,6 @@
                     "type": {
                         "numeric": true
                     },
-                    "placeHolderText": "Start",
                     "suppressFormatPainterCopy": true
                 },
                 "end": {
@@ -204,7 +203,6 @@
                     "type": {
                         "numeric": true
                     },
-                    "placeHolderText": "End",
                     "suppressFormatPainterCopy": true
                 }
             }
@@ -283,7 +281,6 @@
                     "type": {
                         "numeric": true
                     },
-                    "placeHolderText": "Start",
                     "suppressFormatPainterCopy": true
                 },
                 "end": {
@@ -292,7 +289,6 @@
                     "type": {
                         "numeric": true
                     },
-                    "placeHolderText": "End",
                     "suppressFormatPainterCopy": true
                 },
                 "position": {

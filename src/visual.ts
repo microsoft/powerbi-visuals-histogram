@@ -91,7 +91,7 @@ import createInteractivitySelectionService = interactivitySelectionService.creat
 import SelectableDataPoint = interactivitySelectionService.SelectableDataPoint;
 
 // powerbi-visuals-utils-tooltiputils
-import { TooltipEventArgs, ITooltipServiceWrapper, createTooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
+import { ITooltipServiceWrapper, createTooltipServiceWrapper } from "powerbi-visuals-utils-tooltiputils";
 
 // histogram
 import {
@@ -950,7 +950,7 @@ export class Visual implements IVisual {
 
             this.tooltipServiceWrapper.addTooltip(
                 columnsSelection,
-                (eventArgs: TooltipEventArgs<HistogramDataPoint>) => eventArgs.data.tooltipInfo
+                (dataPoint: HistogramDataPoint) => dataPoint.tooltipInfo
             );
 
             this.bindSelectionHandler(columnsSelection);
