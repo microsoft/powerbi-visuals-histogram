@@ -444,26 +444,62 @@ export class Visual implements IVisual {
         return Math.round(number * factor) / factor;
     }
 
+    private static getRandomNumberInGivenInterval = (min: number, max: number): number => {
+        // Disabled because a unique number is not required here. 
+        // We just need a number that is different from the previous value to trigger the enumeration of pane properties.  
+        // eslint-disable-next-line powerbi-visuals/insecure-random
+        return Math.random() * (max - min) + min;
+      }
+
     private static setMinMaxForXAxis(xAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
-        const maxXValue: number = (xAxisSettings.end !== null) && (xAxisSettings.end > borderValues.minX)
-            ? xAxisSettings.end
-            : borderValues.maxX;
-        const minXValue: number = (xAxisSettings.start !== null) && (xAxisSettings.start < maxXValue)
-            ? xAxisSettings.start
-            : borderValues.minX;
+        const randomNumber = Visual.getRandomNumberInGivenInterval(0.01, 0.05);
+
+        let maxXValue: number = borderValues.maxX;
+        
+        if (xAxisSettings.end === null) {
+            maxXValue = borderValues.maxX + randomNumber;
+        }
+        else if (xAxisSettings.end > borderValues.minX) {
+            maxXValue = xAxisSettings.end;
+        }
+        
+        let minXValue: number = borderValues.minX;
+
+        if (xAxisSettings.start === null) {
+            minXValue = borderValues.minX - randomNumber;
+        }
+        else if (xAxisSettings.start < maxXValue) {
+            minXValue = xAxisSettings.start;
+        }
+
         xAxisSettings.start = Visual.GET_CORRECT_X_AXIS_VALUE(minXValue);
         xAxisSettings.end = Visual.GET_CORRECT_X_AXIS_VALUE(maxXValue);
     }
 
     private static getMinMaxFoxYAxis(yAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
-        const maxYValue: number = (yAxisSettings.end !== null) && (yAxisSettings.end > yAxisSettings.start)
-            ? yAxisSettings.end
-            : borderValues.maxY;
-        const minYValue: number = yAxisSettings.start < maxYValue
-            ? yAxisSettings.start
-            : 0;
+        const randomNumber = Visual.getRandomNumberInGivenInterval(0.01, 0.05);
+
+        let maxYValue: number = borderValues.maxY;
+
+        if (yAxisSettings.end !== null && yAxisSettings.end > yAxisSettings.start) {
+            maxYValue = yAxisSettings.end;
+        }
+        else {
+            maxYValue = borderValues.maxY - randomNumber;
+        }
+
+        let minYValue: number = borderValues.maxY;
+
+        if (yAxisSettings.start < maxYValue) {
+            minYValue = yAxisSettings.start;
+        }
+        else {
+            minYValue = 0;
+        }
+
         yAxisSettings.start = Visual.GET_CORRECT_Y_AXIS_VALUE(minYValue);
         yAxisSettings.end = Visual.GET_CORRECT_Y_AXIS_VALUE(maxYValue);
+
         return yAxisSettings;
     }
 

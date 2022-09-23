@@ -246,6 +246,13 @@ describe("HistogramChart", () => {
 
             dataView = dataViewBuilder.getDataView();
 
+            dataView.metadata.objects = {
+                xAxis: {
+                    start: 9,
+                    end: 14
+                }
+            };
+
             visualBuilder.updateFlushAllD3Transitions(dataView);
 
             expect(visualBuilder.xAxisTicks.length).toBe(7);
@@ -265,7 +272,8 @@ describe("HistogramChart", () => {
 
             dataView.metadata.objects = {
                 xAxis: {
-                    start: 7.2
+                    start: 7.2,
+                    end: 14
                 }
             };
 
@@ -288,6 +296,7 @@ describe("HistogramChart", () => {
 
             dataView.metadata.objects = {
                 xAxis: {
+                    start: 9,
                     end: 17.34
                 },
                 general: {
@@ -314,7 +323,8 @@ describe("HistogramChart", () => {
 
             dataView.metadata.objects = {
                 xAxis: {
-                    start: 10
+                    start: 10,
+                    end: 14
                 },
                 general: {
                     bins: 7
@@ -340,6 +350,7 @@ describe("HistogramChart", () => {
 
             dataView.metadata.objects = {
                 xAxis: {
+                    start: 9,
                     end: 12
                 },
                 general: {
@@ -366,6 +377,7 @@ describe("HistogramChart", () => {
 
             dataView.metadata.objects = {
                 xAxis: {
+                    start: 9,
                     end: 13
                 },
                 general: {
@@ -415,7 +427,8 @@ describe("HistogramChart", () => {
 
             dataView.metadata.objects = {
                 xAxis: {
-                    end: 8
+                    start: 9,
+                    end: 14
                 }
             };
 
