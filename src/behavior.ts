@@ -25,11 +25,8 @@
  */
 
 // d3
-import * as d3 from "d3";
-type Selection<T> = d3.Selection<any, T, any, any>;
-
-import powerbi from "powerbi-visuals-api";
-import ISelectionId = powerbi.visuals.ISelectionId;
+import { Selection as d3Selection } from "d3-selection";
+type Selection<T> = d3Selection<any, T, any, any>;
 
 import { interactivityBaseService, interactivitySelectionService } from "powerbi-visuals-utils-interactivityutils";
 import ISelectionHandler = interactivityBaseService.ISelectionHandler;
@@ -65,8 +62,8 @@ export class HistogramBehavior implements IInteractiveBehavior {
         this.interactivityService = behaviorOptions.interactivityService;
         this.clearCatcher = behaviorOptions.clearCatcher;
 
-        this.columns.on("click", (dataPoint: HistogramDataPoint) => {
-            const isCtrlPressed: boolean = d3.event && (<MouseEvent>d3.event).ctrlKey;
+        this.columns.on("click", (event: MouseEvent, dataPoint: HistogramDataPoint) => {
+            const isCtrlPressed: boolean = event && event.ctrlKey;
 
             selectionHandler.handleSelection(dataPoint.subDataPoints, isCtrlPressed);
         });

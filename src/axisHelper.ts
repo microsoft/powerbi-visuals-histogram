@@ -25,12 +25,11 @@
  */
 
 import powerbi from "powerbi-visuals-api";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash.isempty";
 // d3
-import * as d3 from "d3";
+import { axisRight, axisLeft, axisBottom } from "d3-axis";
 import { Axis as SVGAxis } from "d3-axis";
-import { scaleOrdinal, scaleLinear } from "d3";
-import { ScaleLogarithmic as LogScale, ScaleLinear as LinearScale, ScaleOrdinal as OrdinalScale, scaleLog, scaleBand, ScaleBand, ScaleOrdinal } from "d3-scale";
+import { scaleLinear, ScaleLogarithmic as LogScale, ScaleLinear as LinearScale, ScaleOrdinal as OrdinalScale, scaleLog, scaleBand, ScaleBand } from "d3-scale";
 
 // powerbi
 import NumberRange = powerbi.NumberRange;
@@ -58,27 +57,23 @@ import CreateAxisOptions = axisInterfaces.CreateAxisOptions;
  */
 const DefaultOuterPadding: number = 0;
 
-const DefaultInnerTickSize: number = 6;
-const DefaultOuterTickSize: number = 0;
-
-const OrientationLeft: string = "left";
-const OrientationBottom: string = "bottom";
-
 const DefaultXLabelMaxWidth: number = 1;
 const DefaultXLabelFactor: number = 2;
-
-const PowerOfTenOffset: number = 1e-12;
 
 const DefaultMinInterval: number = 0;
 const MinTickInterval100Pct: number = 0.01;
 const MinTickIntervalInteger: number = 1;
 
-const RecommendedNumberOfTicksSmall: number = 3;
-const RecommendedNumberOfTicksMiddle: number = 5;
-const RecommendedNumberOfTicksLarge: number = 8;
+const RecommendedNumberOfTicksExtraSmall: number = 3;
+const RecommendedNumberOfTicksSmall: number = 5;
+const RecommendedNumberOfTicksMiddle: number = 8;
+const RecommendedNumberOfTicksLarge: number = 16;
+const RecommendedNumberOfTicksExtraLarge: number = 32;
 
-const AvailableWidthXAxisSmall: number = 300;
-const AvailableWidthXAxisMiddle: number = 500;
+const AvailableWidthXAxisExtraSmall: number = 300;
+const AvailableWidthXAxisSmall: number = 500;
+const AvailableWidthXAxisMiddle: number = 800;
+const AvailableWidthXAxisLarge: number = 1100;
 
 const AvailableWidthYAxisSmall: number = 150;
 const AvailableWidthYAxisMiddle: number = 300;
@@ -87,15 +82,15 @@ const AvailableWidthYAxisMiddle: number = 300;
  * Default ranges are for when we have a field chosen for the axis,
  * but no values are returned by the query.
  */
-export let emptyDomain = [0, 0];
+export const emptyDomain = [0, 0];
 
-let InnerPaddingRatio: number = 0.2;
-let TickLabelPadding: number = 2; // between text labels, used by AxisHelper
-let MinOrdinalRectThickness: number = 20;
+const InnerPaddingRatio: number = 0.2;
+const TickLabelPadding: number = 2; // between text labels, used by AxisHelper
+const MinOrdinalRectThickness: number = 20;
 
-let ScalarTickLabelPadding: number = 3;
-let MinTickCount: number = 2;
-let DefaultBestTickCount: number = 3;
+const ScalarTickLabelPadding: number = 3;
+const MinTickCount: number = 2;
+const DefaultBestTickCount: number = 3;
 
 export interface CreateScaleResult {
     scale: LinearScale<any, any>;
@@ -110,12 +105,23 @@ export interface CreateAxisOptionsExtended extends CreateAxisOptions {
     onRight?: boolean;
 }
 
+interface OrdinalDataParameters {
+    bestTickCount: number, 
+    dataDomain: number[], 
+    pixelSpan: number, 
+    innerPaddingRatio: number, 
+    categoryThickness: number, 
+    outerPadding: number,
+    maxTicks: number, 
+    minOrdinalRectThickness: number
+}
+
 /**
  * Create a D3 axis including scale. Can be vertical or horizontal, and either datetime, numeric, or text.
  * @param options The properties used to create the axis.
  */
 export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties {
-    let pixelSpan: number = options.pixelSpan,
+    const pixelSpan: number = options.pixelSpan,
         dataDomain: number[] = options.dataDomain,
         metaDataColumn: DataViewMetadataColumn = options.metaDataColumn,
         formatString: string = options.formatString,
@@ -125,21 +131,22 @@ export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties 
         isVertical: boolean = !!options.isVertical,
         useTickIntervalForDisplayUnits: boolean = !!options.useTickIntervalForDisplayUnits,
         getValueFn: (index: number, valueType: ValueType) => any = options.getValueFn,
-        categoryThickness: number = options.categoryThickness,
         axisDisplayUnits: number = options.axisDisplayUnits,
         axisPrecision: number = options.axisPrecision,
         is100Pct: boolean = !!options.is100Pct,
         tickLabelPadding: number = options.tickLabelPadding || TickLabelPadding,
         onRight: boolean = options.onRight || false;
 
-    let dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
+    let categoryThickness: number = options.categoryThickness;
+
+    const dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
 
     // Create the Scale
-    let scaleResult: CreateScaleResult = createScale(options);
-    let scale: LinearScale<any, any> = scaleResult.scale;
-    let bestTickCount: number = scaleResult.bestTickCount;
-    let scaleDomain: number[] = scale.domain();
-    let isLogScaleAllowed: boolean = isLogScalePossible(dataDomain, dataType);
+    const scaleResult: CreateScaleResult = createScale(options);
+    const scale: LinearScale<any, any> = scaleResult.scale;
+    const bestTickCount: number = scaleResult.bestTickCount;
+    const scaleDomain: number[] = scale.domain();
+    const isLogScaleAllowed: boolean = isLogScalePossible(dataDomain, dataType);
 
     // fix categoryThickness if scalar and the domain was adjusted when making the scale "nice"
     categoryThickness = fixCategoryThickness(categoryThickness, isScalar, dataDomain, scaleDomain);
@@ -150,7 +157,7 @@ export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties 
         tickValues = [dataDomain[0]];
     }
     else {
-        let minTickInterval: number = isScalar
+        const minTickInterval: number = isScalar
             ? getMinTickValueInterval(formatString, dataType, is100Pct)
             : undefined;
 
@@ -163,7 +170,7 @@ export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties 
         });
     }
 
-    let formatter: IValueFormatter = createFormatter(
+    const formatter: IValueFormatter = createFormatter(
         scaleDomain,
         dataDomain,
         dataType,
@@ -178,9 +185,9 @@ export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties 
 
     // sets default orientation only, cartesianChart will fix y2 for comboChart
     // tickSize(pixelSpan) is used to create gridLines
-    let axis = (isVertical
-        ? onRight ? d3.axisRight(scale) : d3.axisLeft(scale)
-        : d3.axisBottom(scale)
+    const axis = (isVertical
+        ? onRight ? axisRight(scale) : axisLeft(scale)
+        : axisBottom(scale)
     );
 
     let formattedTickValues: any[] = [];
@@ -188,7 +195,7 @@ export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties 
         formattedTickValues = formatAxisTickValues(axis, tickValues, formatter, dataType, getValueFn);
     }
 
-    let xLabelMaxWidth: number = getXLabelMaxWidth(isScalar, categoryThickness, tickLabelPadding, tickValues, scale, pixelSpan);
+    const xLabelMaxWidth: number = getXLabelMaxWidth(isScalar, categoryThickness, tickLabelPadding, tickValues, scale, pixelSpan);
 
     return {
         scale: scale,
@@ -209,8 +216,8 @@ export function createAxis(options: CreateAxisOptionsExtended): IAxisProperties 
 
 function fixCategoryThickness(categoryThickness: number, isScalar: boolean, dataDomain: number[], scaleDomain: number[]) {
     if (categoryThickness && isScalar && dataDomain && dataDomain.length === 2) {
-        let oldSpan: number = dataDomain[1] - dataDomain[0];
-        let newSpan: number = scaleDomain[1] - scaleDomain[0];
+        const oldSpan: number = dataDomain[1] - dataDomain[0];
+        const newSpan: number = scaleDomain[1] - scaleDomain[0];
         if (oldSpan > 0 && newSpan > 0) {
             categoryThickness = categoryThickness * oldSpan / newSpan;
         }
@@ -218,7 +225,7 @@ function fixCategoryThickness(categoryThickness: number, isScalar: boolean, data
     return categoryThickness;
 }
 
-function getXLabelMaxWidth(isScalar: boolean, categoryThickness: number, tickLabelPadding: number, tickValues: any[], scale: d3.ScaleLinear<any, any>, pixelSpan: number) {
+function getXLabelMaxWidth(isScalar: boolean, categoryThickness: number, tickLabelPadding: number, tickValues: any[], scale: LinearScale<any, any>, pixelSpan: number) {
     let xLabelMaxWidth: number;
     // Use category layout of labels if specified, otherwise use scalar layout of labels
     if (!isScalar && categoryThickness) {
@@ -238,7 +245,7 @@ function getXLabelMaxWidth(isScalar: boolean, categoryThickness: number, tickLab
  * Indicates whether the number is power of 10.
  */
 export function powerOfTen(d: any): boolean {
-    let value: number = Math.abs(d);
+    const value: number = Math.abs(d);
     // formula log2(Y)/log2(10) = log10(Y)
     // because double issues this won"t return exact value
     // we need to ceil it to nearest number.
@@ -298,11 +305,11 @@ export function createFormatter(
     }
     else {
         if (useTickIntervalForDisplayUnits && isScalar && tickValues.length > 1) {
-            let value1: number = axisDisplayUnits
+            const value1: number = axisDisplayUnits
                 ? axisDisplayUnits
                 : tickValues[1] - tickValues[0];
 
-            let options: ValueFormatterOptions = {
+            const options: ValueFormatterOptions = {
                 format: formatString,
                 value: value1,
                 value2: 0, // force tickInterval or display unit to be used
@@ -332,7 +339,7 @@ export function createFormatter(
 }
 
 export function getMinTickValueInterval(formatString: string, columnType: ValueType, is100Pct?: boolean): number {
-    let isCustomFormat: boolean = formatString && !numberFormat.isStandardFormat(formatString);
+    const isCustomFormat: boolean = formatString && !numberFormat.isStandardFormat(formatString);
 
     if (isCustomFormat) {
         let precision: number = numberFormat.getCustomFormatMetadata(formatString, true).precision;
@@ -411,14 +418,14 @@ export function getRecommendedTickValues(
 }
 
 export function getRecommendedTickValuesForAnOrdinalRange(maxTicks: number, labels: string[]): string[] {
-    let tickLabels: string[] = [];
+    const tickLabels: string[] = [];
 
     // return no ticks in this case
     if (maxTicks <= 0) {
         return tickLabels;
     }
 
-    let len: number = labels.length;
+    const len: number = labels.length;
 
     if (maxTicks > len) {
         return labels;
@@ -443,7 +450,7 @@ export function getRecommendedTickValuesForAQuantitativeRange(
         return tickLabels;
     }
 
-    let quantitiveScale: LinearScale<any, any> = scale;
+    const quantitiveScale: LinearScale<any, any> = scale;
 
     if (quantitiveScale.ticks) {
         tickLabels = quantitiveScale.ticks(maxTicks);
@@ -488,7 +495,7 @@ function getRecommendedTickValuesForADateTimeRange(maxTicks: number, dataDomain:
         return [];
     }
 
-    let dateTimeTickLabels: Date[] = DateTimeSequence.calculate(
+    const dateTimeTickLabels: Date[] = DateTimeSequence.CALCULATE(
         new Date(dataDomain[0]),
         new Date(dataDomain[1]), maxTicks).sequence;
 
@@ -522,8 +529,7 @@ export function columnDataTypeHasValue(dataType: ValueTypeDescriptor) {
 }
 
 export function createScale(options: CreateAxisOptionsExtended): CreateScaleResult {
-    let pixelSpan: number = options.pixelSpan,
-        dataDomain: number[] = options.dataDomain,
+    const pixelSpan: number = options.pixelSpan,
         metaDataColumn: DataViewMetadataColumn = options.metaDataColumn,
         outerPadding: number = options.outerPadding || DefaultOuterPadding,
         isScalar: boolean = !!options.isScalar,
@@ -535,12 +541,12 @@ export function createScale(options: CreateAxisOptionsExtended): CreateScaleResu
         innerPaddingRatio: number = options.innerPaddingRatio || InnerPaddingRatio,
         minOrdinalRectThickness: number = options.minOrdinalRectThickness || MinOrdinalRectThickness;
 
-    let dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
+    let dataDomain: number[] = options.dataDomain;
 
-    let maxTicks: number = getMaxTicks(isVertical, pixelSpan, maxTickCount);
+    const dataType: ValueType = getCategoryValueType(metaDataColumn, isScalar);
+    const maxTicks: number = getMaxTicks(isVertical, pixelSpan, maxTickCount);
 
     let scalarDomain: number[] = dataDomain ? dataDomain.slice() : null;
-
     let bestTickCount: number = maxTicks;
     let scale: LinearScale<any, any> | OrdinalScale<any, any> | ScaleBand<any>;
     let usingDefaultDomain: boolean = false;
@@ -580,7 +586,6 @@ export function createScale(options: CreateAxisOptionsExtended): CreateScaleResu
 
             scalarDomain = getScalarDomain(dataDomain, scalarDomain);
         }
-
         if (isScalar && dataType.numeric && !dataType.dateTime) {
             // Note: Don't pass bestTickCount to createNumericalScale, because it overrides boundaries of the domain.
             scale = createNumericalScale(
@@ -599,17 +604,20 @@ export function createScale(options: CreateAxisOptionsExtended): CreateScaleResu
             // in accordance to our design. scalarDomain: should already be in long-int time (via category.values[0].getTime())
             scale = createLinearScale(pixelSpan, scalarDomain, outerPadding, null, shouldClamp); // DO NOT PASS TICKCOUNT
         }
-        else if (dataType.text || dataType.dateTime || dataType.numeric || dataType.bool) {
-            scale = createOrdinalScale(
+        else if (dataType.text || dataType.dateTime || dataType.numeric || dataType.bool) {            
+            const ordinalParameters: OrdinalDataParameters = {
+                bestTickCount,
+                dataDomain,
                 pixelSpan,
-                scalarDomain,
                 innerPaddingRatio,
-                categoryThickness ? outerPadding / categoryThickness : 0);
-
-            bestTickCount = maxTicks === 0 ? 0
-                : Math.min(
-                    scalarDomain.length,
-                    (pixelSpan - outerPadding * 2) / minOrdinalRectThickness);
+                categoryThickness: categoryThickness ? outerPadding / categoryThickness : 0,
+                outerPadding,
+                maxTicks, 
+                minOrdinalRectThickness,
+            };
+            const { ordinalScale, tickCount } = getOrdinalData(ordinalParameters);
+            scale = ordinalScale;
+            bestTickCount = tickCount;
         }
     }
 
@@ -622,8 +630,32 @@ export function createScale(options: CreateAxisOptionsExtended): CreateScaleResu
     };
 }
 
+function getOrdinalData(ordinalDataParameters: OrdinalDataParameters) {
+    const { bestTickCount, dataDomain, pixelSpan, innerPaddingRatio, 
+        categoryThickness, outerPadding, maxTicks, minOrdinalRectThickness } = ordinalDataParameters;
+
+    const ordinalDomain = getOrdinalDomain(bestTickCount, dataDomain);
+
+    const scale = createOrdinalScale(
+        pixelSpan,
+        ordinalDomain,
+        innerPaddingRatio,
+        categoryThickness ? outerPadding / categoryThickness : 0);
+            
+    const tickCount = maxTicks === 0 
+        ? 0
+        : Math.min(
+            ordinalDomain.length,
+            (pixelSpan - outerPadding * 2) / minOrdinalRectThickness);
+
+    return {
+        ordinalScale: scale,
+        tickCount: tickCount
+    }
+}
+
 function getScalarDomain(dataDomain: number[], scalarDomain: number[]) {
-    let normalizedRange: ValueRange<number> = normalizeLinearDomain({
+    const normalizedRange: ValueRange<number> = normalizeLinearDomain({
         min: dataDomain[0],
         max: dataDomain[dataDomain.length - 1]
     });
@@ -632,6 +664,14 @@ function getScalarDomain(dataDomain: number[], scalarDomain: number[]) {
         normalizedRange.max
     ];
     return scalarDomain;
+}
+
+function getOrdinalDomain(tickCount: number, originalDomain: number[]): number[] {
+    const dataPointsLabels = originalDomain.map(value => value.toString());
+    
+    const recommendedTickValues = getRecommendedTickValuesForAnOrdinalRange(tickCount, dataPointsLabels);
+
+    return recommendedTickValues.map(value => parseFloat(value));
 }
 
 function getEmptyDomain(dataType: valueType.ValueType) {
@@ -658,7 +698,7 @@ export function normalizeInfinityInScale(scale: LinearScale<any, any>): void {
     // When large values (eg Number.MAX_VALUE) are involved, a call to scale.nice occasionally
     // results in infinite values being included in the domain. To correct for that, we need to
     // re-normalize the domain now to not include infinities.
-    let scaledDomain: number[] = scale.domain();
+    const scaledDomain: number[] = scale.domain();
 
     for (let i: number = 0, len = scaledDomain.length; i < len; ++i) {
         if (scaledDomain[i] === Number.POSITIVE_INFINITY) {
@@ -737,7 +777,7 @@ function createLogScale(
     outerPadding: number = 0,
     niceCount?: number): LinearScale<any, any> {
 
-    let scale: LogScale<number, number> = scaleLog()
+    const scale: LogScale<number, number> = scaleLog()
         .range([outerPadding, pixelSpan - outerPadding])
         .domain([dataDomain[0], dataDomain[1]])
         .clamp(true);
@@ -757,7 +797,7 @@ export function createLinearScale(
     niceCount?: number,
     shouldClamp?: boolean): LinearScale<any, any> {
 
-    let scale: LinearScale<any, any> = scaleLinear()
+    const scale: LinearScale<any, any> = scaleLinear()
         .range([outerPadding, pixelSpan - outerPadding])
         .domain([dataDomain[0], dataDomain[1]])
         .clamp(shouldClamp);
@@ -771,6 +811,10 @@ export function createLinearScale(
 }
 
 export function getRecommendedNumberOfTicksForXAxis(availableWidth: number): number {
+    if (availableWidth < AvailableWidthXAxisExtraSmall) {
+        return RecommendedNumberOfTicksExtraSmall;
+    }
+    
     if (availableWidth < AvailableWidthXAxisSmall) {
         return RecommendedNumberOfTicksSmall;
     }
@@ -779,7 +823,11 @@ export function getRecommendedNumberOfTicksForXAxis(availableWidth: number): num
         return RecommendedNumberOfTicksMiddle;
     }
 
-    return RecommendedNumberOfTicksLarge;
+    if (availableWidth < AvailableWidthXAxisLarge) {
+        return RecommendedNumberOfTicksLarge;
+    }
+
+    return RecommendedNumberOfTicksExtraLarge;
 }
 
 export function getRecommendedNumberOfTicksForYAxis(availableWidth: number): number {
@@ -829,7 +877,7 @@ export function getBestNumberOfTicks(
 
     if (min === max) {
         // datetime needs to only show one tick value in this case so formatting works correctly
-        if (!!isDateTime) {
+        if (isDateTime) {
             return 1;
         }
 
@@ -856,7 +904,7 @@ export function ensureValuesInRange(values: number[], min: number, max: number):
 
 export function hasNonIntegerData(valuesMetadata: DataViewMetadataColumn[]): boolean {
     for (let i: number = 0, len = valuesMetadata.length; i < len; i++) {
-        let currentMetadata: DataViewMetadataColumn = valuesMetadata[i];
+        const currentMetadata: DataViewMetadataColumn = valuesMetadata[i];
 
         if (currentMetadata && currentMetadata.type && !currentMetadata.type.integer) {
             return true;
@@ -883,7 +931,7 @@ function createTrueZeroTickLabel(ticks: number[], epsilon: number = 1e-5): numbe
         return ticks;
     }
 
-    let closeZero: number = epsilon * Math.abs(ticks[1] - ticks[0]);
+    const closeZero: number = epsilon * Math.abs(ticks[1] - ticks[0]);
 
     return ticks.map((tick) => Math.abs(tick) <= closeZero ? 0 : tick);
 }

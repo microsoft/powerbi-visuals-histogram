@@ -37,7 +37,9 @@ export class HistogramSettings extends DataViewObjectsParser {
 
 export class HistogramGeneralSettings {
     public static DefaultBins: number = null;
+    public static DefaultBinSize: number = 0;
     public static MinNumberOfBins: number = 0;
+    public static MinBinSize: number = 1;
     public static MaxNumberOfBins: number = 5000;
 
     /**
@@ -47,6 +49,8 @@ export class HistogramGeneralSettings {
     public displayName: string = "Histogram";
 
     public bins: number = HistogramGeneralSettings.DefaultBins;
+    public isBinSizeEnabled: boolean = false;
+    public binSize: number = HistogramGeneralSettings.DefaultBinSize;
     public frequency: boolean = true;
 }
 
@@ -77,7 +81,7 @@ export class HistogramXAxisSettings extends HistogramAxisSettings {
 }
 
 export class HistogramYAxisSettings extends HistogramAxisSettings {
-    public start: number = 0;
+    public start: number = null;
     public end: number = null;
     public position: HistogramPositionType = HistogramPositionType.Left;
 }

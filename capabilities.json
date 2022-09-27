@@ -1,5 +1,6 @@
 {
     "supportsHighlight": true,
+    "privileges": [],
     "dataRoles": [
         {
             "name": "Values",
@@ -65,6 +66,20 @@
                 "bins": {
                     "displayName": "Bins",
                     "displayNameKey": "Visual_General_Bins",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "isBinSizeEnabled": {
+                    "displayName": "Enable Bin Size",
+                    "displayNameKey": "Visual_General_IsBinSizeEnabled",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "binSize": {
+                    "displayName": "Bin Size",
+                    "displayNameKey": "Visual_General_BinSize",
                     "type": {
                         "numeric": true
                     }
@@ -180,7 +195,6 @@
                     "type": {
                         "numeric": true
                     },
-                    "placeHolderText": "Start",
                     "suppressFormatPainterCopy": true
                 },
                 "end": {
@@ -189,7 +203,6 @@
                     "type": {
                         "numeric": true
                     },
-                    "placeHolderText": "End",
                     "suppressFormatPainterCopy": true
                 }
             }
@@ -268,7 +281,6 @@
                     "type": {
                         "numeric": true
                     },
-                    "placeHolderText": "Start",
                     "suppressFormatPainterCopy": true
                 },
                 "end": {
@@ -277,7 +289,6 @@
                     "type": {
                         "numeric": true
                     },
-                    "placeHolderText": "End",
                     "suppressFormatPainterCopy": true
                 },
                 "position": {

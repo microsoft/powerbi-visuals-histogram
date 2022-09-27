@@ -19,10 +19,6 @@ module.exports = {
                 options: { esModules: true }
             },
             {
-                test: /\.json$/,
-                loader: 'json-loader'
-            },
-            {
                 test: /\.less$/,
                 use: [
                     {
@@ -34,7 +30,9 @@ module.exports = {
                     {
                         loader: 'less-loader',
                         options: {
-                            paths: [path.resolve(__dirname, 'node_modules')]
+                            lessOptions: {
+                                root: [path.resolve(__dirname, 'node_modules')]
+                            }
                         }
                     }
                 ]

@@ -64,7 +64,7 @@ export class HistogramData extends TestDataViewBuilder {
                     },
                     values: valuesColumnValues
                 }
-            ], columnNames).build();
+            ], columnNames!).build();
     }
 }
 
