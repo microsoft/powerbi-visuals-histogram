@@ -76,13 +76,13 @@ export class HistogramAxisSettings {
 }
 
 export class HistogramXAxisSettings extends HistogramAxisSettings {
-    public start: number = 0;
-    public end: number = 0;
+    public start: number = null;
+    public end: number = null;
 }
 
 export class HistogramYAxisSettings extends HistogramAxisSettings {
-    public start: number = 0;
-    public end: number = 0;
+    public start: number = null;
+    public end: number = null;
     public position: HistogramPositionType = HistogramPositionType.Left;
 }
 

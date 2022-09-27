@@ -444,23 +444,16 @@ export class Visual implements IVisual {
         return Math.round(number * factor) / factor;
     }
 
-    private static getRandomNumberInGivenInterval = (min: number, max: number): number => {
-        // Disabled because a unique number is not required here. 
-        // We just need a number that is different from the previous value to trigger the enumeration of pane properties.  
-        // eslint-disable-next-line powerbi-visuals/insecure-random
-        return Math.random() * (max - min) + min;
-      }
-
     private static setMinMaxForXAxis(xAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
         let maxXValue: number = borderValues.maxX;
         
-        if (xAxisSettings.end !== 0 && xAxisSettings.end > borderValues.minX) {
+        if (xAxisSettings.end !== null && xAxisSettings.end > borderValues.minX) {
             maxXValue = xAxisSettings.end;
         }
         
         let minXValue: number = borderValues.minX;
 
-        if (xAxisSettings.start !== 0 && xAxisSettings.start < maxXValue) {
+        if (xAxisSettings.start !== null && xAxisSettings.start < maxXValue) {
             minXValue = xAxisSettings.start;
         }
 
@@ -469,16 +462,15 @@ export class Visual implements IVisual {
     }
 
     private static setMinMaxForYAxis(yAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
-
         let maxYValue: number = borderValues.maxY;
 
-        if (yAxisSettings.end !== 0 && yAxisSettings.end > yAxisSettings.start) {
+        if (yAxisSettings.end !== null && yAxisSettings.end > yAxisSettings.start) {
             maxYValue = yAxisSettings.end;
         }
 
         let minYValue: number = 0;
 
-        if (yAxisSettings.start < maxYValue) {
+        if (yAxisSettings.start !== null && yAxisSettings.start < maxYValue) {
             minYValue = yAxisSettings.start;
         }
 
