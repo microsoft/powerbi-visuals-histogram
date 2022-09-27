@@ -337,7 +337,7 @@ export class Visual implements IVisual {
         const borderValues: HistogramBorderValues = Visual.GET_BORDER_VALUES(bins);
 
         // min-max for Y axis
-        Visual.getMinMaxFoxYAxis(settings.yAxis, borderValues);
+        Visual.setMinMaxForYAxis(settings.yAxis, borderValues);
 
         // min-max for X axis
         Visual.setMinMaxForXAxis(settings.xAxis, borderValues);
@@ -452,23 +452,15 @@ export class Visual implements IVisual {
       }
 
     private static setMinMaxForXAxis(xAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
-        const randomNumber = Visual.getRandomNumberInGivenInterval(0.01, 0.05);
-
         let maxXValue: number = borderValues.maxX;
         
-        if (xAxisSettings.end === null) {
-            maxXValue = borderValues.maxX + randomNumber;
-        }
-        else if (xAxisSettings.end > borderValues.minX) {
+        if (xAxisSettings.end !== 0 && xAxisSettings.end > borderValues.minX) {
             maxXValue = xAxisSettings.end;
         }
         
         let minXValue: number = borderValues.minX;
 
-        if (xAxisSettings.start === null) {
-            minXValue = borderValues.minX - randomNumber;
-        }
-        else if (xAxisSettings.start < maxXValue) {
+        if (xAxisSettings.start !== 0 && xAxisSettings.start < maxXValue) {
             minXValue = xAxisSettings.start;
         }
 
@@ -476,25 +468,18 @@ export class Visual implements IVisual {
         xAxisSettings.end = Visual.GET_CORRECT_X_AXIS_VALUE(maxXValue);
     }
 
-    private static getMinMaxFoxYAxis(yAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
-        const randomNumber = Visual.getRandomNumberInGivenInterval(0.01, 0.05);
+    private static setMinMaxForYAxis(yAxisSettings: HistogramXAxisSettings, borderValues: HistogramBorderValues) {
 
         let maxYValue: number = borderValues.maxY;
 
-        if (yAxisSettings.end !== null && yAxisSettings.end > yAxisSettings.start) {
+        if (yAxisSettings.end !== 0 && yAxisSettings.end > yAxisSettings.start) {
             maxYValue = yAxisSettings.end;
         }
-        else {
-            maxYValue = borderValues.maxY - randomNumber;
-        }
 
-        let minYValue: number = borderValues.maxY;
+        let minYValue: number = 0;
 
         if (yAxisSettings.start < maxYValue) {
             minYValue = yAxisSettings.start;
-        }
-        else {
-            minYValue = 0;
         }
 
         yAxisSettings.start = Visual.GET_CORRECT_Y_AXIS_VALUE(minYValue);
